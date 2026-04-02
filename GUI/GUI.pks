@@ -6,6 +6,12 @@ accountutente constant VARCHAR2(20) := 'Benedetti2526';
 procedure mettiHeader(
     TitoloPagina IN VARCHAR2
     );
-procedure panoramica;
+procedure mettiFooter;
+
+procedure lista;
+
+procedure home;
+
+procedure visualizzaCorsi;
 
 end GUI;
