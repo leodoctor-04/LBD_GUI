@@ -1,20 +1,13 @@
 create or replace package body Corsi as
 
 -- Lista Corsi
-procedure visualizza( numero IN number DEFAULT NULL )
-is 
+procedure visualizza( numero IN number DEFAULT NULL ) is
 begin
     if numero is null then
-        for corso in (select titolo from Corso)
-        loop
-            htp.print('<p>' || corso.titolo || '</p>');
-        end loop;
+        SELECT titolo BULK COLLECT INTO array_corsi FROM Corso;
     else
-        for corso in (select titolo from Corso fetch first numero rows only)
-        loop
-            htp.print('<p>' || corso.titolo || '</p>');
-        end loop;
-    end if; -- <--- Mancava questo
+        SELECT titolo BULK COLLECT INTO array_corsi FROM Corso fetch first numero rows only;
+    end if;
 end visualizza;
 
 end Corsi;

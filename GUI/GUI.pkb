@@ -47,6 +47,14 @@ procedure lista
 is begin
     htp.print('<div id="lista">');
       Corsi.visualizza(5);
+      IF Corsi.array_corsi IS NOT NULL AND Corsi.array_corsi.COUNT > 0 THEN
+        -- Cicliamo l'array del package esterno
+        FOR i IN 1 .. Corsi.array_corsi.COUNT LOOP
+          -- Usiamo htp.print o una procedura specifica per gli elementi della lista
+          htp.print('<p>' || Corsi.array_corsi(i) || '</p>');
+        END LOOP;
+      ELSE htp.p('<p>tabella vuota o inesistente</p>');
+      END IF;
     htp.print('</div>');
 end lista;
 
