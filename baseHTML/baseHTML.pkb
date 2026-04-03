@@ -34,13 +34,17 @@ PROCEDURE chiudiPagina IS BEGIN
     htp.htmlClose;
 END chiudiPagina;
 
-
-PROCEDURE apriDiv(stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
-    IF stile IS NOT NULL THEN
-        htp.p('<div style="' || stile || '">');
-    ELSE
-        htp.p('<div>');
+-- div speciali: lista
+PROCEDURE apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    htp.p('<div');
+    IF id IS NOT NULL THEN
+        htp.p( ' id="' || id );
     END IF;
+    IF stile IS NOT NULL THEN
+        htp.p( ' style="' || stile );
+    END IF;
+    htp.p('>');
+    
 END apriDiv;
 
 PROCEDURE chiudiDiv IS BEGIN
@@ -55,34 +59,41 @@ PROCEDURE h1(testo IN VARCHAR2) IS BEGIN
     htp.p('<h1>' || testo || '</h1>');
 END h1;
 
-PROCEDURE h3(testo IN VARCHAR2) IS BEGIN
-    htp.p('<h3>' || testo || '</h3>');
-END h3;
-
--- Menu a tendina (Tag Select)
-PROCEDURE apriMenuTendina(stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
-    IF stile IS NOT NULL THEN
-        htp.p('<select class="' || stile || '">');
-    ELSE
-        htp.p('<select>');
+PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    htp.p('<select');
+    IF id IS NOT NULL THEN
+        htp.p( ' id="' || id );
     END IF;
+    IF stile IS NOT NULL THEN
+        htp.p( ' style="' || stile );
+    END IF;
+    htp.p('>');
 END apriMenuTendina;
 
 PROCEDURE chiudiMenuTendina IS BEGIN
     htp.p('</select>');
 END chiudiMenuTendina;
 
-PROCEDURE tendinaOption(ozione IN VARCHAR2) IS BEGIN
-    htp.p('<option value="' || ozione || '">' || ozione || '</option>');
+PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
+    htp.p('<option value="' || opzione || '">' || opzione || '</option>');
 END tendinaOption;
 
--- Liste per paragrafi
-PROCEDURE apriLista IS BEGIN
-    htp.print('<div id="lista">');
-END apriLista;
+-- per i form onclick vuoto e diventa di tipo submit
+PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    htp.print( '<button' );
+    IF onClick IS NOT NULL THEN
+        htp.p( 'type="button" onclick="' || onClick || '()"');
+    END IF;
+    htp.p( '>' || testo || '</button>' );
+END bottone;
 
-PROCEDURE chiudiLista IS BEGIN
-    htp.print('</div>');
-END chiudiLista;
+PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
+    htp.p('<a ');
+    IF pagina IS NOT NULL THEN
+        htp.p( 'href="' || pagina || '"' );
+    END IF;
+    htp.p( '>' || testo || '</a>' );
+
+END collegamento;
 
 END baseHTML;

@@ -8,7 +8,7 @@ procedure mettiHeader(
     );
 procedure mettiFooter;
 
-procedure lista;
+procedure lista( array IN VARCHAR2 );
 
 procedure home;
 

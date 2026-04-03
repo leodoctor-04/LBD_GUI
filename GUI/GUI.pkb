@@ -43,10 +43,10 @@ procedure mettiFooter is BEGIN
 
 end mettiFooter;
 
-procedure lista
+procedure lista( numero IN NUMBER )
 is begin
     htp.print('<div id="lista">');
-      Corsi.visualizza(5);
+      Corsi.visualizza(numero);
       IF Corsi.array_corsi IS NOT NULL AND Corsi.array_corsi.COUNT > 0 THEN
         -- Cicliamo l'array del package esterno
         FOR i IN 1 .. Corsi.array_corsi.COUNT LOOP
@@ -77,7 +77,7 @@ procedure home is BEGIN
         <div>
             <h1 style="margin-bottom:0px; text-align: center; color:white;">I nostri corsi</h1>
                 ');
-              lista;
+              lista(5);
   htp.print('
         </div>
     ');
@@ -87,7 +87,7 @@ end home;
 procedure visualizzaCorsi is BEGIN
  mettiHeader('Visualizza tuoi corsi');
   htp.print('<h1 style="margin-bottom:0px; text-align:center; margin-top:2vw; color:white;">I tuoi Corsi</h1>');
-  lista;
+  lista(3);
   htp.print('
     <div style="display:flex; justify-content:center; align-items:center; gap:1vw;">
     <label for="parametri" style="color:white;"><h1>Tipologia:</h1></label>
@@ -100,7 +100,7 @@ procedure visualizzaCorsi is BEGIN
       <button>Cerca</button>
     </div>
   ');
-  lista;
+  lista(5);
  
  mettiFooter;
 end visualizzaCorsi;
