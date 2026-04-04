@@ -83,7 +83,7 @@ create or replace package body Stile as
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    /*lista*/
+    /*div lista*/
     #lista {
         margin: 2vw 3.5vw;
         display: flex;

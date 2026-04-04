@@ -21,7 +21,6 @@ PROCEDURE apriPagina(titolo IN VARCHAR2 DEFAULT NULL) IS BEGIN
         </header>
         ');
 END apriPagina;
-
 PROCEDURE chiudiPagina IS BEGIN
     htp.print('
         <footer>
@@ -34,19 +33,17 @@ PROCEDURE chiudiPagina IS BEGIN
     htp.htmlClose;
 END chiudiPagina;
 
--- div speciali: lista
 PROCEDURE apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
-    htp.p('<div');
+    htp.prn('<div');
     IF id IS NOT NULL THEN
-        htp.p( ' id="' || id );
+        htp.prn( ' id="' || id );
     END IF;
     IF stile IS NOT NULL THEN
-        htp.p( ' style="' || stile );
+        htp.prn( ' style="' || stile );
     END IF;
     htp.p('>');
     
 END apriDiv;
-
 PROCEDURE chiudiDiv IS BEGIN
     htp.p('</div>');
 END chiudiDiv;
@@ -54,46 +51,90 @@ END chiudiDiv;
 PROCEDURE paragrafo(testo IN VARCHAR2) IS BEGIN
     htp.p('<p>' || testo || '</p>');
 END paragrafo;
-
 PROCEDURE h1(testo IN VARCHAR2) IS BEGIN
     htp.p('<h1>' || testo || '</h1>');
 END h1;
 
 PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
-    htp.p('<select');
+    htp.prn('<select');
     IF id IS NOT NULL THEN
-        htp.p( ' id="' || id );
+        htp.prn( ' id="' || id );
     END IF;
     IF stile IS NOT NULL THEN
-        htp.p( ' style="' || stile );
+        htp.prn( ' style="' || stile );
     END IF;
     htp.p('>');
 END apriMenuTendina;
-
 PROCEDURE chiudiMenuTendina IS BEGIN
     htp.p('</select>');
 END chiudiMenuTendina;
-
 PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
     htp.p('<option value="' || opzione || '">' || opzione || '</option>');
 END tendinaOption;
 
--- per i form onclick vuoto e diventa di tipo submit
 PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
-    htp.print( '<button' );
+    htp.prn( '<button' );
     IF onClick IS NOT NULL THEN
-        htp.p( 'type="button" onclick="' || onClick || '()"');
+        htp.prn( 'type="button" onclick="' || onClick || '()"');
     END IF;
     htp.p( '>' || testo || '</button>' );
 END bottone;
 
 PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
-    htp.p('<a ');
+    htp.prn('<a ');
     IF pagina IS NOT NULL THEN
-        htp.p( 'href="' || pagina || '"' );
+        htp.prn( 'href="' || pagina || '"' );
     END IF;
     htp.p( '>' || testo || '</a>' );
 
 END collegamento;
 
+PROCEDURE apriForm( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false) IS BEGIN
+    htp.prn( '<form' );
+    IF id IS NOT NULL THEN
+        htp.prn( ' id="' || id || '"' );
+    END IF;
+    IF action IS NOT NULL THEN
+        htp.prn( ' action="' || action || '"' );
+    END IF;
+    IF metodo THEN
+        htp.prn( ' method="true"' );
+    ELSE
+        htp.prn( ' method="false"' );
+    END IF;
+    htp.p( '>' );
+
+END apriForm;
+PROCEDURE chiudiForm IS BEGIN
+    htp.p('</form>');
+END chiudiForm;
+PROCEDURE inserisciInput(
+    id  IN VARCHAR2,
+    tipo    IN VARCHAR2 DEFAULT 'text',    -- text, password, email, tel, checkbox, radio, number, hidden, date.
+    nome    IN VARCHAR2,    -- il nome per richiamare il campo
+    valore  IN VARCHAR2 DEFAULT NULL, 
+    placeholder IN VARCHAR2 DEFAULT NULL,
+    obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
+) IS BEGIN
+    htp.p( '<label for="' || id || '">' || nome || '</label>' );
+    htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
+    IF valore IS NOT NULL THEN
+        htp.prn( ' value="' || valore || '"' );
+    END IF;
+    IF placeholder IS NOT NULL THEN
+        IF tipo = 'radio' OR tipo = 'checkbox' THEN
+            htp.prn( ' checked' );
+        ELSE
+            htp.prn( ' placeholder="' || placeholder || '"' );
+        END IF;
+    END IF;
+    IF obbligatorio THEN
+        htp.prn( ' required' );
+    END IF;
+
+    htp.p( ' >');
+END inserisciInput;
+PROCEDURE inserisciTextArea( testo IN VARCHAR2 ) IS BEGIN
+    htp.p( '<textarea>' || testo || '</textarea>' );
+END inserisciTextArea;
 END baseHTML;
