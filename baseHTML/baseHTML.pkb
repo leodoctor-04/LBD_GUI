@@ -144,7 +144,7 @@ PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL ) IS BEGIN
         htp.prn( ' id="' || id || '"' );
     END IF;
     htp.p(' >');
-END apriPopup
+END apriPopup;
 
 PROCEDURE chiudiPopup IS BEGIN
     htp.prn( '</dialog>');

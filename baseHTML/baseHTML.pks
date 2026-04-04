@@ -33,5 +33,7 @@ create or replace package body baseHTML as
     );
     PROCEDURE inserisciTextArea( testo IN VARCHAR2 );
 
+    PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
+    PROCEDURE chiudiPopup;
 
 end baseHTML;
