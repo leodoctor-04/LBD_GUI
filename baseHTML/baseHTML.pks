@@ -20,7 +20,7 @@ create or replace package body baseHTML as
 
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
 
-    -- form( action<la pagina a cui inviare i dati>,metodo<true get, false post>)
+    -- form( action<la pagina a cui inviare i dati>,metodo<true:get, false:post>)
     PROCEDURE apriForm( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false);
     PROCEDURE chiudiForm;
     PROCEDURE inserisciInput(

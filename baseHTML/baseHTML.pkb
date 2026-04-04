@@ -137,4 +137,18 @@ END inserisciInput;
 PROCEDURE inserisciTextArea( testo IN VARCHAR2 ) IS BEGIN
     htp.p( '<textarea>' || testo || '</textarea>' );
 END inserisciTextArea;
+
+PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    htp.prn( '<dialog ');
+    IF id IS NOT NULL THEN
+        htp.prn( ' id="' || id || '"' );
+    END IF;
+    htp.p(' >');
+END apriPopup
+
+PROCEDURE chiudiPopup IS BEGIN
+    htp.prn( '</dialog>');
+END chiudiPopup;
+
+
 END baseHTML;
