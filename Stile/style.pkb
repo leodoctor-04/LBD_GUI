@@ -129,6 +129,109 @@ create or replace package body Stile as
         border: none; /* Consiglio: rimuove il bordo predefinito dei browser */
         cursor: pointer; /* Consiglio: mostra la manina al passaggio del mouse */"
     }
+
+
+
+    .calendar{
+        display: grid;
+        grid-template-columns: repeat(5,1fr);
+        grid-template-rows: 1fr 1fr 20fr;
+        gap: 0px;
+
+        border: 1px black solid;
+    }
+
+    .control_panel{
+        margin: 0px;
+        padding: 3px;
+        background-color: greenyellow;
+        grid-column: span 5;
+        display: flex;
+        flex-direction: row;
+        flex-flow: 1;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .control_panel button{
+        background: none;
+        border: none;
+        color: grey;
+    }
+
+
+    .control_panel button:active{
+        color: black;
+    }
+
+    .control_panel button{
+        background: none;
+        border: none;
+    }
+
+    .day_label{
+        display: flex;
+        margin: 0px;
+
+        background-color: antiquewhite;
+        border: 1px solid grey;
+
+        height: 100%;
+        width: 100%;
+
+        font-size: 1.9rem;
+        justify-content: center;
+        align-items: center;   
+    }
+
+    .lesson_column{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid grey;
+        padding-top: 10px;
+    }
+
+    .lesson{
+        border-radius: 10%;
+        background-color: #ffc7d1;
+        box-shadow: 1px 1px grey;
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        grid-template-columns: repeat(2,1fr);
+        gap: 0px 10px;
+        padding: 0px 5px;
+    }
+
+
+    .attend{
+        background-color: #ffc7d1;
+    }
+    .teach{
+        background-color: #c3edd5;
+    }
+
+    .lesson_popup[open]{
+        width: 50vh;
+        background-color: olive;
+        border: 1px;
+        border-radius: 10px;
+        display: grid;
+        grid-template-rows: repeat(3,1fr);
+        grid-template-columns: repeat(3,1fr);
+        gap: 0px;
+        font-size: 2vh;
+        box-shadow: 3px 3px grey;
+    }
+
+    .lesson_popup p{
+        text-align: center;
+    }
+    .lesson_popup a{
+        display: flex;
+        align-items: center;
+    }
     </style>
     ');
 
