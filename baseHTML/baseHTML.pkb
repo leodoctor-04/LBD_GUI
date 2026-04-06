@@ -36,10 +36,10 @@ END chiudiPagina;
 PROCEDURE apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
     htp.prn('<div');
     IF id IS NOT NULL THEN
-        htp.prn( ' id="' || id );
+        htp.prn( ' id="' || id || '"' );
     END IF;
     IF stile IS NOT NULL THEN
-        htp.prn( ' style="' || stile );
+        htp.prn( ' style="' || stile || '"' );
     END IF;
     htp.p('>');
     
@@ -58,10 +58,10 @@ END h1;
 PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
     htp.prn('<select');
     IF id IS NOT NULL THEN
-        htp.prn( ' id="' || id );
+        htp.prn( ' id="' || id || '"' );
     END IF;
     IF stile IS NOT NULL THEN
-        htp.prn( ' style="' || stile );
+        htp.prn( ' style="' || stile || '"' );
     END IF;
     htp.p('>');
 END apriMenuTendina;
@@ -89,7 +89,7 @@ PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS B
 
 END collegamento;
 
-PROCEDURE apriForm( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false) IS BEGIN
+PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false) IS BEGIN
     htp.prn( '<form' );
     IF id IS NOT NULL THEN
         htp.prn( ' id="' || id || '"' );
@@ -105,7 +105,7 @@ PROCEDURE apriForm( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL
     htp.p( '>' );
 
 END apriForm;
-PROCEDURE chiudiForm IS BEGIN
+PROCEDURE chiudiModulo IS BEGIN
     htp.p('</form>');
 END chiudiForm;
 PROCEDURE inserisciInput(
@@ -145,10 +145,8 @@ PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL ) IS BEGIN
     END IF;
     htp.p(' >');
 END apriPopup;
-
 PROCEDURE chiudiPopup IS BEGIN
     htp.prn( '</dialog>');
 END chiudiPopup;
-
 
 END baseHTML;
