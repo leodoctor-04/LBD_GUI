@@ -1,9 +1,7 @@
 create or replace package Premi as
 
--- root constant VARCHAR2(20) := '/apex/Benedetti2526.';
--- accountutente constant VARCHAR2(20) := 'Benedetti2526';
-root constant VARCHAR2(20) := '/apex/LBD_LOCALE.';
-accountutente constant VARCHAR2(20) := 'LBD_LOCALE';
+root constant VARCHAR2(20) := '/apex/Benedetti2526.';
+accountutente constant VARCHAR2(20) := 'Benedetti2526';
 
 PROCEDURE visualizzaPremi;
 

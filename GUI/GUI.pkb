@@ -1,7 +1,24 @@
 create or replace package body GUI as
 
-procedure home is BEGIN
-  baseHTML.apriPagina('Fitzone');
+procedure home( IdSessione IN NUMBER DEFAULT NULL, msg IN VARCHAR2 DEFAULT NULL) is
+  v_nome  VARCHAR2(20);
+  v_sessione_attiva NUMBER;
+BEGIN
+
+  IF IdSessione IS NOT NULL THEN
+    v_sessione_attiva := IdSessione;
+    SELECT USERNAME 
+    INTO v_nome
+    FROM SESSIONI, CREDENZIALI 
+    WHERE SESSIONI.IdUtente = CREDENZIALI.IdUtente
+    AND CREDENZIALI.IdUtente = IdSessione;
+
+    baseHTML.apriPagina('Fitzone', true, v_nome);
+  ELSE
+    baseHTML.apriPagina('Fitzone');
+  END IF;
+
+  baseHTML.messaggioLogin(msg);
 
   baseHTML.apriDiv('panoramica');
     baseHTML.apriDiv;
@@ -37,10 +54,10 @@ procedure visualizzaCorsi is BEGIN
     baseHTML.H1( 'Tipologia:', 'color:white;' );
     baseHTML.apriMenuTendina;
     -- queste opzioni sono di prova, vanno generate apposta con una procedura che dice i tipi
-      baseHTML.opzione('a');
-      baseHTML.opzione('b');
-      baseHTML.opzione('c');
-      baseHTML.opzione('d');
+      baseHTML.tendinaOption('a');
+      baseHTML.tendinaOption('b');
+      baseHTML.tendinaOption('c');
+      baseHTML.tendinaOption('d');
     baseHTML.chiudiMenuTendina;
     baseHTML.bottone('Cerca'); -- da aggiungere qualcosa di dinamico, tipo chiamata di funzione
   baseHTML.chiudiDiv;

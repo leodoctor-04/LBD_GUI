@@ -1,5 +1,8 @@
 create or replace package baseHTML as
 
+    root constant VARCHAR2(20) := '/apex/Benedetti2526.';
+    accountutente constant VARCHAR2(20) := 'Benedetti2526';
+
     procedure apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL);
     procedure chiudiPagina;
 
@@ -40,7 +43,6 @@ create or replace package baseHTML as
 
     -- Login
 procedure LoginPopup;
-procedure BottoneLogin;
 
 -- NUOVI
 procedure MenuHamburger;
@@ -65,11 +67,11 @@ procedure StatCard (
 );          -- in component
 
 
-PROCEDURE login_proc (
+PROCEDURE loginProc (
     p_user IN VARCHAR2,
     p_pwd  IN VARCHAR2
 );
 
-
+PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
 end baseHTML;

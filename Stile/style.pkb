@@ -223,6 +223,53 @@ create or replace package body Stile as
         display: flex;
         align-items: center;
     }
+
+
+
+
+
+
+    #loginPopup {
+            position: fixed;
+            top: 25%;
+            border: 0.25vw solid var(--colore-primario);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            background: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #loginPopup form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #loginPopup p {
+            color: black;
+        }
+        #loginPopup button {
+            color: var(--colore-primario);
+        }
+
+
+    #sidebar{
+        position:fixed;
+        top:0;
+        left:0;
+        width:250px;
+        height:100%;
+        background: var(--colore-secondario);
+        padding:20px;
+        transform:translateX(-100%);
+        transition:transform 0.3s ease;
+        z-index:999;
+        box-shadow:2px 0px 5px rgba(0,0,0,0.3);
+    }
+
     </style>
     ');
 

@@ -12,13 +12,13 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
         htp.print('<header>');
 
         IF acceduto THEN
-                htp.p( '<div onclick="toggleMenu()">☰</div>' );
+            htp.p( '<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>' );
+            MenuHamburger;
         END IF;
 
         htp.print('<h1>'|| titolo ||'</h1> <nav>');
-
         IF acceduto THEN
-            htp.p( nome );
+            htp.p( '<p>' || nome || '</p>');
         ELSE
             htp.p('
                 <button onclick="openLogin()">Accedi</button>
@@ -171,48 +171,41 @@ END apriPagina;
 
     procedure LoginPopup is
     begin
-        htp.print('<div id="loginOverlay">');
+        -- il pop up è inizialmente nascosto
+        htp.print('<dialog id="loginPopup" style="display: none;">');
 
-        htp.print('<h3>Login</h3>');
+            htp.print('<h1>Login</h1> <br>');
 
-        htp.formOpen('DELPRETE2526.login_proc', 'GET');
+            htp.formOpen( accountutente ||'.baseHTML.loginProc', 'GET');
+                htp.print('<p>Username:</p><br>');
+                htp.formText('p_user',20);
+                htp.br;
 
-        htp.print('Username:<br>');
-        htp.formText('p_user',20);
-        htp.br;
+                htp.print('<p>Password:</p><br>');
+                htp.formPassword('p_pwd',20);
+                htp.br;
+                htp.br;
 
-        htp.print('Password:<br>');
-        htp.formPassword('p_pwd',20);
-        htp.br; 
-        htp.br;
+                htp.p('<div style="display:flex; gap:0.25vw;">');
+                    htp.print('<button type="submit" style="margin:auto;" >Accedi</button>');
+                    htp.print('<br><button type="button" onclick="closeLogin()">Chiudi</button>');
+                htp.p('</div>');
+            htp.p('</div>');
+            
+            htp.formClose;
 
-        htp.print('<button type="submit">Accedi</button>');
-        htp.formClose;
-
-        htp.print('<br><button type="button" onclick="closeLogin()">Chiudi</button>');
-
-        htp.print('</div>');
-        htp.print('</div>');
-
+        htp.print('</dialog>');
+        -- javascript
         htp.print('<script>
             function openLogin() {
-                document.getElementById("loginOverlay").style.display = "flex";
+                document.getElementById("loginPopup").style.display = "flex";
             }
             function closeLogin() {
-                document.getElementById("loginOverlay").style.display = "none";
+                document.getElementById("loginPopup").style.display = "none";
             }
             </script>'
         );
     end;
-
-    procedure BottoneLogin is
-begin
-    htp.print('<button onclick="openLogin()" style="
-        padding:10px 20px;
-        border-radius:10px;
-        cursor:pointer;
-    ">Accedi</button>');
-end;
 
 procedure MessaggioTemporaneo (
     IdMsg        varchar2,
@@ -343,33 +336,18 @@ end;
     
 -- MENU HAMBURGER
 -- considerare tabella pagine per modifiche dinamiche
-procedure MenuHamburger is
-begin
-
+procedure MenuHamburger is begin
 -- SIDEBAR
-htp.print('<div id="sidebar" style="
-    position:fixed;
-    top:0;
-    left:0;
-    width:250px;
-    height:100%;
-    background:#f0f0f0;
-    padding:20px;
-    transform:translateX(-100%);
-    transition:transform 0.3s ease;
-    z-index:999;
-    box-shadow:2px 0px 5px rgba(0,0,0,0.3);
-">');
+htp.print('<div id="sidebar">');
 
 htp.print('<h3>Menu</h3>');
 
-MenuButton('Abbonamento','/apex/DELPRETE2526.pagina_abbonamento');
-MenuButton('Corsi','/apex/DELPRETE2526.pagina_corsi');
-MenuButton('Calendario lezioni','/apex/DELPRETE2526.calendario');
-MenuButton('Crea Corso','/apex/DELPRETE2526.crea_corso');
-MenuButton('Crea Abbonamento','/apex/DELPRETE2526.crea_abbonamento');
-MenuButton('Statistiche Palestra','/apex/DELPRETE2526.statistiche');
-
+MenuButton('Abbonamento', root ||'pagina_abbonamento');
+MenuButton('Corsi', root || 'pagina_corsi');
+MenuButton('Calendario lezioni', root || 'calendario');
+MenuButton('Crea Corso', root || 'crea_corso');
+MenuButton('Crea Abbonamento', root || 'crea_abbonamento');
+MenuButton('Statistiche Palestra', root || 'statistiche');
 
 htp.print('</div>');
 
@@ -403,7 +381,27 @@ function toggleMenu() {
 
 end;
 
-PROCEDURE login_proc (
+-- MENU BUTTON
+procedure MenuButton (
+    Testo varchar2,
+    Link varchar2,
+    Colore varchar2 default 'black'
+) is
+begin
+    htp.print('<a href="' || Link || '" style="
+        display:block;
+        margin:10px 0;
+        padding:12px;
+        border-radius:10px;
+        text-decoration:none;
+        color:' || Colore || ';
+        background:white;
+        border:1px solid #ccc;
+        font-weight:bold;
+    ">' || Testo || '</a>');
+end;
+
+PROCEDURE loginProc (
     p_user IN VARCHAR2,
     p_pwd  IN VARCHAR2
 ) IS
@@ -423,13 +421,13 @@ BEGIN
     -- Controllo campi mancanti
     ------------------------------------------------------------------
     IF v_user IS NULL AND v_pwd IS NULL THEN
-        htp.print('<script>window.location.href="/apex/DELPRETE2526.home?msg=campi_mancanti";</script>');
+        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=campi_mancanti";</script>');
         RETURN;
     ELSIF v_user IS NULL THEN
-        htp.print('<script>window.location.href="/apex/DELPRETE2526.home?msg=user_mancante";</script>');
+        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=user_mancante";</script>');
         RETURN;
     ELSIF v_pwd IS NULL THEN
-        htp.print('<script>window.location.href="/apex/DELPRETE2526.home?msg=pwd_mancante";</script>');
+        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=pwd_mancante";</script>');
         RETURN;
     END IF;
 
@@ -499,16 +497,64 @@ BEGIN
 
     COMMIT;
 
-htp.print('<script>window.location.href="/apex/DELPRETE2526.home?IdSessione=' 
+htp.print('<script>window.location.href="' || root || 'GUI.home?IdSessione=' 
           || v_idsessione 
           || '" + "&" + "msg=login_ok";</script>');
           
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        htp.print('<script>window.location.href="/apex/DELPRETE2526.home?msg=login_errato";</script>');
+        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=login_errato";</script>');
     WHEN OTHERS THEN
         ROLLBACK;
-        htp.print('<script>window.location.href="/apex/DELPRETE2526.home?msg=errore_login";</script>');
+        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=errore_login";</script>');
 END;
+
+PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
+    IF msg IS NOT NULL THEN
+        IF msg = 'login_errato' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_login_errato',
+                'Login errato',
+                'errore',
+                3000
+            );
+        ELSIF msg = 'user_mancante' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_user_mancante',
+                'Nome utente mancante',
+                'warning',
+                3000
+            );
+        ELSIF msg = 'pwd_mancante' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_pwd_mancante',
+                'Password mancante',
+                'warning',
+                3000
+            );
+        ELSIF msg = 'campi_mancanti' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_campi_mancanti',
+                'Nome utente e password mancanti',
+                'warning',
+                3000
+            );
+        ELSIF msg = 'errore_login' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_errore_login',
+                'Errore durante il login',
+                'errore',
+                3000
+            );
+        ELSIF msg = 'login_ok' THEN
+            baseHTML.MessaggioTemporaneo(
+                'msg_login_ok',
+                'Login effettuato con successo',
+                'successo',
+                3000
+            );
+        END IF;
+    END IF;
+END messaggioLogin;
 
 END baseHTML;
