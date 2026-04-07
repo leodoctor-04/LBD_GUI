@@ -1,18 +1,18 @@
-create or replace package body baseHTML as
+create or replace package baseHTML as
 
     procedure apriPagina( titolo IN VARCHAR2 DEFAULT NULL );
     procedure chiudiPagina;
 
-    -- div speciali: lista
+    -- div speciali: lista, griglia
     procedure apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiDiv;
 
-    procedure paragrafo( testo IN VARCHAR2 );
-    procedure h1( testo IN VARCHAR2 );
+    procedure paragrafo( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
+    procedure h1( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
 
     procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
-    procedure tendinaOption( ozione IN VARCHAR2 );
+    procedure tendinaOption( opzione IN VARCHAR2 );
 
     -- per i form onclick vuoto e diventa di tipo submit da mettere nel modulo
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL );

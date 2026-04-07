@@ -4,9 +4,15 @@ create or replace package body Corsi as
 procedure visualizza( numero IN number DEFAULT NULL ) is
 begin
     if numero is null then
-        SELECT titolo BULK COLLECT INTO array_corsi FROM Corso;
+        FOR corso IN ( SELECT titolo FROM Corso )
+        LOOP
+            baseHTML.paragrafo( corso.titolo );
+        END LOOP;
     else
-        SELECT titolo BULK COLLECT INTO array_corsi FROM Corso fetch first numero rows only;
+        FOR corso IN ( SELECT titolo FROM Corso fetch first numero rows only)
+        LOOP
+            baseHTML.paragrafo( corso.titolo );
+        END LOOP;
     end if;
 end visualizza;
 

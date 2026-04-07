@@ -105,22 +105,13 @@ create or replace package body Stile as
         border: 0.25vw solid var(--colore-primario-scuro);
     }
 
-
-    /* Pagina ituoi corsi */
-    label[for="parametri"] {
-        font-size: 1vw;
+    /*div griglia*/
+    #griglia{
+        display:grid;
+        grid-template-columns:repeat( 3, 1fr);
+        gap:24px;
     }
 
-    select[name="parametri"] {
-        padding: 1vw 1vw;
-        font-size: clamp(20px, 1.5vw, 1.5vw);
-        width: 70%;
-        border-radius: 5vw;
-        cursor: pointer;
-    }
-    select[name="parametri"] option {
-        font-size: clamp(15px, 1vw, 20px);
-    }
 
     button{
         font-size: clamp(30px, 2vw, 2vw);
@@ -144,7 +135,7 @@ create or replace package body Stile as
     .control_panel{
         margin: 0px;
         padding: 3px;
-        background-color: greenyellow;
+        background-color: var(--colore-primario);
         grid-column: span 5;
         display: flex;
         flex-direction: row;
