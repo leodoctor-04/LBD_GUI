@@ -33,6 +33,5 @@ procedure StatCard (
     Descrizione varchar2 default null
 );          -- in component
 
-procedure ApriGriglia (Colonne number default 3);   --Da trasformare in stile
 
 END fitGUI;

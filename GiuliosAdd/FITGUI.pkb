@@ -138,26 +138,7 @@ end;
 -- Dialog???????????
 procedure LoginPopup is
 begin
-    htp.print('<div id="loginOverlay" style="
-        position:fixed;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        background:rgba(0,0,0,0.5);
-        display:none;
-        justify-content:center;
-        align-items:center;
-        z-index:1000;
-    ">');
-
-    htp.print('<div style="
-        background:white;
-        padding:30px;
-        border-radius:15px;
-        width:300px;
-        text-align:center;
-    ">');
+    htp.print('<div id="loginOverlay">');
 
     htp.print('<h3>Login</h3>');
 

@@ -1,6 +1,6 @@
 create or replace package baseHTML as
 
-    procedure apriPagina( titolo IN VARCHAR2 DEFAULT NULL );
+    procedure apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL);
     procedure chiudiPagina;
 
     -- div speciali: lista, griglia
@@ -34,5 +34,42 @@ create or replace package baseHTML as
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
     PROCEDURE chiudiPopup;
+
+
+
+
+    -- Login
+procedure LoginPopup;
+procedure BottoneLogin;
+
+-- NUOVI
+procedure MenuHamburger;
+procedure MenuButton (
+    Testo varchar2,
+    Link varchar2,
+    Colore varchar2 default 'black'
+);
+
+
+procedure MessaggioTemporaneo (
+    IdMsg        varchar2,
+    Testo        varchar2,
+    Tipo         varchar2 default 'errore',
+    Millisecondi number default 3000
+);
+
+procedure StatCard (
+    Titolo      varchar2,
+    Valore      varchar2,
+    Descrizione varchar2 default null
+);          -- in component
+
+
+PROCEDURE login_proc (
+    p_user IN VARCHAR2,
+    p_pwd  IN VARCHAR2
+);
+
+
 
 end baseHTML;
