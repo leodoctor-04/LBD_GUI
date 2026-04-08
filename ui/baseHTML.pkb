@@ -13,7 +13,7 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
 
         IF acceduto THEN
             htp.p( '<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>' );
-            MenuHamburger;
+            Componenti.MenuHamburger;
         END IF;
 
         htp.print('<h1>'|| titolo ||'</h1> <nav>');
@@ -24,7 +24,7 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
                 <button onclick="openLogin()">Accedi</button>
                 <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
                 '); --aggiungere icona
-            LoginPopup;
+            Componenti.LoginPopup;
         END IF;
             
         htp.print('</nav>

@@ -1,4 +1,4 @@
-create or replace package Components as
+create or replace package Componenti as
 
 -- types
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
@@ -11,7 +11,7 @@ array_corsi tabella_corsi;
 -- procedure
 PROCEDURE calendar(startDate IN DATE);
 PROCEDURE lesson(isTeacher BOOLEAN,course VARCHAR, teacher VARCHAR, startH VARCHAR , endH VARCHAR);
-procedure listaCorsi(numero IN number DEFAULT NULL);
+
 procedure LoginPopup;
 procedure MenuHamburger;
 procedure MenuButton (
@@ -35,4 +35,8 @@ PROCEDURE loginProc (
     p_pwd  IN VARCHAR2
 );
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
-END Components;
+
+-- del gruppo 3 (qui abusivamente)
+procedure listaCorsi(numero IN number DEFAULT NULL);
+
+END Componenti;

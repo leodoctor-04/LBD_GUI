@@ -1,4 +1,4 @@
-create or replace package body Components as
+create or replace package body Componenti as
 
 PROCEDURE calendar(startDate IN DATE) is
     nextLun Date;
@@ -131,7 +131,7 @@ procedure LoginPopup is
 
             htp.print('<h1>Login</h1> <br>');
 
-            htp.formOpen( accountutente ||'.baseHTML.loginProc', 'GET');
+            htp.formOpen( accountutente ||'.Componenti.loginProc', 'GET');
                 htp.print('<p>Username:</p><br>');
                 htp.formText('p_user',20);
                 htp.br;
@@ -460,42 +460,42 @@ END;
 PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
     IF msg IS NOT NULL THEN
         IF msg = 'login_errato' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_login_errato',
                 'Login errato',
                 'errore',
                 3000
             );
         ELSIF msg = 'user_mancante' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_user_mancante',
                 'Nome utente mancante',
                 'warning',
                 3000
             );
         ELSIF msg = 'pwd_mancante' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_pwd_mancante',
                 'Password mancante',
                 'warning',
                 3000
             );
         ELSIF msg = 'campi_mancanti' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_campi_mancanti',
                 'Nome utente e password mancanti',
                 'warning',
                 3000
             );
         ELSIF msg = 'errore_login' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_errore_login',
                 'Errore durante il login',
                 'errore',
                 3000
             );
         ELSIF msg = 'login_ok' THEN
-            baseHTML.MessaggioTemporaneo(
+            MessaggioTemporaneo(
                 'msg_login_ok',
                 'Login effettuato con successo',
                 'successo',
@@ -505,4 +505,21 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
     END IF;
 END messaggioLogin;
 
-END Components;
+
+
+procedure listaCorsi( numero IN number DEFAULT NULL ) is
+begin
+    if numero is null then
+        FOR corso IN ( SELECT titolo FROM Corso )
+        LOOP
+            baseHTML.paragrafo( corso.titolo );
+        END LOOP;
+    else
+        FOR corso IN ( SELECT titolo FROM Corso fetch first numero rows only)
+        LOOP
+            baseHTML.paragrafo( corso.titolo );
+        END LOOP;
+    end if;
+end listaCorsi;
+
+END Componenti;
