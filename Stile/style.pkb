@@ -121,8 +121,9 @@ create or replace package body Stile as
         cursor: pointer; /* Consiglio: mostra la manina al passaggio del mouse */"
     }
 
-
-
+    /*
+        calendar style
+    */
     .calendar{
         display: grid;
         grid-template-columns: repeat(5,1fr);
@@ -224,11 +225,9 @@ create or replace package body Stile as
         align-items: center;
     }
 
-
-
-
-
-
+    /*
+        login style
+    */
     #loginPopup {
             position: fixed;
             top: 25%;
