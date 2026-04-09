@@ -1,42 +1,22 @@
-GUI
-esempio di url
-http://131.114.73.17:8080/apex/Benedetti2526.GUI.home
-cambiare il nome utente con quello del proprio database
+benvenuti alla repo del gruppo di grafica.
 
-# Procedure Fatte
+# struttura repo
 
-    procedure apriPagina( titolo IN VARCHAR2 DEFAULT NULL );
-    procedure chiudiPagina;
+directory:
+- **libs**: pacchetti che provengano da altri gruppi
+- **pages**: procedure che rappresentano le pagine del sito 
+- **stile**: pacchetti che riguardano il css
+- **ui**: pacchetti che riguardano l'html
 
-    -- div speciali: lista
-    procedure apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
-    procedure chiudiDiv;
+# sequenza di compilazione 
 
-    procedure paragrafo( testo IN VARCHAR2 );
-    procedure h1( testo IN VARCHAR2 );
-    procedure h3( testo IN VARCHAR2 );
+steps:
+1. file .pks
+2. file .pkb 
+3. pagine all'interno di pages
 
-    procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
-    procedure chiudiMenuTendina;
-    procedure tendinaOption( ozione IN VARCHAR2 );
+# esempi
 
-    -- per i form onclick vuoto e diventa di tipo submit
-    PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL );
+esempio di url: http://131.114.73.17:8080/apex/Benedetti2526.home
 
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
-
-    -- form( action<la pagina a cui inviare i dati>,metodo<true:get, false:post>)
-    PROCEDURE apriForm( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false);
-    PROCEDURE chiudiForm;
-    PROCEDURE inserisciInput(
-        id  IN VARCHAR2,    --obbligatorio nell'input per permettere a label di collegarsi alla casella
-        tipo    IN VARCHAR2 DEFAULT 'text', -- text, password, email, tel, checkbox, radio, number, hidden, date.
-        nome    IN VARCHAR2,    -- il nome per richiamare il campo
-        valore  IN VARCHAR2 DEFAULT NULL,   --valore di default del campo
-        placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se 
-        obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
-    );
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2 );
-
-    PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
-    PROCEDURE chiudiPopup;
+nota: questa corrisponde alla procedura [home.sql](pages/home.sql)

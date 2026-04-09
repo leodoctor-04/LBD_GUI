@@ -1,8 +1,4 @@
 create or replace package baseHTML as
-
-    root constant VARCHAR2(20) := '/apex/Benedetti2526.';
-    accountutente constant VARCHAR2(20) := 'Benedetti2526';
-
     procedure apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL);
     procedure chiudiPagina;
 

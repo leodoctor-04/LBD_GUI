@@ -31,7 +31,6 @@ BEGIN
         '
         , TO_CHAR(nextLun, 'DD mon')
         , TO_CHAR(nextLun+7, 'DD mon')
-
         )
     );
 
@@ -98,6 +97,7 @@ BEGIN
     );
 
 END;
+
 PROCEDURE lesson(isTeacher BOOLEAN,course VARCHAR, teacher VARCHAR, startH VARCHAR , endH VARCHAR) is
     bg_color VARCHAR(8);
 BEGIN
@@ -124,6 +124,7 @@ BEGIN
         ',course,startH,endH,bg_color,course,teacher,startH,endH)
     );
 END;
+
 procedure LoginPopup is
     begin
         -- il pop up è inizialmente nascosto
@@ -131,13 +132,13 @@ procedure LoginPopup is
 
             htp.print('<h1>Login</h1> <br>');
 
-            htp.formOpen( accountutente ||'.Componenti.loginProc', 'GET');
+            htp.formOpen( global.accountutente ||'.loginproc', 'GET');
                 htp.print('<p>Username:</p><br>');
-                htp.formText('p_user',20);
+                htp.formText('p_username',20);
                 htp.br;
 
                 htp.print('<p>Password:</p><br>');
-                htp.formPassword('p_pwd',20);
+                htp.formPassword('p_password',20);
                 htp.br;
                 htp.br;
 
@@ -161,6 +162,7 @@ procedure LoginPopup is
             </script>'
         );
     end;
+
 procedure MessaggioTemporaneo (
     IdMsg        varchar2,
     Testo        varchar2,
@@ -241,6 +243,7 @@ begin
         }, ' || Millisecondi || ');
     </script>');
 end;
+
 procedure StatCard (
         Titolo      varchar2,
         Valore      varchar2,
@@ -283,7 +286,8 @@ procedure StatCard (
         end if;
 
         htp.print('</div>');
-    end;
+end;
+
 procedure MenuHamburger is begin
     -- SIDEBAR
     htp.print('<div id="sidebar">');
@@ -291,12 +295,12 @@ procedure MenuHamburger is begin
     htp.print('<h3>Menu</h3>');
 
     -- sidebar buttons
-    MenuButton('Abbonamento', root ||'pagina_abbonamento');
-    MenuButton('Corsi', root || 'pagina_corsi');
-    MenuButton('Calendario lezioni', root || 'calendario');
-    MenuButton('Crea Corso', root || 'crea_corso');
-    MenuButton('Crea Abbonamento', root || 'crea_abbonamento');
-    MenuButton('Statistiche Palestra', root || 'statistiche');
+    MenuButton('Abbonamento', global.root ||'pagina_abbonamento');
+    MenuButton('Corsi', global.root || 'pagina_corsi');
+    MenuButton('Calendario lezioni', global.root || 'calendario');
+    MenuButton('Crea Corso', global.root || 'crea_corso');
+    MenuButton('Crea Abbonamento', global.root || 'crea_abbonamento');
+    MenuButton('Statistiche Palestra', global.root || 'statistiche');
 
     htp.print('</div>');
 
@@ -349,114 +353,6 @@ begin
     ">' || Testo || '</a>');
 end;
 
-PROCEDURE loginProc (
-    p_user IN VARCHAR2,
-    p_pwd  IN VARCHAR2
-) IS
-    v_user        VARCHAR2(100);
-    v_pwd         VARCHAR2(100);
-    v_idUtente    NUMBER;
-    v_idsessione  NUMBER;
-    v_admin       NUMBER := 0;
-    v_atleta      NUMBER := 0;
-    v_istruttore  NUMBER := 0;
-    v_pt          NUMBER := 0;
-BEGIN
-    v_user := TRIM(p_user);
-    v_pwd  := p_pwd;
-
-    ------------------------------------------------------------------
-    -- Controllo campi mancanti
-    ------------------------------------------------------------------
-    IF v_user IS NULL AND v_pwd IS NULL THEN
-        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=campi_mancanti";</script>');
-        RETURN;
-    ELSIF v_user IS NULL THEN
-        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=user_mancante";</script>');
-        RETURN;
-    ELSIF v_pwd IS NULL THEN
-        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=pwd_mancante";</script>');
-        RETURN;
-    END IF;
-
-    ------------------------------------------------------------------
-    -- Login
-    ------------------------------------------------------------------
-    SELECT IdUtente
-    INTO v_idUtente
-    FROM CREDENZIALI
-    WHERE TRIM(Username) = v_user
-      AND Password = v_pwd;
-
-    BEGIN
-        SELECT 1 INTO v_admin
-        FROM AMMINISTRATIVO
-        WHERE IdUtente = v_idUtente;
-    EXCEPTION WHEN NO_DATA_FOUND THEN
-        v_admin := 0;
-    END;
-
-    BEGIN
-        SELECT 1 INTO v_atleta
-        FROM ATLETA
-        WHERE IdUtente = v_idUtente;
-    EXCEPTION WHEN NO_DATA_FOUND THEN
-        v_atleta := 0;
-    END;
-
-    BEGIN
-        SELECT 1 INTO v_istruttore
-        FROM ISTRUTTORE
-        WHERE IdUtente = v_idUtente;
-    EXCEPTION WHEN NO_DATA_FOUND THEN
-        v_istruttore := 0;
-    END;
-
-    BEGIN
-        SELECT 1 INTO v_pt
-        FROM PERSONAL_TRAINER
-        WHERE IdUtente = v_idUtente;
-    EXCEPTION WHEN NO_DATA_FOUND THEN
-        v_pt := 0;
-    END;
-
-    v_idsessione := seq_sessione.NEXTVAL;
-
-    INSERT INTO SESSIONI (
-        IdSessione,
-        IsAmministratore,
-        IsAtleta,
-        IsIstruttore,
-        IsPersonalTrainer,
-        DataInizio,
-        DataFine,
-        IdUtente
-    )
-    VALUES (
-        v_idsessione,
-        v_admin,
-        v_atleta,
-        v_istruttore,
-        v_pt,
-        SYSDATE,
-        NULL,
-        v_idUtente
-    );
-
-    COMMIT;
-
-htp.print('<script>window.location.href="' || root || 'GUI.home?IdSessione=' 
-          || v_idsessione 
-          || '" + "&" + "msg=login_ok";</script>');
-          
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=login_errato";</script>');
-    WHEN OTHERS THEN
-        ROLLBACK;
-        htp.print('<script>window.location.href="' || root || 'GUI.home?msg=errore_login";</script>');
-END;
-
 PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
     IF msg IS NOT NULL THEN
         IF msg = 'login_errato' THEN
@@ -504,8 +400,6 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
         END IF;
     END IF;
 END messaggioLogin;
-
-
 
 procedure listaCorsi( numero IN number DEFAULT NULL ) is
 begin

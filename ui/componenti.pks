@@ -4,8 +4,6 @@ create or replace package Componenti as
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
 
 -- pkg scope var
-root constant VARCHAR2(20) := '/apex/Benedetti2526.';
-accountutente constant VARCHAR2(20) := 'Benedetti2526';
 array_corsi tabella_corsi;
 
 -- procedure
@@ -30,10 +28,7 @@ procedure StatCard (
     Valore      varchar2,
     Descrizione varchar2 default null
 );
-PROCEDURE loginProc (
-    p_user IN VARCHAR2,
-    p_pwd  IN VARCHAR2
-);
+
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
 -- del gruppo 3 (qui abusivamente)

@@ -1,36 +1,37 @@
 CREATE OR REPLACE PACKAGE BODY baseHTML AS
 
     PROCEDURE apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL) IS BEGIN
-    htp.htmlOpen;
-    htp.headOpen;
-        htp.title( titolo );
-        htp.print('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
-        Stile.stile;
-    htp.headClose;
+        htp.htmlOpen;
+        htp.headOpen;
+            htp.title( titolo );
+            htp.print('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
+            Stile.stile;
+        htp.headClose;
 
-    htp.bodyOpen;
-        htp.print('<header>');
+        htp.bodyOpen;
+            htp.print('<header>');
 
-        IF acceduto THEN
-            htp.p( '<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>' );
-            Componenti.MenuHamburger;
-        END IF;
+            IF acceduto THEN
+                htp.p( '<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>' );
+                Componenti.MenuHamburger;
+            END IF;
 
-        htp.print('<h1>'|| titolo ||'</h1> <nav>');
-        IF acceduto THEN
-            htp.p( '<p>' || nome || '</p>');
-        ELSE
-            htp.p('
-                <button onclick="openLogin()">Accedi</button>
-                <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
-                '); --aggiungere icona
-            Componenti.LoginPopup;
-        END IF;
-            
-        htp.print('</nav>
-        </header>
-        ');
-END apriPagina;
+            htp.print('<h1>'|| titolo ||'</h1> <nav>');
+            IF acceduto THEN
+                htp.p( '<p>' || nome || '</p>');
+            ELSE
+                htp.p('
+                    <button onclick="openLogin()">Accedi</button>
+                    <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    '); --aggiungere icona
+                Componenti.LoginPopup;
+            END IF;
+                
+            htp.print('</nav>
+            </header>
+            ');
+    END apriPagina;
+
     PROCEDURE chiudiPagina IS BEGIN
         htp.print('
             <footer>

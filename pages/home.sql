@@ -1,6 +1,7 @@
 create or replace procedure home( IdSessione IN NUMBER DEFAULT NULL, msg IN VARCHAR2 DEFAULT NULL) is
   v_nome  VARCHAR2(20);
   v_sessione_attiva NUMBER;
+  test varchar2(199);
 BEGIN
 
   IF IdSessione IS NOT NULL THEN
