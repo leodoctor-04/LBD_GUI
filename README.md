@@ -16,6 +16,9 @@ steps:
 3. Stile.pks e .pkb
 4. Componenti.pks e.pkb
 5. baseHTML.pks e .pkb
+6. home.sql
+7. loginProc.sql
+8. grant.sql
 
 # esempi
 
