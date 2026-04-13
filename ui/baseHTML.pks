@@ -19,7 +19,7 @@ create or replace package baseHTML as
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
 
     -- form( action<la pagina a cui inviare i dati>,metodo<true:GET, false:POST>)
-    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false);
+    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT true);
     PROCEDURE chiudiModulo;
     PROCEDURE inserisciInput(
         id  IN VARCHAR2,    --obbligatorio nell'input per permettere a label di collegarsi alla casella

@@ -11,9 +11,11 @@ directory:
 # sequenza di compilazione 
 
 steps:
-1. file .pks
-2. file .pkb 
-3. pagine all'interno di pages
+1. global.pks
+2. sessioneUtente.pks e .pkb
+3. Stile.pks e .pkb
+4. Componenti.pks e.pkb
+5. baseHTML.pks e .pkb
 
 # esempi
 

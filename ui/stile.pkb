@@ -11,7 +11,7 @@ create or replace package body Stile as
         }
 
     h1{ font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px; }
-    p{ font-size: clamp(20px, 1.5vw, 2vw); }
+    p{ font-size: clamp(20px, 1.5vw, 2vw); text-color: white; }
 
     body{
         background: var(--colore-secondario);

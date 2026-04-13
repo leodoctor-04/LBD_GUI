@@ -140,29 +140,29 @@ create or replace PACKAGE BODY sessioneUtente AS
             p_idSessione := NULL;
             IF p_username IS NULL AND p_password IS NULL THEN
                 --apex_util.redirect_url ( p_url => global.root || 'home?msg=campi_mancanti' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=campi_mancanti";</script>');
                 RETURN;
             ELSIF p_username IS NULL THEN
                 --apex_util.redirect_url ( p_url => global.root || 'home?msg=user_mancante' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=user_mancante";</script>');
                 RETURN;
             ELSIF p_password IS NULL THEN
                 --apex_util.redirect_url ( p_url => global.root || 'home?msg=pwd_mancante' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=pwd_mancante";</script>');
                 RETURN;
             END IF;
-        else 
+        else
             v_inserito := sessioneUtente.creaSessione(p_username, p_password, p_idSessione, v_sessioneDuplicata);
         end if;
         if(v_inserito) then
             if(v_sessioneDuplicata) then
                 --si dice che è stata chiusa la sessione precedente e mandiamo in homePage
                 --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
             else
                 --mandiamo direttamente in homePage
                 --apex_util.redirect_url ( p_url => global.root || 'home' );
-                htp.print('<script>window.location.href="' || global.root || 'home";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
             end if;
         else 
             p_idSessione := NULL;
