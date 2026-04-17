@@ -191,3 +191,41 @@ create or replace type body popup is
     end;
 end;
 /
+
+create or replace type trow under ui_container(
+    CONSTRUCTOR FUNCTION trow(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    overriding member procedure showhtml
+);
+/
+
+create or replace type body trow is
+    CONSTRUCTOR FUNCTION trow(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    BEGIN
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.children := element_list();
+        return;
+    end;
+
+    overriding member procedure showhtml as
+    begin
+        htp.print(
+            '<tr '      ||
+            'id= "'     || self.id              || '" ' ||
+            'class="'   || self.class           || '" ' ||
+            'style="'   || self.css_style       || '">' 
+        );
+
+        for i in 1 .. self.children.count loop
+            htp.print('<td>');
+            self.children(i).showhtml;
+            htp.print('</td>');
+        end loop;
+
+        htp.print('</tr>');
+
+        return;
+    end;
+end;
