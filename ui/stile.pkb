@@ -125,7 +125,7 @@ create or replace package body Stile as
         border: 0.25vw solid var(--colore-primario);
     }
     
-    form{
+    #modulo{
         width: 90%;
         margin: 2.5vw auto;
         display: flex;
@@ -136,7 +136,7 @@ create or replace package body Stile as
         border-radius: 1vw;
         border: 0.25vw solid var(--colore-primario);
     }
-    label{
+    #modulo label{
         font-size: clamp(20px, 1.5vw, 2vw);
         font-weight: bold;
         margin-bottom: 0.25vw;

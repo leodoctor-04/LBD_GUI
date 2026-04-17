@@ -74,10 +74,18 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
         htp.p( '>' || testo || '</h1>' );
     END h1;
 
-    PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+        htp.p('<div style="display: block;">');
+        IF nome IS NOT NULL THEN
+            htp.p( '<label for="' || id || '">' || id || '</label>' );
+        END IF;
+
         htp.prn('<select');
         IF id IS NOT NULL THEN
             htp.prn( ' id="' || id || '"' );
+        END IF;
+        IF nome IS NOT NULL THEN
+            htp.prn( ' name="' || nome || '"' );
         END IF;
         IF stile IS NOT NULL THEN
             htp.prn( ' style="' || stile || '"' );
@@ -86,6 +94,7 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
     END apriMenuTendina;
     PROCEDURE chiudiMenuTendina IS BEGIN
         htp.p('</select>');
+        htp.p('</div>');
     END chiudiMenuTendina;
     PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
         htp.p('<option value="' || opzione || '">' || opzione || '</option>');
@@ -131,7 +140,9 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     ) IS BEGIN
         htp.p('<div style="display: block;">');
-            htp.p( '<label for="' || id || '">' || id || '</label>' );
+            IF tipo <> 'hidden' THEN
+                htp.p( '<label for="' || id || '">' || id || '</label>' );
+            END IF;
             htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
             IF valore IS NOT NULL THEN
                 htp.prn( ' value="' || valore || '"' );
@@ -150,10 +161,10 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
             htp.p( ' >');
         htp.p('</div>');
     END inserisciInput;
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true) IS BEGIN
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true) IS BEGIN
         htp.prn( '<textarea' );
-        IF name IS NOT NULL THEN
-            htp.prn( ' name="' || name || '"' );
+        IF nome IS NOT NULL THEN
+            htp.prn( ' name="' || nome || '"' );
         END IF;
         IF NOT modificabile THEN
             htp.prn( ' readonly' );

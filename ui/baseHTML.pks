@@ -9,7 +9,8 @@ create or replace package baseHTML as
     procedure paragrafo( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure h1( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
 
-    procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
+    -- nome per chiamarlo in un form
+    procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
     procedure tendinaOption( opzione IN VARCHAR2 );
 
@@ -29,7 +30,7 @@ create or replace package baseHTML as
         placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se sono checked o no
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     );
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
     PROCEDURE chiudiPopup;
