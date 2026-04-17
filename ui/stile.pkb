@@ -11,7 +11,7 @@ create or replace package body Stile as
         }
 
     h1{ font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px; }
-    p{ font-size: clamp(20px, 1.5vw, 2vw); text-color: white; }
+    p{ font-size: clamp(20px, 1.5vw, 2vw); }
 
     body{
         background: var(--colore-secondario);
@@ -108,10 +108,48 @@ create or replace package body Stile as
     /*div griglia*/
     #griglia{
         display:grid;
+        justify-content: space-between;
         grid-template-columns:repeat( 3, 1fr);
-        gap:24px;
+        gap: 2vw;
     }
 
+    /*div flex*/
+    #flex{
+        margin: 2vw 3vw;
+        display:flex;
+        justify-content: space-between;
+        border-radius: 1vw;
+        background:white;
+        border: 0.25vw solid var(--colore-primario);
+        align-items: center;
+        border: 0.25vw solid var(--colore-primario);
+    }
+    
+    form{
+        width: 90%;
+        margin: 2.5vw auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1vw;
+        padding: 2vw;
+        background:white;
+        border-radius: 1vw;
+        border: 0.25vw solid var(--colore-primario);
+    }
+    label{
+        font-size: clamp(20px, 1.5vw, 2vw);
+        font-weight: bold;
+        margin-bottom: 0.25vw;
+    }
+
+    textarea{
+        width: 100%;
+        height: 10vw;
+        border-radius: 1vw;
+        border: 0.25vw solid var(--colore-primario);
+        padding: 1vw;
+        font-size: clamp(20px, 1.5vw, 2vw);
+    }
 
     button{
         font-size: clamp(30px, 2vw, 2vw);
@@ -121,6 +159,33 @@ create or replace package body Stile as
         cursor: pointer; /* Consiglio: mostra la manina al passaggio del mouse */"
     }
 
+    table{
+        width: 90%;
+        margin: 2.5vw auto;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        border: 0.25vw solid var(--colore-primario);
+        border-radius: 1vw;
+
+        overflow: hidden;
+        background:white;
+    }
+    th, td{
+        border-bottom: 0.25vw solid var(--colore-secondario);
+        border-right: 0.25vw solid var(--colore-secondario);
+        padding: 1vw;
+        text-align: center;
+    }
+    th:last-child, td:last-child {
+        border-right: none;
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* INIZIO */
     /*
         calendar style
     */

@@ -92,7 +92,7 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
     END tendinaOption;
 
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
-        htp.prn( '<button' );
+        htp.prn( '<button ' );
         IF onClick IS NOT NULL THEN
             htp.prn( 'type="button" onclick="' || onClick || '()"');
         END IF;
@@ -108,18 +108,13 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
 
     END collegamento;
 
-    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false) IS BEGIN
+    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn( '<form' );
         IF id IS NOT NULL THEN
             htp.prn( ' id="' || id || '"' );
         END IF;
         IF action IS NOT NULL THEN
             htp.prn( ' action="' || action || '"' );
-        END IF;
-        IF metodo THEN
-            htp.prn( ' method="true"' );
-        ELSE
-            htp.prn( ' method="false"' );
         END IF;
         htp.p( '>' );
 
@@ -135,26 +130,32 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
         placeholder IN VARCHAR2 DEFAULT NULL,
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     ) IS BEGIN
-        htp.p( '<label for="' || id || '">' || nome || '</label>' );
-        htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
-        IF valore IS NOT NULL THEN
-            htp.prn( ' value="' || valore || '"' );
-        END IF;
-        IF placeholder IS NOT NULL THEN
-            IF tipo = 'radio' OR tipo = 'checkbox' THEN
-                htp.prn( ' checked' );
-            ELSE
-                htp.prn( ' placeholder="' || placeholder || '"' );
+        htp.p('<div style="display: block;">');
+            htp.p( '<label for="' || id || '">' || id || '</label>' );
+            htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
+            IF valore IS NOT NULL THEN
+                htp.prn( ' value="' || valore || '"' );
             END IF;
-        END IF;
-        IF obbligatorio THEN
-            htp.prn( ' required' );
-        END IF;
+            IF placeholder IS NOT NULL THEN
+                IF tipo = 'radio' OR tipo = 'checkbox' THEN
+                    htp.prn( ' checked' );
+                ELSE
+                    htp.prn( ' placeholder="' || placeholder || '"' );
+                END IF;
+            END IF;
+            IF obbligatorio THEN
+                htp.prn( ' required' );
+            END IF;
 
-        htp.p( ' >');
+            htp.p( ' >');
+        htp.p('</div>');
     END inserisciInput;
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2 ) IS BEGIN
-        htp.p( '<textarea>' || testo || '</textarea>' );
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL) IS BEGIN
+        htp.prn( '<textarea' );
+        IF name IS NOT NULL THEN
+            htp.prn( ' name="' || name || '"' );
+        END IF;
+        htp.p( '>' || testo || '</textarea>' );
     END inserisciTextArea;
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL ) IS BEGIN
@@ -167,4 +168,36 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
     PROCEDURE chiudiPopup IS BEGIN
     htp.prn( '</dialog>');
     END chiudiPopup;
+
+    PROCEDURE apriTabella( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+        htp.prn( '<table' );
+        IF id IS NOT NULL THEN
+            htp.prn( ' id="' || id || '"' );
+        END IF;
+        IF stile IS NOT NULL THEN
+            htp.prn( ' style="' || stile || '"' );
+        END IF;
+        htp.p( '>' );
+    END apriTabella;
+    PROCEDURE chiudiTabella IS BEGIN
+        htp.p('</table>');
+    END chiudiTabella;
+    PROCEDURE inizioRiga IS BEGIN
+        htp.p('<tr>');
+    END inizioRiga;
+    PROCEDURE fineRiga IS BEGIN
+        htp.p('</tr>');
+    END fineRiga;
+    PROCEDURE inserisciIntestazione( testo IN VARCHAR2 ) IS BEGIN
+        htp.p('<th>' || testo || '</th>');
+    END inserisciIntestazione;
+    PROCEDURE inserisciCella( testo IN VARCHAR2 ) IS BEGIN
+        htp.p('<td>' || testo || '</td>');
+    END inserisciCella;
+    PROCEDURE apriCella IS BEGIN
+        htp.p('<td>');
+    END apriCella;
+    PROCEDURE chiudiCella IS BEGIN
+        htp.p('</td>');
+    END chiudiCella;
 END baseHTML;
