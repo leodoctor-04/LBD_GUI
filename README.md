@@ -5,8 +5,7 @@ benvenuti alla repo del gruppo di grafica.
 directory:
 - **libs**: pacchetti che provengano da altri gruppi
 - **pages**: procedure che rappresentano le pagine del sito 
-- **stile**: pacchetti che riguardano il css
-- **ui**: pacchetti che riguardano l'html
+- **ui**: pacchetti che riguardano l'html e css
 
 # sequenza di compilazione 
 
