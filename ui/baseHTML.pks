@@ -1,5 +1,13 @@
-create or replace package baseHTML as
-    procedure apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL);
+--------------------------------------------------------
+--  DDL for Package BASEHTML
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."BASEHTML" as
+PROCEDURE apriPagina(
+        titolo       IN VARCHAR2 DEFAULT NULL,
+        nome         IN VARCHAR2 DEFAULT NULL,
+        p_idSessione IN NUMBER DEFAULT -1
+    );
     procedure chiudiPagina;
 
     -- div speciali: lista, griglia
