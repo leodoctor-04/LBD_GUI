@@ -1,5 +1,13 @@
-create or replace package baseHTML as
-    procedure apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL);
+--------------------------------------------------------
+--  DDL for Package BASEHTML
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."BASEHTML" as
+PROCEDURE apriPagina(
+        titolo       IN VARCHAR2 DEFAULT NULL,
+        nome         IN VARCHAR2 DEFAULT NULL,
+        p_idSessione IN NUMBER DEFAULT -1
+    );
     procedure chiudiPagina;
 
     -- div speciali: lista, griglia
@@ -19,7 +27,7 @@ create or replace package baseHTML as
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
 
     -- form( action<la pagina a cui inviare i dati>,metodo<true:GET, false:POST>)
-    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT true);
+    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false);
     PROCEDURE chiudiModulo;
     PROCEDURE inserisciInput(
         id  IN VARCHAR2,    --obbligatorio nell'input per permettere a label di collegarsi alla casella
@@ -35,3 +43,7 @@ create or replace package baseHTML as
     PROCEDURE chiudiPopup;
 
 end baseHTML;
+
+/
+
+  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";

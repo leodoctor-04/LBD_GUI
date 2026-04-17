@@ -1,35 +1,67 @@
-CREATE OR REPLACE PACKAGE BODY baseHTML AS
+--------------------------------------------------------
+--  File creato - venerdì-aprile-17-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body BASEHTML
+--------------------------------------------------------
 
-    PROCEDURE apriPagina(titolo IN VARCHAR2 DEFAULT NULL, acceduto IN BOOLEAN DEFAULT false, nome IN VARCHAR2 DEFAULT NULL) IS BEGIN
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."BASEHTML" AS
+
+    PROCEDURE apriPagina(
+        titolo       IN VARCHAR2 DEFAULT NULL,
+        nome         IN VARCHAR2 DEFAULT NULL,
+        p_idSessione IN NUMBER DEFAULT -1
+    ) IS
+        v_homeLink VARCHAR2(4000);
+    BEGIN
+        -- Link per la home
+        IF p_idSessione != -1 THEN
+            v_homeLink := global.root || 'home?IdSessione=' || p_idSessione;
+        END IF;
+    
         htp.htmlOpen;
         htp.headOpen;
-            htp.title( titolo );
+            htp.title(titolo);
             htp.print('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
             Stile.stile;
         htp.headClose;
-
+    
         htp.bodyOpen;
             htp.print('<header>');
-
-            IF acceduto THEN
-                htp.p( '<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>' );
-                Componenti.MenuHamburger;
+    
+            ------------------------------------------------------------------
+            -- MENU HAMBURGER
+            ------------------------------------------------------------------
+            IF p_idSessione != -1 THEN
+                htp.p('<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
+                Componenti.MenuHamburger(p_idSessione);
             END IF;
-
-            htp.print('<h1>'|| titolo ||'</h1> <nav>');
-            IF acceduto THEN
-                htp.p( '<p>' || nome || '</p>');
+        
+            ------------------------------------------------------------------
+            -- TITOLO
+            ------------------------------------------------------------------
+            IF p_idSessione != -1 THEN
+                htp.print('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
+                          || titolo || '</h1> <nav>');
+            ELSE
+                htp.print('<h1>' || titolo || '</h1> <nav>');
+            END IF;
+        
+            ------------------------------------------------------------------
+            -- UTENTE / LOGIN
+            ------------------------------------------------------------------
+            IF p_idSessione != -1 THEN
+                htp.p('<p>' || INITCAP(nome) || '</p>');
             ELSE
                 htp.p('
                     <button onclick="openLogin()">Accedi</button>
                     <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
-                    '); --aggiungere icona
+                ');
                 Componenti.LoginPopup;
             END IF;
-                
+        
             htp.print('</nav>
-            </header>
-            ');
+            </header>');
     END apriPagina;
 
     PROCEDURE chiudiPagina IS BEGIN
@@ -168,3 +200,7 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
     htp.prn( '</dialog>');
     END chiudiPopup;
 END baseHTML;
+
+/
+
+  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";

@@ -1,4 +1,8 @@
-create or replace package Componenti as
+--------------------------------------------------------
+--  DDL for Package COMPONENTI
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."COMPONENTI" as
 
 -- types
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
@@ -11,10 +15,11 @@ PROCEDURE calendar(startDate IN DATE);
 PROCEDURE lesson(isTeacher BOOLEAN,course VARCHAR, teacher VARCHAR, startH VARCHAR , endH VARCHAR);
 
 procedure LoginPopup;
-procedure MenuHamburger;
+procedure MenuHamburger(p_idSessione IN NUMBER);
 procedure MenuButton (
     Testo varchar2,
     Link varchar2,
+    p_idSessione IN NUMBER,
     Colore varchar2 default 'black'
 );
 procedure MessaggioTemporaneo (
@@ -35,3 +40,5 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2);
 procedure listaCorsi(numero IN number DEFAULT NULL);
 
 END Componenti;
+
+

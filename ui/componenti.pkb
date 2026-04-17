@@ -1,4 +1,11 @@
-create or replace package body Componenti as
+--------------------------------------------------------
+--  File creato - venerdì-aprile-17-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body COMPONENTI
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."COMPONENTI" as
 
 PROCEDURE calendar(startDate IN DATE) is
     nextLun Date;
@@ -288,19 +295,22 @@ procedure StatCard (
         htp.print('</div>');
 end;
 
-procedure MenuHamburger is begin
+procedure MenuHamburger (
+    p_idSessione IN NUMBER
+) is
+begin
     -- SIDEBAR
     htp.print('<div id="sidebar">');
 
     htp.print('<h3>Menu</h3>');
 
     -- sidebar buttons
-    MenuButton('Abbonamento', global.root ||'pagina_abbonamento');
-    MenuButton('Corsi', global.root || 'pagina_corsi');
-    MenuButton('Calendario lezioni', global.root || 'calendario');
-    MenuButton('Crea Corso', global.root || 'crea_corso');
-    MenuButton('Crea Abbonamento', global.root || 'crea_abbonamento');
-    MenuButton('Statistiche Palestra', global.root || 'statistiche');
+    MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
+    MenuButton('Corsi',               global.root || 'pagina_corsi',            p_idSessione);
+    MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
+    MenuButton('Crea Corso',          global.root || 'crea_corso',              p_idSessione);
+    MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
+    MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
 
     htp.print('</div>');
 
@@ -322,7 +332,7 @@ function toggleMenu() {
     var menu = document.getElementById("sidebar");
     var overlay = document.getElementById("overlay");
 
-    if (menu.style.transform === "translateX(0px)") {
+    if (menu.style.transform === "translateX(0px)" || menu.style.transform === "translateX(0%)" || menu.style.transform === "translateX(0)") {
         menu.style.transform = "translateX(-100%)";
         overlay.style.display = "none";
     } else {
@@ -334,13 +344,22 @@ function toggleMenu() {
 
 end;
 
+
 procedure MenuButton (
-    Testo varchar2,
-    Link varchar2,
-    Colore varchar2 default 'black'
+    Testo       IN varchar2,
+    Link        IN varchar2,
+    p_idSessione IN NUMBER,
+    Colore      IN varchar2 default 'black'
 ) is
+    v_link varchar2(4000);
 begin
-    htp.print('<a href="' || Link || '" style="
+    if p_idSessione is not null then
+        v_link := Link || '?IdSessione=' || p_idSessione;
+    else
+        v_link := Link;
+    end if;
+
+    htp.print('<a href="' || v_link || '" style="
         display:block;
         margin:10px 0;
         padding:12px;
@@ -390,6 +409,13 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
                 'errore',
                 3000
             );
+        ELSIF msg = 'sessione_scaduta' THEN
+            MessaggioTemporaneo(
+                'msg_sessione_scaduta',
+                'Sessione Scaduta',
+                'errore',
+                3000
+            );
         ELSIF msg = 'login_ok' THEN
             MessaggioTemporaneo(
                 'msg_login_ok',
@@ -417,3 +443,7 @@ begin
 end listaCorsi;
 
 END Componenti;
+
+/
+
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
