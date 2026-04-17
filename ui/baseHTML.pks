@@ -29,7 +29,7 @@ create or replace package baseHTML as
         placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se sono checked o no
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     );
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL); -- name serve per richiamarlo nel form
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
     PROCEDURE chiudiPopup;

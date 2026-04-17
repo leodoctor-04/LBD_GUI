@@ -150,10 +150,13 @@ CREATE OR REPLACE PACKAGE BODY baseHTML AS
             htp.p( ' >');
         htp.p('</div>');
     END inserisciInput;
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL) IS BEGIN
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, name IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true) IS BEGIN
         htp.prn( '<textarea' );
         IF name IS NOT NULL THEN
             htp.prn( ' name="' || name || '"' );
+        END IF;
+        IF NOT modificabile THEN
+            htp.prn( ' readonly' );
         END IF;
         htp.p( '>' || testo || '</textarea>' );
     END inserisciTextArea;
