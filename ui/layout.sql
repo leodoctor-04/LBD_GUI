@@ -1,24 +1,24 @@
 create or replace package layout AS
-    function hlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar;
-    function vlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar;
-    function grid(grow NUMBER default -1 ,gcolumn NUMBER default -1,gap number default 0) return VARCHAR;
+    function hlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar;
+    function vlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar;
+    function grid(grow NUMBER default -1 ,gcolumn NUMBER default -1,gap varchar default '0px') return VARCHAR;
 
     function add_size(width varchar default '', height varchar default '') return varchar;
 end;
 /
 
 create or replace package body layout as
-    function hlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar is
+    function hlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: row;column-gap: '|| gap || 'px;align-content:' || halign || ';justify-content:' || valign || ';';
+        return 'display: flex;flex-direction: row;column-gap: '|| gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
     end;
 
-    function vlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar is
+    function vlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: column;row-gap: ' || gap || 'px;align-content:' || halign || ';justify-content:' || valign || ';';
+        return 'display: flex;flex-direction: column;row-gap: ' || gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
     end;
 
-    function grid(grow NUMBER default -1,gcolumn NUMBER default -1,gap number default 0) return VARCHAR is
+    function grid(grow NUMBER default -1,gcolumn NUMBER default -1,gap varchar default '0px') return VARCHAR is
     begin
 
         if(grow = -1 and gcolumn = -1) then
