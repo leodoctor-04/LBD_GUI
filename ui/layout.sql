@@ -10,12 +10,12 @@ end;
 create or replace package body layout as
     function hlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: row;flex-flow: 1;column-gap: '|| gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
+        return 'display: flex;flex-direction: row;column-gap: '|| gap || 'px;align-content:' || halign || ';justify-content:' || valign || ';';
     end;
 
     function vlist(gap number default 0, valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: column;flex-flow: 1;row-gap: ' || gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
+        return 'display: flex;flex-direction: column;row-gap: ' || gap || 'px;align-content:' || halign || ';justify-content:' || valign || ';';
     end;
 
     function grid(grow NUMBER default -1,gcolumn NUMBER default -1,gap number default 0) return VARCHAR is
@@ -42,15 +42,15 @@ create or replace package body layout as
     function add_size(width varchar default '', height varchar default '') return varchar is
         res VARCHAR(200) := '';
     begin
-        if(width != '') then
-            res := res + ( 'width:' || width);
+        if(width is not null) then
+            res := res ||  'width:' || width || ';';
         end if;
 
-        if(height!= '') then
-            res := res + ('height' || height);
+        if(height is not null) then
+            res := res || 'height:' || height || ';';
         end if;
 
-        return res + ';';
+        return res;
     end;
 
     function add_internal_spacing(spacing varchar default '') return varchar is
