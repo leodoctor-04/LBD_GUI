@@ -1,8 +1,4 @@
---------------------------------------------------------
---  DDL for Package COMPONENTI
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."COMPONENTI" as
+CREATE OR REPLACE EDITIONABLE PACKAGE COMPONENTI as
 
 -- types
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;

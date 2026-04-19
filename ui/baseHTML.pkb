@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - venerdì-aprile-17-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body BASEHTML
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."BASEHTML" AS
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,

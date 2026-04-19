@@ -1,9 +1,6 @@
---------------------------------------------------------
---  DDL for Package BASEHTML
---------------------------------------------------------
+CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."BASEHTML" as
-PROCEDURE apriPagina(
+    PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
         nome         IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1

@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - venerdì-aprile-17-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body COMPONENTI
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."COMPONENTI" as
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY COMPONENTI as
 
 PROCEDURE calendar(startDate IN DATE) is
     nextLun Date;
@@ -443,7 +436,4 @@ begin
 end listaCorsi;
 
 END Componenti;
-
 /
-
-  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";

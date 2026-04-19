@@ -293,16 +293,16 @@ end;
 -- la text box in realta ha bisogno di una label successiva che contiene il tetso
 -- le metto in un div per porteggerle da variazioni di layout
 create or replace type checkbox under f_input(
-    in_value BOOLEAN,
+    in_value number(1), -- nota: boolean non e' utilizzabile quindi deve essere un numero 0/1 (qualcosa sul non e' un dato che esiste nel sql)
     text varchar(200),
 
-    constructor function passwordInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value boolean) return self as result,
+    constructor function checkbox(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result,
     overriding member procedure showhtml 
 );
 /
 create or replace type body checkbox is
 
-    constructor function checkbox(id varchar, class varchar, css_style varchar,in_name varchar,in_value boolean) return self as result as
+    constructor function checkbox(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -325,7 +325,7 @@ create or replace type body checkbox is
             'type="'    || 'checkbox'       || '" ' 
         );
 
-        if(self.in_value) then
+        if(self.in_value != 0) then
             htp.print('checked >');
         else
             htp.print('>');
@@ -336,15 +336,15 @@ end;
 
 create or replace type radioInput under f_input(
     in_value varchar(200),
-    checked boolean,
+    checked number(1),
 
-    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value boolean) return self as result,
+    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result,
     overriding member procedure showhtml 
 );
 /
 create or replace type body radioInput is
 
-    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value boolean) return self as result as
+    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -367,7 +367,7 @@ create or replace type body radioInput is
             'value="'   || self.in_value    || '" ' ||
             'type="'    || 'radio'       || '" ' 
         );
-        if(self.checked) then
+        if(self.checked != 0) then
             htp.print('checked >');
         else
             htp.print('>');

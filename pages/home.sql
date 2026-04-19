@@ -12,7 +12,7 @@ BEGIN
     WHERE SESSIONI.IdUtente = CREDENZIALI.IdUtente
     AND CREDENZIALI.IdUtente = IdSessione;
 
-    baseHTML.apriPagina('Fitzone', true, v_nome);
+    baseHTML.apriPagina('Fitzone', v_nome, IdSessione);
   ELSE
     baseHTML.apriPagina('Fitzone');
   END IF;
