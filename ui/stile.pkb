@@ -334,6 +334,24 @@ create or replace package body Stile as
         box-shadow:2px 0px 5px rgba(0,0,0,0.3);
     }
 
+    .select-button {
+        /* Rimuove lo stile predefinito del browser (Chrome, Safari, Firefox) */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none; /*rimuove la freccetta*/
+    }
+
+    /* Effetto Hover */
+    .select-button:hover {
+        background-color: #2980b9;
+    }
+
+    /* Rimuove il bordo fastidioso su Firefox */
+    .select-button:-moz-focusring {
+        color: transparent;
+        text-shadow: 0 0 0 #fff;
+    }
     </style>
     ');
 
