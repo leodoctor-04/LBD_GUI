@@ -2,14 +2,20 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
-        nome         IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     ) IS
         v_homeLink VARCHAR2(4000);
+        v_username VARCHAR2(100);
     BEGIN
         -- Link per la home
         IF p_idSessione != -1 THEN
             v_homeLink := global.root || 'home?IdSessione=' || p_idSessione;
+
+            -- Recupero il nome dell'utente per il menu
+            SELECT username INTO v_username
+            FROM sessioni, credenziali
+            WHERE sessioni.idUtente = credenziali.idUtente
+            AND sessioni.idSessione = p_idSessione;
         END IF;
     
         htp.htmlOpen;
@@ -22,33 +28,28 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.bodyOpen;
             htp.print('<header>');
     
-            ------------------------------------------------------------------
-            -- MENU HAMBURGER
-            ------------------------------------------------------------------
             IF p_idSessione != -1 THEN
-                htp.p('<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
-                Componenti.MenuHamburger(p_idSessione);
-            END IF;
-        
-            ------------------------------------------------------------------
-            -- TITOLO
-            ------------------------------------------------------------------
-            IF p_idSessione != -1 THEN
-                htp.print('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
-                          || titolo || '</h1> <nav>');
+                -- MENU HAMBURGER
+                htp.p('<div style="display: flex; align-items: center; gap: 20px;">
+                        <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
+                        Componenti.MenuHamburger(p_idSessione);
+                        --TITOLO    
+                htp.p('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
+                            || titolo || '</h1>
+                    </div>'
+                    || --Utente
+                    '<div style="display: flex; align-items: center; gap: 10px;">
+                        <p>' || INITCAP(v_username) || '</p>
+                        <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    </div>');
             ELSE
-                htp.print('<h1>' || titolo || '</h1> <nav>');
-            END IF;
-        
-            ------------------------------------------------------------------
-            -- UTENTE / LOGIN
-            ------------------------------------------------------------------
-            IF p_idSessione != -1 THEN
-                htp.p('<p>' || INITCAP(nome) || '</p>');
-            ELSE
+                htp.print('<h1>' || titolo || '</h1>');
+            --LOGIN
                 htp.p('
-                    <button onclick="openLogin()">Accedi</button>
-                    <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button onclick="openLogin()">Accedi</button>
+                        <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    </div>
                 ');
                 Componenti.LoginPopup;
             END IF;

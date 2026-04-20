@@ -13,11 +13,13 @@ steps:
 1. libs/global.pks
 2. libs/sessioneUtente.pks e .pkb
 3. ui/Stile.pks e .pkb
-4. ui/baseHTML.pks e .pkb
-5. ui/Componenti.pks e.pkb
-6. pages/home.sql
-7. pages/loginProc.sql
-8. grant.sql
+4. ui/baseHTML.pks
+5. ui/Componenti.pks
+6. ui/baseHTML.pkb
+7. ui/Componenti.pkb
+8. pages/home.sql
+9. pages/loginProc.sql
+10. grant.sql
 
 # esempi
 

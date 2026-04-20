@@ -2,7 +2,6 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
 
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
-        nome         IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     );
     procedure chiudiPagina;

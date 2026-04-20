@@ -1,18 +1,8 @@
 create or replace procedure home( IdSessione IN NUMBER DEFAULT NULL, msg IN VARCHAR2 DEFAULT NULL) is
-  v_nome  VARCHAR2(20);
-  v_sessione_attiva NUMBER;
-  test varchar2(199);
 BEGIN
 
   IF IdSessione IS NOT NULL THEN
-    v_sessione_attiva := IdSessione;
-    SELECT USERNAME 
-    INTO v_nome
-    FROM SESSIONI, CREDENZIALI 
-    WHERE SESSIONI.IdUtente = CREDENZIALI.IdUtente
-    AND CREDENZIALI.IdUtente = IdSessione;
-
-    baseHTML.apriPagina('Fitzone', v_nome, IdSessione);
+    baseHTML.apriPagina('Fitzone', IdSessione);
   ELSE
     baseHTML.apriPagina('Fitzone');
   END IF;

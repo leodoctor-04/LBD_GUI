@@ -21,17 +21,12 @@ create or replace package body Stile as
     header{
         background: var(--colore-primario);
         color: white;
-        padding: 0px 5%;
+        padding: 0px 2.5vw;
         display: flex;
         justify-content: space-between; /* Spinge gli elementi ai lati opposti */
         align-items: center; /* Allinea verticalmente al centro */
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         height: 6vw;
-    }
-    header nav{
-        display: flex;
-        gap: 1vw;
-        align-items: center;
     }
 
     header button{
