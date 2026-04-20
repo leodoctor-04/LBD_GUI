@@ -28,7 +28,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL);
     PROCEDURE chiudiModulo;
     PROCEDURE inserisciInput(
-        id  IN VARCHAR2,    --obbligatorio nell'input per permettere a label di collegarsi alla casella
+        id  IN VARCHAR2,    ----Nome del label
         tipo    IN VARCHAR2 DEFAULT 'text', -- text, password, email, tel, checkbox, radio, number, hidden, date.
         nome    IN VARCHAR2,    -- il nome per richiamare il campo
         valore  IN VARCHAR2 DEFAULT NULL,   --valore di default del campo

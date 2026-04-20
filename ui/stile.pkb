@@ -137,10 +137,17 @@ create or replace package body Stile as
         border: 0.25vw solid var(--colore-primario);
     }
     #modulo label{
-        font-size: clamp(20px, 1.5vw, 2vw);
+        font-size: clamp(20px, 2vw, 2.5vw);
         font-weight: bold;
         margin-bottom: 0.25vw;
+        padding-right: 0.5vw;
     }
+
+    #modulo button{
+        background: var(--colore-primario);
+        color: white;
+        font-size: clamp(30px, 2vw, 2vw);
+        }
 
     textarea{
         width: 100%;
@@ -171,9 +178,14 @@ create or replace package body Stile as
         overflow: hidden;
         background:white;
     }
+    th{
+        background-color: var(--colore-primario-scuro);
+        color: white;
+        font-size: clamp(20px, 1.5vw, 2vw);
+    }
     th, td{
-        border-bottom: 0.25vw solid var(--colore-secondario);
-        border-right: 0.25vw solid var(--colore-secondario);
+        border-bottom: 0.15vw solid var(--colore-secondario);
+        border-right: 0.15vw solid var(--colore-secondario);
         padding: 1vw;
         text-align: center;
     }
@@ -182,6 +194,9 @@ create or replace package body Stile as
     }
     tr:last-child td {
         border-bottom: none;
+    }
+    tr:nth-child(odd) {
+        background-color: #e1e1e1;
     }
 
 
