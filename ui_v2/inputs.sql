@@ -290,8 +290,6 @@ create or replace type body textAreaInput IS
 end;
 /
 
--- la text box in realta ha bisogno di una label successiva che contiene il tetso
--- le metto in un div per porteggerle da variazioni di layout
 create or replace type checkbox under f_input(
     in_value number(1), -- nota: boolean non e' utilizzabile quindi deve essere un numero 0/1 (qualcosa sul non e' un dato che esiste nel sql)
     text varchar(200),
@@ -330,50 +328,103 @@ create or replace type body checkbox is
         else
             htp.print('>');
         end if;
+
+        htp.print('<label for= "'|| self.in_name ||'">' || self.in_value ||'</label>'); -- domanda: br o no br?
     end;
 end;
 /
 
-create or replace type radioInput under f_input(
-    in_value varchar(200),
-    checked number(1),
 
-    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result,
-    overriding member procedure showhtml 
+-- nota: prima o poi mettere anche la possibilita di specificare checked
+create or replace type radioOptionsInput under f_input(
+    options option_list,
+
+    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar, class varchar, css_style varchar, in_name varchar) RETURN SELF AS RESULT,
+
+    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt varchar),
+    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number),
+    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu),
+
+    MEMBER FUNCTION  search_option(opt varchar) return number,
+    MEMBER FUNCTION  count_options return number,
+    OVERRIDING MEMBER PROCEDURE showhtml 
 );
 /
-create or replace type body radioInput is
 
-    constructor function radioInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result as
+create or replace TYPE BODY radioOptionsInput is
+
+    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
         self.class := class;
         self.css_style := css_style;
         self.in_name := in_name;
-        self.in_value := in_value;
+        self.options := option_list();
+        return;
     end;
 
-    overriding member procedure showhtml as
-    begin
-        --questa permetterebbe di far comapare 0 o 1 per ogni checkbox per segnare se segnalata o no
-        --htp.print('<input type="hidden" name="'|| self.in_name||'" value="0">')
-        htp.print(
-            '<input '   || 
-            'id="'      || self.id          || '" ' ||
-            'class="'   || self.class       || '" ' ||
-            'style="'   || self.css_style   || '" ' ||
-            'name="'    || self.in_name     || '" ' ||
-            'value="'   || self.in_value    || '" ' ||
-            'type="'    || 'radio'       || '" ' 
-        );
-        if(self.checked != 0) then
-            htp.print('checked >');
-        else
-            htp.print('>');
-        end if;
+    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt VARCHAR) as
+    BEGIN
+        self.options.extend();
+        self.options(self.options.count) := opt;
+        return;
     end;
-end;
+
+    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number) as
+    begin
+        self.options.delete(idx);
+
+        -- shift a sx
+        for i in idx .. self.options.count loop
+            self.options(i) := self.options(i+1);
+        end loop;
+
+        -- remove void space
+        self.options.trim(1);
+    end;
+
+    MEMBER FUNCTION search_option(opt varchar) return number as
+    begin
+        for i in 1 .. self.options.count loop
+            if self.options(i) = opt then
+                return i;
+            end if;
+        end loop;
+
+        return -1;
+    end;
+
+    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu) as
+    begin
+        self.options.delete;
+        return;
+    end;
+
+    MEMBER FUNCTION count_options return number as
+    begin
+        return self.options.count;
+    end;
+
+
+    OVERRIDING MEMBER PROCEDURE showhtml as
+    BEGIN
+
+        for i in 1 .. self.options.count loop
+            htp.print(
+                '<input '   || 
+                'id="'      || self.id          || '" ' ||
+                'class="'   || self.class       || '" ' ||
+                'style="'   || self.css_style   || '" ' ||
+                'name="'    || self.in_name     || '" ' ||
+                'value="'   || self.in_value    || '" ' ||
+                'type="'    || 'radio'          || '" >' 
+                || '<label for= "' || self.options(i)|| '">'|| self.options(i) || '</label> <br>'
+            );
+        end loop;
+        return;
+    END;
+END;
 /
 
 create or replace type dateInput under f_input(
