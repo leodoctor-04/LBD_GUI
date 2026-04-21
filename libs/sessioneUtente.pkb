@@ -139,13 +139,16 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(p_username is NULL or p_password is NULL) then 
             p_idSessione := NULL;
             IF p_username IS NULL AND p_password IS NULL THEN
-                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=campi_mancanti');
+                --apex_util.redirect_url ( p_url => global.root || 'home?msg=campi_mancanti' ); -- da inserire un messaggio di errore nella home
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=campi_mancanti";</script>');
                 RETURN;
             ELSIF p_username IS NULL THEN
-                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=user_mancante');
+                --apex_util.redirect_url ( p_url => global.root || 'home?msg=user_mancante' ); -- da inserire un messaggio di errore nella home
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=user_mancante";</script>');
                 RETURN;
             ELSIF p_password IS NULL THEN
-                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=pwd_mancanti');
+                --apex_util.redirect_url ( p_url => global.root || 'home?msg=pwd_mancante' ); -- da inserire un messaggio di errore nella home
+                htp.print('<script>window.location.href="' || global.root || 'home?msg=pwd_mancante";</script>');
                 RETURN;
             END IF;
         else
@@ -154,15 +157,18 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_inserito) then
             if(v_sessioneDuplicata) then
                 --si dice che è stata chiusa la sessione precedente e mandiamo in homePage
-                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
+                --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
+                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
             else
                 --mandiamo direttamente in homePage
-                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
+                --apex_util.redirect_url ( p_url => global.root || 'home' );
+                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
             end if;
         else 
             p_idSessione := NULL;
             --mostriamo un errore di psw o username sbagliati e facciamo riprovare il login
-            OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=errore_login');
+            --apex_util.redirect_url ( p_url => global.root || 'home?msg=errore_login' );
+            htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
         end if;
     end login;
 
@@ -174,10 +180,11 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_aggiornata) then
             --il logout ha successo
             --apex_util.redirect_url ( p_url => global.root || 'home' );
-            OWA_UTIL.REDIRECT_URL(global.root || 'home');
+            htp.print('<script>window.location.href="' || global.root || 'home";</script>');
         else 
             --il logout non va a buon fine
-            OWA_UTIL.REDIRECT_URL(global.root || 'home');
+            --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
+            htp.print('<script>window.location.href="' || global.root || 'home";</script>');
         end if;
     end logout;
 
@@ -204,5 +211,93 @@ create or replace PACKAGE BODY sessioneUtente AS
         end if;
 
     end controllaSessione;
+
+    function controllaAmministrativo(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isAmministrativo SESSIONI.IsAmministratore%TYPE;
+    begin 
+        begin
+            select IsAmministratore into v_isAmministrativo
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isAmministrativo = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaAmministrativo;
+
+    function controllaAtleta(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isAtleta SESSIONI.IsAtleta%TYPE;
+    begin 
+        begin
+            select IsAtleta into v_isAtleta
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isAtleta = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaAtleta;
+
+     function controllaIstruttore(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isIstruttore SESSIONI.IsIstruttore%TYPE;
+    begin 
+        begin
+            select IsIstruttore into v_isIstruttore
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isIstruttore = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaIstruttore;
+
+         function controllaPersonalTrainer(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isPersonalTrainer SESSIONI.IsPersonalTrainer%TYPE;
+    begin 
+        begin
+            select IsPersonalTrainer into v_isPersonalTrainer
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isPersonalTrainer = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaPersonalTrainer;
 
     end sessioneUtente; 

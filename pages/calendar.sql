@@ -1,4 +1,7 @@
 create or replace procedure calendar(startDate in date default null )AS
+    type dname_array is varray(5) of varchar(10);
+    dname dname_array := dname_array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+
     toolPn panel := Panel(
         css_style => layout.HLIST('10px',aligment.page_center)|| 'background:red'
     );
@@ -42,7 +45,7 @@ BEGIN
                 css_style => layout.vlist('0px') || 'background:blue;' || 'flex-grow:1;'
             );
 
-        currP.add_element(label(css_style => 'text-align:center', text => 'days'));
+        currP.add_element(label(css_style => 'text-align:center', text => dname(i)));
         ---- add lessons
         currp.add_element(
             panel(
