@@ -1,4 +1,4 @@
-create or replace procedure calendar(course in varchar default null,startDate in date default null )AS
+create or replace procedure calendar(startDate in date default null )AS
     toolPn panel := Panel(
         '',
         '',
@@ -22,9 +22,13 @@ BEGIN
     --- query
 
     -- ui
-    basehtml.apriPagina;
+    basehtml.apriPagina( titolo => 'calendar');
 
-    toolPn.add_element(button('','','','<i class="material-icons">arrow_back_ios</i>',''));
+    toolPn.add_element(button(
+        '','','',
+        '<i class="material-icons">arrow_back_ios</i>'
+        ,'window.location.href=''' || global.url || 'calendar?startdate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy' || '''')
+    ));
     toolPn.add_element(label(
                                 '',
                                 '',
@@ -32,7 +36,11 @@ BEGIN
                                 utl_lms.format_message('%s -- %s',TO_CHAR(nxt_monday, 'DD mon'), TO_CHAR(nxt_monday+7, 'DD mon'))
                     ));
         
-    toolPn.add_element(button('','','','<i class="material-icons">arrow_forward_ios</i>',''));
+    toolPn.add_element(button(
+        '','','',
+        '<i class="material-icons">arrow_forward_ios</i>'
+        ,'window.location.href=''' || global.url || 'calendar?startdate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy' || '''')
+    ));
     toolpn.showhtml;
 
     for i in  1 .. 5 loop
@@ -43,7 +51,7 @@ BEGIN
                 layout.vlist('0px',aligment.page_center,aligment.page_start) || 'background:blue;' || 'flex-grow:1;' || 'width:100%;'
             );
 
-        currP.add_element(label('','','','days'));
+        currP.add_element(label('','','text-align:center;','days'));
         ---- add lessons
         currp.add_element(
             panel(

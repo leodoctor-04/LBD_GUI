@@ -93,7 +93,8 @@ create or replace TYPE BODY button IS
             '<button '  ||
             'id="'      || self.id          || '" ' ||
             'class="'   || self.class       || '" ' ||
-            'style="'   || self.css_style   || '">' ||
+            'style="'   || self.css_style   || '" ' ||
+            'onclick="' || self.onclick     || '">' ||
             self.text   || '</button>'
         );
         return;
