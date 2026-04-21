@@ -1,22 +1,21 @@
---------------------------------------------------------
---  File creato - venerdì-aprile-17-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body BASEHTML
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."BASEHTML" AS
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
-        nome         IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     ) IS
         v_homeLink VARCHAR2(4000);
+        v_username VARCHAR2(100);
     BEGIN
         -- Link per la home
         IF p_idSessione != -1 THEN
             v_homeLink := global.root || 'home?IdSessione=' || p_idSessione;
+
+            -- Recupero il nome dell'utente per il menu
+            SELECT username INTO v_username
+            FROM sessioni, credenziali
+            WHERE sessioni.idUtente = credenziali.idUtente
+            AND sessioni.idSessione = p_idSessione;
         END IF;
     
         htp.htmlOpen;
@@ -29,33 +28,28 @@
         htp.bodyOpen;
             htp.print('<header>');
     
-            ------------------------------------------------------------------
-            -- MENU HAMBURGER
-            ------------------------------------------------------------------
             IF p_idSessione != -1 THEN
-                htp.p('<h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
-                Componenti.MenuHamburger(p_idSessione);
-            END IF;
-        
-            ------------------------------------------------------------------
-            -- TITOLO
-            ------------------------------------------------------------------
-            IF p_idSessione != -1 THEN
-                htp.print('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
-                          || titolo || '</h1> <nav>');
+                -- MENU HAMBURGER
+                htp.p('<div style="display: flex; align-items: center; gap: 20px;">
+                        <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
+                        Componenti.MenuHamburger(p_idSessione);
+                        --TITOLO    
+                htp.p('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
+                            || titolo || '</h1>
+                    </div>'
+                    || --Utente
+                    '<div style="display: flex; align-items: center; gap: 10px;">
+                        <p>' || INITCAP(v_username) || '</p>
+                        <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    </div>');
             ELSE
-                htp.print('<h1>' || titolo || '</h1> <nav>');
-            END IF;
-        
-            ------------------------------------------------------------------
-            -- UTENTE / LOGIN
-            ------------------------------------------------------------------
-            IF p_idSessione != -1 THEN
-                htp.p('<p>' || INITCAP(nome) || '</p>');
-            ELSE
+                htp.print('<h1>' || titolo || '</h1>');
+            --LOGIN
                 htp.p('
-                    <button onclick="openLogin()">Accedi</button>
-                    <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button onclick="openLogin()">Accedi</button>
+                        <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                    </div>
                 ');
                 Componenti.LoginPopup;
             END IF;
@@ -106,10 +100,18 @@
         htp.p( '>' || testo || '</h1>' );
     END h1;
 
-    PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+    PROCEDURE apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+        htp.p('<div style="display: block;">');
+        IF nome IS NOT NULL THEN
+            htp.p( '<label for="' || id || '">' || id || '</label>' );
+        END IF;
+
         htp.prn('<select');
         IF id IS NOT NULL THEN
             htp.prn( ' id="' || id || '"' );
+        END IF;
+        IF nome IS NOT NULL THEN
+            htp.prn( ' name="' || nome || '"' );
         END IF;
         IF stile IS NOT NULL THEN
             htp.prn( ' style="' || stile || '"' );
@@ -118,13 +120,14 @@
     END apriMenuTendina;
     PROCEDURE chiudiMenuTendina IS BEGIN
         htp.p('</select>');
+        htp.p('</div>');
     END chiudiMenuTendina;
     PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
         htp.p('<option value="' || opzione || '">' || opzione || '</option>');
     END tendinaOption;
 
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
-        htp.prn( '<button' );
+        htp.prn( '<button ' );
         IF onClick IS NOT NULL THEN
             htp.prn( 'type="button" onclick="' || onClick || '()"');
         END IF;
@@ -140,18 +143,13 @@
 
     END collegamento;
 
-    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false) IS BEGIN
+    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn( '<form' );
         IF id IS NOT NULL THEN
             htp.prn( ' id="' || id || '"' );
         END IF;
         IF action IS NOT NULL THEN
             htp.prn( ' action="' || action || '"' );
-        END IF;
-        IF metodo THEN
-            htp.prn( ' method="true"' );
-        ELSE
-            htp.prn( ' method="false"' );
         END IF;
         htp.p( '>' );
 
@@ -167,26 +165,37 @@
         placeholder IN VARCHAR2 DEFAULT NULL,
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     ) IS BEGIN
-        htp.p( '<label for="' || id || '">' || nome || '</label>' );
-        htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
-        IF valore IS NOT NULL THEN
-            htp.prn( ' value="' || valore || '"' );
-        END IF;
-        IF placeholder IS NOT NULL THEN
-            IF tipo = 'radio' OR tipo = 'checkbox' THEN
-                htp.prn( ' checked' );
-            ELSE
-                htp.prn( ' placeholder="' || placeholder || '"' );
+        htp.p('<div style="display: block;">');
+            IF tipo <> 'hidden' THEN
+                htp.p( '<label for="' || id || '">' || id || '</label>' );
             END IF;
-        END IF;
-        IF obbligatorio THEN
-            htp.prn( ' required' );
-        END IF;
+            htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
+            IF valore IS NOT NULL THEN
+                htp.prn( ' value="' || valore || '"' );
+            END IF;
+            IF placeholder IS NOT NULL THEN
+                IF tipo = 'radio' OR tipo = 'checkbox' THEN
+                    htp.prn( ' checked' );
+                ELSE
+                    htp.prn( ' placeholder="' || placeholder || '"' );
+                END IF;
+            END IF;
+            IF obbligatorio THEN
+                htp.prn( ' required' );
+            END IF;
 
-        htp.p( ' >');
+            htp.p( ' >');
+        htp.p('</div>');
     END inserisciInput;
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2 ) IS BEGIN
-        htp.p( '<textarea>' || testo || '</textarea>' );
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true) IS BEGIN
+        htp.prn( '<textarea' );
+        IF nome IS NOT NULL THEN
+            htp.prn( ' name="' || nome || '"' );
+        END IF;
+        IF NOT modificabile THEN
+            htp.prn( ' readonly' );
+        END IF;
+        htp.p( '>' || testo || '</textarea>' );
     END inserisciTextArea;
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL ) IS BEGIN
@@ -199,8 +208,36 @@
     PROCEDURE chiudiPopup IS BEGIN
     htp.prn( '</dialog>');
     END chiudiPopup;
+
+    PROCEDURE apriTabella( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+        htp.prn( '<table' );
+        IF id IS NOT NULL THEN
+            htp.prn( ' id="' || id || '"' );
+        END IF;
+        IF stile IS NOT NULL THEN
+            htp.prn( ' style="' || stile || '"' );
+        END IF;
+        htp.p( '>' );
+    END apriTabella;
+    PROCEDURE chiudiTabella IS BEGIN
+        htp.p('</table>');
+    END chiudiTabella;
+    PROCEDURE inizioRiga IS BEGIN
+        htp.p('<tr>');
+    END inizioRiga;
+    PROCEDURE fineRiga IS BEGIN
+        htp.p('</tr>');
+    END fineRiga;
+    PROCEDURE inserisciIntestazione( testo IN VARCHAR2 ) IS BEGIN
+        htp.p('<th>' || testo || '</th>');
+    END inserisciIntestazione;
+    PROCEDURE inserisciCella( testo IN VARCHAR2 ) IS BEGIN
+        htp.p('<td>' || testo || '</td>');
+    END inserisciCella;
+    PROCEDURE apriCella IS BEGIN
+        htp.p('<td>');
+    END apriCella;
+    PROCEDURE chiudiCella IS BEGIN
+        htp.p('</td>');
+    END chiudiCella;
 END baseHTML;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";

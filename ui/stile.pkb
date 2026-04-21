@@ -11,7 +11,7 @@ create or replace package body Stile as
         }
 
     h1{ font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px; }
-    p{ font-size: clamp(20px, 1.5vw, 2vw); text-color: white; }
+    p{ font-size: clamp(20px, 1.5vw, 2vw); }
 
     body{
         background: var(--colore-secondario);
@@ -21,17 +21,12 @@ create or replace package body Stile as
     header{
         background: var(--colore-primario);
         color: white;
-        padding: 0px 5%;
+        padding: 0px 2.5vw;
         display: flex;
         justify-content: space-between; /* Spinge gli elementi ai lati opposti */
         align-items: center; /* Allinea verticalmente al centro */
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         height: 6vw;
-    }
-    header nav{
-        display: flex;
-        gap: 1vw;
-        align-items: center;
     }
 
     header button{
@@ -108,10 +103,55 @@ create or replace package body Stile as
     /*div griglia*/
     #griglia{
         display:grid;
+        justify-content: space-between;
         grid-template-columns:repeat( 3, 1fr);
-        gap:24px;
+        gap: 2vw;
     }
 
+    /*div flex*/
+    #flex{
+        margin: 2vw 3vw;
+        display:flex;
+        justify-content: space-between;
+        border-radius: 1vw;
+        background:white;
+        border: 0.25vw solid var(--colore-primario);
+        align-items: center;
+        border: 0.25vw solid var(--colore-primario);
+    }
+    
+    #modulo{
+        width: 90%;
+        margin: 2.5vw auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1vw;
+        padding: 2vw;
+        background:white;
+        border-radius: 1vw;
+        border: 0.25vw solid var(--colore-primario);
+    }
+    #modulo label{
+        font-size: clamp(20px, 2vw, 2.5vw);
+        font-weight: bold;
+        margin-bottom: 0.25vw;
+        padding-right: 0.5vw;
+    }
+
+    #modulo button{
+        background: var(--colore-primario);
+        color: white;
+        font-size: clamp(30px, 2vw, 2vw);
+        }
+
+    textarea{
+        width: 100%;
+        height: 10vw;
+        border-radius: 1vw;
+        border: 0.25vw solid var(--colore-primario);
+        padding: 1vw;
+        font-size: clamp(20px, 1.5vw, 2vw);
+    }
 
     button{
         font-size: clamp(30px, 2vw, 2vw);
@@ -121,6 +161,41 @@ create or replace package body Stile as
         cursor: pointer; /* Consiglio: mostra la manina al passaggio del mouse */"
     }
 
+    table{
+        width: 90%;
+        margin: 2.5vw auto;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        border: 0.25vw solid var(--colore-primario);
+        border-radius: 1vw;
+
+        overflow: hidden;
+        background:white;
+    }
+    th{
+        background-color: var(--colore-primario-scuro);
+        color: white;
+        font-size: clamp(20px, 1.5vw, 2vw);
+    }
+    th, td{
+        border-bottom: 0.15vw solid var(--colore-secondario);
+        border-right: 0.15vw solid var(--colore-secondario);
+        padding: 1vw;
+        text-align: center;
+    }
+    th:last-child, td:last-child {
+        border-right: none;
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+    tr:nth-child(odd) {
+        background-color: #e1e1e1;
+    }
+
+
+    /* INIZIO */
     /*
         calendar style
     */
@@ -269,6 +344,24 @@ create or replace package body Stile as
         box-shadow:2px 0px 5px rgba(0,0,0,0.3);
     }
 
+    .select-button {
+        /* Rimuove lo stile predefinito del browser (Chrome, Safari, Firefox) */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none; /*rimuove la freccetta*/
+    }
+
+    /* Effetto Hover */
+    .select-button:hover {
+        background-color: #2980b9;
+    }
+
+    /* Rimuove il bordo fastidioso su Firefox */
+    .select-button:-moz-focusring {
+        color: transparent;
+        text-shadow: 0 0 0 #fff;
+    }
     </style>
     ');
 

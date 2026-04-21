@@ -1,11 +1,7 @@
---------------------------------------------------------
---  DDL for Package BASEHTML
---------------------------------------------------------
+CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."BASEHTML" as
-PROCEDURE apriPagina(
+    PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
-        nome         IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     );
     procedure chiudiPagina;
@@ -17,7 +13,8 @@ PROCEDURE apriPagina(
     procedure paragrafo( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure h1( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
 
-    procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
+    -- nome per chiamarlo in un form
+    procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
     procedure tendinaOption( opzione IN VARCHAR2 );
 
@@ -26,24 +23,31 @@ PROCEDURE apriPagina(
 
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
 
-    -- form( action<la pagina a cui inviare i dati>,metodo<true:GET, false:POST>)
-    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL, metodo IN BOOLEAN DEFAULT false);
+    -- form( action<la pagina a cui inviare i dati>)
+    PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL);
     PROCEDURE chiudiModulo;
     PROCEDURE inserisciInput(
-        id  IN VARCHAR2,    --obbligatorio nell'input per permettere a label di collegarsi alla casella
+        id  IN VARCHAR2,    ----Nome del label
         tipo    IN VARCHAR2 DEFAULT 'text', -- text, password, email, tel, checkbox, radio, number, hidden, date.
         nome    IN VARCHAR2,    -- il nome per richiamare il campo
         valore  IN VARCHAR2 DEFAULT NULL,   --valore di default del campo
         placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se sono checked o no
         obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
     );
-    PROCEDURE inserisciTextArea( testo IN VARCHAR2 );
+    PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
 
     PROCEDURE apriPopup( id IN VARCHAR2 DEFAULT NULL );
     PROCEDURE chiudiPopup;
 
+    PROCEDURE apriTabella( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
+    PROCEDURE chiudiTabella;
+    PROCEDURE inizioRiga;
+    PROCEDURE fineRiga;
+    PROCEDURE inserisciIntestazione( testo IN VARCHAR2 );
+    PROCEDURE inserisciCella( testo IN VARCHAR2 );
+    -- per inserire altre procedure in una cella
+    PROCEDURE apriCella;
+    PROCEDURE chiudiCella;
+
+
 end baseHTML;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";
