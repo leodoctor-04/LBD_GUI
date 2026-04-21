@@ -1,14 +1,19 @@
+-- utils
+create or replace type option_list is table of varchar(100);
+/
+
+-- ui types
 create or replace type f_input under uielem(
     in_name VARCHAR(100),
     
-    CONSTRUCTOR FUNCTION f_input (id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION f_input (id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml 
 )NOT FINAL;
 /
      
 
 create or replace TYPE BODY f_input IS
-    CONSTRUCTOR FUNCTION f_input (id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION f_input (id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -25,12 +30,10 @@ create or replace TYPE BODY f_input IS
 END;
 /
 
-create or replace type option_list is table of varchar(100);
-/
 create or replace type option_menu under f_input(
     options option_list,
 
-    CONSTRUCTOR FUNCTION option_menu(id varchar, class varchar, css_style varchar, in_name varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION option_menu(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT,
 
     MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt varchar),
     MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number),
@@ -43,7 +46,7 @@ create or replace type option_menu under f_input(
 /
 
 create or replace TYPE BODY option_menu is
-    CONSTRUCTOR FUNCTION option_menu(id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION option_menu(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -124,13 +127,13 @@ END;
 /
 
 create or replace type submit_butt under f_input(
-    CONSTRUCTOR FUNCTION submit_butt(id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION submit_butt(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace type body submit_butt is
-    CONSTRUCTOR FUNCTION submit_butt(id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT AS
+    CONSTRUCTOR FUNCTION submit_butt(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT AS
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -157,7 +160,7 @@ end;
 create or replace type numberInput under f_input(
     in_value number,
 
-    constructor function numberInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result,
+    constructor function numberInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value number) return self as result,
     overriding member procedure showhtml 
 );
 /
@@ -191,13 +194,13 @@ end;
 create or replace type textInput under f_input(
     in_value varchar(200),
 
-    constructor function textInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result,
+    constructor function textInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result,
     overriding member procedure showhtml 
 );
 /
 
 create or replace type body textInput IS
-    constructor function textInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result as
+    constructor function textInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -225,13 +228,13 @@ end;
 create or replace type passwordInput under f_input(
     in_value varchar(200),
 
-    constructor function passwordInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result,
+    constructor function passwordInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result,
     overriding member procedure showhtml 
 );
 /
 
 create or replace type body passwordInput IS
-    constructor function passwordInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result as
+    constructor function passwordInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -257,17 +260,16 @@ create or replace type body passwordInput IS
 end;
 /
 
-
 create or replace type textAreaInput under f_input(
     in_value varchar(500),
 
-    constructor function textAreaInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result,
+    constructor function textAreaInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result,
     overriding member procedure showhtml 
 );
 /
 
 create or replace type body textAreaInput IS
-    constructor function textAreaInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value varchar) return self as result as
+    constructor function textAreaInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -294,13 +296,12 @@ create or replace type checkbox under f_input(
     in_value number(1), -- nota: boolean non e' utilizzabile quindi deve essere un numero 0/1 (qualcosa sul non e' un dato che esiste nel sql)
     text varchar(200),
 
-    constructor function checkbox(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result,
+    constructor function checkbox(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value number) return self as result,
     overriding member procedure showhtml 
 );
 /
 create or replace type body checkbox is
-
-    constructor function checkbox(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result as
+    constructor function checkbox(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value number) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -339,11 +340,11 @@ end;
 create or replace type radioOptionsInput under f_input(
     options option_list,
 
-    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar, class varchar, css_style varchar, in_name varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT,
 
-    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt varchar),
-    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number),
-    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu),
+    MEMBER PROCEDURE add_option(SELF IN OUT radioOptionsInput, opt varchar),
+    MEMBER PROCEDURE delete_option(SELF IN OUT radioOptionsInput, idx number),
+    MEMBER PROCEDURE clear_options(SELF IN OUT radioOptionsInput),
 
     MEMBER FUNCTION  search_option(opt varchar) return number,
     MEMBER FUNCTION  count_options return number,
@@ -353,7 +354,7 @@ create or replace type radioOptionsInput under f_input(
 
 create or replace TYPE BODY radioOptionsInput is
 
-    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar, class varchar, css_style varchar,in_name varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -364,14 +365,14 @@ create or replace TYPE BODY radioOptionsInput is
         return;
     end;
 
-    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt VARCHAR) as
+    MEMBER PROCEDURE add_option(SELF IN OUT radioOptionsInput, opt VARCHAR) as
     BEGIN
         self.options.extend();
         self.options(self.options.count) := opt;
         return;
     end;
 
-    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number) as
+    MEMBER PROCEDURE delete_option(SELF IN OUT radioOptionsInput, idx number) as
     begin
         self.options.delete(idx);
 
@@ -395,7 +396,7 @@ create or replace TYPE BODY radioOptionsInput is
         return -1;
     end;
 
-    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu) as
+    MEMBER PROCEDURE clear_options(SELF IN OUT radioOptionsInput) as
     begin
         self.options.delete;
         return;
@@ -417,7 +418,6 @@ create or replace TYPE BODY radioOptionsInput is
                 'class="'   || self.class       || '" ' ||
                 'style="'   || self.css_style   || '" ' ||
                 'name="'    || self.in_name     || '" ' ||
-                'value="'   || self.in_value    || '" ' ||
                 'type="'    || 'radio'          || '" >' 
                 || '<label for= "' || self.options(i)|| '">'|| self.options(i) || '</label> <br>'
             );
@@ -430,13 +430,13 @@ END;
 create or replace type dateInput under f_input(
     in_value date,
 
-    constructor function dateInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value date) return self as result,
+    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date) return self as result,
     overriding member procedure showhtml 
 );
 /
 
 create or replace type body dateInput IS
-    constructor function dateInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value date) return self as result as
+    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date) return self as result as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;

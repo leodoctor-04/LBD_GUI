@@ -1,9 +1,12 @@
+-- utils
 create or replace type element_list is table of uielem;
 /
+
+-- ui types
 create or replace type ui_container under uielem(
     children element_list,
 
-    CONSTRUCTOR FUNCTION ui_container(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION ui_container(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
 
     MEMBER PROCEDURE add_element(self in out ui_container,e uielem),
     MEMBER PROCEDURE delete_element(self in out ui_container, idx number),
@@ -14,7 +17,7 @@ create or replace type ui_container under uielem(
 )NOT FINAL;
 /
 create or replace type body ui_container is
-    CONSTRUCTOR FUNCTION ui_container(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION ui_container(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -72,14 +75,14 @@ end;
 /
 
 create or replace type panel under ui_container(
-    CONSTRUCTOR FUNCTION panel(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION panel(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
     overriding MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace type body panel is
 
-    CONSTRUCTOR FUNCTION panel(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION panel(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -113,14 +116,14 @@ end;
 create or replace type input_form under ui_container(
     submit_action varchar(200),
 
-    CONSTRUCTOR FUNCTION input_form(id varchar, class varchar, css_style varchar, submit_action varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION input_form(id varchar default '', class varchar default '', css_style varchar default '', submit_action varchar default '') RETURN SELF AS RESULT,
     overriding MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace type body input_form is
 
-    CONSTRUCTOR FUNCTION input_form(id varchar, class varchar, css_style varchar, submit_action varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION input_form(id varchar default '', class varchar default '', css_style varchar default '', submit_action varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -154,14 +157,14 @@ end;
 /
 
 create or replace type popup under ui_container(
-    CONSTRUCTOR FUNCTION popup(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION popup(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
     overriding MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace type body popup is
 
-    CONSTRUCTOR FUNCTION popup(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION popup(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -193,13 +196,13 @@ end;
 /
 
 create or replace type trow under ui_container(
-    CONSTRUCTOR FUNCTION trow(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION trow(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
     overriding member procedure showhtml
 );
 /
 
 create or replace type body trow is
-    CONSTRUCTOR FUNCTION trow(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION trow(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT as
     BEGIN
         self.mem_id := SYS_GUID();
         self.id := id;

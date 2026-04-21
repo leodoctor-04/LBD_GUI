@@ -1,10 +1,17 @@
+-- utils
+create or replace type strings as table of varchar(200);
+/
+create or replace type trow_list as table of trow;
+/
+
+-- ui types
 CREATE OR REPLACE TYPE UIELEM AS OBJECT(
     mem_id raw(16),
-    id VARCHAR(100),
+    id varchar (100),
     class VARCHAR(100),
     css_style VARCHAR(500),
 
-    CONSTRUCTOR FUNCTION uielem(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION uielem(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
     NOT FINAL MEMBER PROCEDURE showhtml,
     MAP MEMBER FUNCTION get_ref RETURN raw
     -- map e' la funzione che utilizza durante le compare tra elementi
@@ -12,7 +19,7 @@ CREATE OR REPLACE TYPE UIELEM AS OBJECT(
 /
 
 CREATE OR REPLACE TYPE BODY UIELEM IS
-    CONSTRUCTOR FUNCTION uielem(id varchar, class varchar, css_style varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION uielem(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT as
     begin
         -- sys_guid restituisce un id che rappresenta l'instanza nella memoria virtuale
         self.mem_id := SYS_GUID();
@@ -37,13 +44,13 @@ END;
 create or replace type label under uielem(
     text VARCHAR(100),
     
-    CONSTRUCTOR FUNCTION label(id varchar, class varchar, css_style varchar, text varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION label(id varchar default '', class varchar default '', css_style varchar default '',  text varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace TYPE BODY label IS
-    CONSTRUCTOR FUNCTION label(id varchar, class varchar, css_style varchar, text varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION label(id varchar default '', class varchar default '', css_style varchar default '',  text varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -71,13 +78,13 @@ create or replace type button under uielem(
     text VARCHAR(100),
     onclick varchar(100),
     
-    CONSTRUCTOR FUNCTION button(id varchar, class varchar, css_style varchar, text varchar,onclick varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION button(id varchar default '', class varchar default '', css_style varchar default '', text varchar default '',onclick varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml
 );
 /
 
 create or replace TYPE BODY button IS
-    CONSTRUCTOR FUNCTION button(id varchar, class varchar, css_style varchar, text varchar,onclick varchar) RETURN SELF AS RESULT as 
+    CONSTRUCTOR FUNCTION button(id varchar default '', class varchar default '', css_style varchar default '', text varchar default '',onclick varchar default '') RETURN SELF AS RESULT as 
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -106,13 +113,13 @@ create or replace type html_link under uielem(
     src VARCHAR(100),
     text varchar(100),
     
-    CONSTRUCTOR FUNCTION html_link(id varchar, class varchar, css_style varchar, text varchar,src varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION html_link(id varchar default '', class varchar default '', css_style varchar default '', text varchar default '', src varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml 
 );
 /
 
 create or replace TYPE BODY html_link IS
-    CONSTRUCTOR FUNCTION html_link(id varchar, class varchar, css_style varchar, text varchar,src varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION html_link(id varchar default '', class varchar default '', css_style varchar default '', text varchar default '', src varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
@@ -138,11 +145,6 @@ create or replace TYPE BODY html_link IS
 END;
 /
 
-create or replace type strings as table of varchar(200);
-/
-create or replace type strings as table of varchar(200);
-create or replace type trow_list as table of trow(200);
-/
 
 create or replace type data_table under uielem(
     headers_color varchar(100),
@@ -150,7 +152,7 @@ create or replace type data_table under uielem(
     headers strings,
     trows trow_list,
 
-    CONSTRUCTOR FUNCTION data_table(id varchar, class varchar, css_style varchar, h_color varchar, c_color varchar) RETURN SELF AS RESULT,
+    CONSTRUCTOR FUNCTION data_table(id varchar default '', class varchar default '', css_style varchar default '', h_color varchar default '', c_color varchar default '') RETURN SELF AS RESULT,
 
     MEMBER PROCEDURE add_header(SELF IN OUT data_table, hd varchar),
     MEMBER PROCEDURE delete_header(SELF IN OUT data_table, idx number),
@@ -166,7 +168,7 @@ create or replace type data_table under uielem(
 /
 
 create or replace type body data_table is
-    CONSTRUCTOR FUNCTION data_table(id varchar, class varchar, css_style varchar, h_color varchar, c_color varchar) RETURN SELF AS RESULT as
+    CONSTRUCTOR FUNCTION data_table(id varchar default '', class varchar default '', css_style varchar default '', h_color varchar default '', c_color varchar default '') RETURN SELF AS RESULT as
     begin
         self.mem_id := SYS_GUID();
         self.id := id;
