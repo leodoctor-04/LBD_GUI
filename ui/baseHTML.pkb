@@ -242,4 +242,16 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiCella IS BEGIN
         htp.p('</td>');
     END chiudiCella;
+
+    PROCEDURE aggiungi_Stile(stile varchar) is
+    begin
+        htp.p(
+            utl_lms.format_message( '<style>%s</style>',stile)
+        );
+    end;
+
+    procedure redirect(url varchar) IS
+    begin
+        htp.print('<script>window.location.href="' || url || '";</script>');
+    end;
 END baseHTML;
