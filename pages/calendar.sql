@@ -1,4 +1,4 @@
-create or replace procedure calendario(p_idSessione in number default null, startDate in date default null )AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null )AS
     -- constants
     dayRange constant number := 7;
 
@@ -20,10 +20,10 @@ create or replace procedure calendario(p_idSessione in number default null, star
 
     toolPn panel := Panel(
         class => 'controls_panel',
-        css_style => layout.HLIST('10px',aligment.page_center)
+        css_style => layout.HLIST('10px',halign => aligment.page_center)
     );
     days panel := Panel(
-        css_style => layout.HLIST('',aligment.page_start)|| 'height:100%;'
+        css_style => layout.HLIST || 'height:100%;'
     );
     currP panel;
     currLessClm panel;
@@ -53,7 +53,9 @@ create or replace procedure calendario(p_idSessione in number default null, star
                 lezione.idCorso = corso.idCorso and
                 corso.idistruttore =  utente.idutente and
                 -- data check
-                lezione.datainizio between p_startDate and p_startDate+7
+                lezione.datainizio between p_startDate and p_startDate+7 
+                -- subscription check
+
             ORDER BY lezione.datainizio,lezione.datafine
             )
         loop
@@ -84,7 +86,19 @@ create or replace procedure calendario(p_idSessione in number default null, star
         );
 
         h_panel panel := panel(
-            css_style => layout.hlist(valign => aligment.space_between) || layout.add_size(width => '100%')
+            css_style => layout.hlist(halign => aligment.space_between) || layout.add_size(width => '100%')
+        );
+
+        info_popup popup := popup(
+            class=>'lesson_popup'
+        );
+
+        info_ct panel := panel( 
+            css_style => layout.vlist  || layout.add_minSize(height => '60px', width => '60px') || layout.add_internal_spacing('10px')
+        );
+
+        act_buttons panel := panel(
+            css_style => layout.hlist(gap=>'10px',halign => aligment.space_around) 
         );
     begin
         main_p.add_element(
@@ -105,30 +119,65 @@ create or replace procedure calendario(p_idSessione in number default null, star
 
         main_p.add_element(h_panel);
 
+        -- add info dialog 
+
+        ---- info corso
+        info_ct.add_element(
+            label(
+                text => 'corso:' || l.course_title
+            )    
+        );
+        info_ct.add_element(
+            label(
+                text => utl_lms.format_message('istruttore: %s %s' , initcap(l.instructor_name),initcap(l.instructor_surname) )
+            )    
+        );
+
+        info_ct.add_element(h_panel);
+
+        ---- act buttons
+        act_buttons.add_element(
+            button(
+                text => 'bt1'
+            )
+        );
+        act_buttons.add_element(
+            button(
+                text => 'bt2'
+            )
+        );
+        act_buttons.add_element(
+            button(
+                text => 'bt3'
+            )
+        );
+        info_ct.add_element(act_buttons);
+
+        ---- final adds
+        info_popup.add_element(info_ct);
+        main_p.add_element(info_popup);
+
         return main_p;
     end;
 
 BEGIN
     if(p_idSessione is null) then
-        --basehtml.redirect(global.root || 'home');
-        htp.print('<script>console.log("no id ses")</script>');
+        basehtml.redirect(global.root || 'home');
+        return;
     end if;
 
     -- setup 
-    if (startDate is null) then
+    if (p_startDate is null) then
         nxt_monday := NEXT_DAY(SYSDATE-7, 'MONDAY');
     else
-        nxt_monday := NEXT_DAY(startDate-7, 'MONDAY');
+        nxt_monday := NEXT_DAY(p_startDate-7, 'MONDAY');
     end if;
 
-    /*
     select sessioni.idutente into v_idUtente 
     from sessioni 
     where sessioni.idSessione = p_idSessione;
-    */
 
-    lessons := lesson_toArray(nxt_monday,1);
-    htp.print('hello');
+    lessons := lesson_toArray(nxt_monday,v_idUtente);
     basehtml.aggiungi_Stile('
         .controls_panel{
             margin: 0px;
@@ -173,6 +222,25 @@ BEGIN
         .teach{
             background-color: #c3edd5;
         }
+
+        .lesson_popup {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        .lesson_popup:focus {
+            outline: none;
+        }
+
+        .lesson_popup>div{
+            border-radius: 10%;
+            background-color: #ffc7d1;
+            box-shadow: 1px 1px grey;
+            padding: 0px 5px;
+        }
+
     ');
 
     -- ui
@@ -198,8 +266,8 @@ BEGIN
     for i in  1 .. dayRange loop
         -- generate day column
         currP := panel(
-                css_style => layout.vlist('0px')  || 'flex-grow:1;' || 'border: 1px black solid;'
-            );
+            css_style => layout.vlist || 'flex-grow:1;' || 'border: 1px black solid;'
+        );
 
         currP.add_element(label(
             class => 'day_label',
@@ -209,7 +277,7 @@ BEGIN
         ---- add lessons
         currLessClm := panel(
             css_style => 
-                layout.vlist('5px',aligment.page_start,aligment.page_center) || 
+                layout.vlist('5px',valign => aligment.page_start, halign => aligment.page_center) || 
                 layout.add_minSize(height => '20vw;')   ||
                 layout.add_internal_spacing('5px 0px')  ||
                 'background:white; flex-grow:1;'
@@ -228,6 +296,23 @@ BEGIN
         days.add_element(currP);
     end loop;
     days.showhtml;
+
+
+
+    -- script to open the popup on onclick of items with the class lesson
+    baseHtml.aggiungi_script(script =>
+    '
+        function openPopup(parent){
+            parent.children[2].showModal();
+        }
+
+        var ls = document.getElementsByClassName("lesson");
+
+        for(l of ls){
+            l.onclick = function(event){ openPopup(event.target)};
+        }
+    '
+    );
 
     basehtml.chiudiPagina;
 end;

@@ -42,7 +42,7 @@ END;
 /
 
 create or replace type label under uielem(
-    text VARCHAR(100),
+    text VARCHAR(1000),
     
     CONSTRUCTOR FUNCTION label(id varchar default '', class varchar default '', css_style varchar default '',  text varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml 

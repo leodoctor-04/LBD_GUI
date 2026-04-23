@@ -51,6 +51,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     PROCEDURE apriCella;
     PROCEDURE chiudiCella;
     procedure aggiungi_stile(stile varchar);
+    procedure aggiungi_script(script varchar);
     procedure redirect(url varchar);
 
 end baseHTML;

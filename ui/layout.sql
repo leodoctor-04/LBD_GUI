@@ -19,7 +19,7 @@ create or replace package body layout as
 
     function vlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: column;row-gap: ' || gap || ';align-content:' || valign || ';justify-content:' || halign || ';';
+        return 'display: flex;flex-direction: column;row-gap: ' || gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
     end;
 
     function grid(grow NUMBER default -1,gcolumn NUMBER default -1,gap varchar default '0px') return VARCHAR is

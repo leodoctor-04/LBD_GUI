@@ -250,6 +250,13 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         );
     end;
 
+    PROCEDURE aggiungi_script(script varchar) is
+    begin
+        htp.p(
+            utl_lms.format_message( '<script>%s</script>',script)
+        );
+    end;
+
     procedure redirect(url varchar) IS
     begin
         htp.print('<script>window.location.href="' || url || '";</script>');
