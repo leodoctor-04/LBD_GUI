@@ -73,6 +73,41 @@ create or replace procedure calendario(p_idSessione in number default null, star
         return res;
     end;
 
+    function new_lesson_popup(l lesson) return panel is
+        main_p panel := panel(
+            class => 'lesson',
+            css_style =>    layout.vlist(gap => '10px') || 
+                            layout.add_minSize(height=> '100px') || 
+                            layout.add_size(width => '80%') || 
+                            layout.add_external_spacing('0px auto') ||
+                            layout.add_internal_spacing('10px')
+        );
+
+        h_panel panel := panel(
+            css_style => layout.hlist(valign => aligment.space_between) || layout.add_size(width => '100%')
+        );
+    begin
+        main_p.add_element(
+            label(text=> l.course_title)
+        );
+
+        -- add hour
+        h_panel.add_element(
+            label(
+                css_style => 'font-size:0.8 rem;',
+                text => utl_lms.format_message('start %s ',TO_CHAR(l.startD, 'HH24:MI')) 
+        ));
+        h_panel.add_element(
+            label(
+                css_style => 'font-size:0.8 rem;',
+                text => utl_lms.format_message('end %s ',TO_CHAR(l.endD, 'HH24:MI')) 
+        ));
+
+        main_p.add_element(h_panel);
+
+        return main_p;
+    end;
+
 BEGIN
     if(p_idSessione is null) then
         --basehtml.redirect(global.root || 'home');
@@ -174,14 +209,15 @@ BEGIN
         ---- add lessons
         currLessClm := panel(
             css_style => 
-                layout.vlist('5px',aligment.page_start,aligment.page_start) || 
-                layout.add_minSize(height => '20vw;') ||
+                layout.vlist('5px',aligment.page_start,aligment.page_center) || 
+                layout.add_minSize(height => '20vw;')   ||
+                layout.add_internal_spacing('5px 0px')  ||
                 'background:white; flex-grow:1;'
         );
 
         for j in 1 .. lessons(i).count loop
             currLessClm.add_element(
-                Label(class=> 'lesson',text => 'carlito')
+                new_lesson_popup(lessons(i)(j))
             );
         end loop;
 

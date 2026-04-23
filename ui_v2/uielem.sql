@@ -9,7 +9,7 @@ CREATE OR REPLACE TYPE UIELEM AS OBJECT(
     mem_id raw(16),
     id varchar (100),
     class VARCHAR(100),
-    css_style VARCHAR(500),
+    css_style VARCHAR(1000),
 
     CONSTRUCTOR FUNCTION uielem(id varchar default '', class varchar default '', css_style varchar default '') RETURN SELF AS RESULT,
     NOT FINAL MEMBER PROCEDURE showhtml,
