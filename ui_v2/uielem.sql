@@ -76,7 +76,7 @@ END;
 
 create or replace type button under uielem(
     text VARCHAR(100),
-    onclick varchar(100),
+    onclick varchar(500),
     
     CONSTRUCTOR FUNCTION button(id varchar default '', class varchar default '', css_style varchar default '', text varchar default '',onclick varchar default '') RETURN SELF AS RESULT,
     OVERRIDING MEMBER PROCEDURE showhtml

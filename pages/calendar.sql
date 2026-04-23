@@ -146,16 +146,17 @@ BEGIN
     toolPn.add_element(
         button(
             text => '<i class="material-icons">arrow_back_ios</i>',
-            onclick => 'window.location.href=''' || global.url || 'calendar?startdate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy' || '''')
+            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy') || ''''
     ));
     toolPn.add_element(
         label(
             text => utl_lms.format_message('%s -- %s',TO_CHAR(nxt_monday, 'DD mon'), TO_CHAR(nxt_monday+7, 'DD mon'))
     ));
         
-    toolPn.add_element(button(
-        text => '<i class="material-icons">arrow_forward_ios</i>',
-        onclick => 'window.location.href=''' || global.url || 'calendar?startdate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy' || '''')
+    toolPn.add_element(
+        button(
+            text => '<i class="material-icons">arrow_forward_ios</i>',
+            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy') || ''''
     ));
     toolpn.showhtml;
 
