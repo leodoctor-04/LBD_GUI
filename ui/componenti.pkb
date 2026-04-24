@@ -420,20 +420,5 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
     END IF;
 END messaggioLogin;
 
-procedure listaCorsi( numero IN number DEFAULT NULL ) is
-begin
-    if numero is null then
-        FOR corso IN ( SELECT titolo FROM Corso )
-        LOOP
-            baseHTML.paragrafo( corso.titolo );
-        END LOOP;
-    else
-        FOR corso IN ( SELECT titolo FROM Corso fetch first numero rows only)
-        LOOP
-            baseHTML.paragrafo( corso.titolo );
-        END LOOP;
-    end if;
-end listaCorsi;
-
 END Componenti;
 /

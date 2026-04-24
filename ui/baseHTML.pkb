@@ -1,16 +1,16 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
+    -- v_idSessione NUMBER := -1; variabile globale pertenerela sessione
+
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     ) IS
-        v_homeLink VARCHAR2(4000);
         v_username VARCHAR2(100);
     BEGIN
         -- Link per la home
         IF p_idSessione != -1 THEN
-            v_homeLink := global.root || 'home?IdSessione=' || p_idSessione;
-
+            v_idSessione := p_idSessione;
             -- Recupero il nome dell'utente per il menu
             SELECT username INTO v_username
             FROM sessioni, credenziali
@@ -28,17 +28,16 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.bodyOpen;
             htp.print('<header>');
     
-            IF p_idSessione != -1 THEN
+            IF p_idSessione > 0 THEN
                 -- MENU HAMBURGER
                 htp.p('<div style="display: flex; align-items: center; gap: 20px;">
                         <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
                         Componenti.MenuHamburger(p_idSessione);
-                        --TITOLO    
-                htp.p('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
-                            || titolo || '</h1>
-                    </div>'
-                    || --Utente
-                    '<div style="display: flex; align-items: center; gap: 10px;">
+                --TITOLO
+                htp.p('<a href="'|| global.url || 'home?IdSessione=' || p_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+                    </div>');
+                --Utente
+                htp.p('<div style="display: flex; align-items: center; gap: 10px;">
                         <p>' || INITCAP(v_username) || '</p>
                         <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
                     </div>');
@@ -61,7 +60,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiPagina IS BEGIN
         htp.print('
             <footer>
-            <h1>FitZone</h1>
+            <a href="'|| global.url || 'home?IdSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
             <p>&copy; ' || to_char(sysdate, 'YYYY') || ' FitZone. Tutti i diritti riservati</p>
             </footer>
         ');
@@ -122,8 +121,11 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.p('</select>');
         htp.p('</div>');
     END chiudiMenuTendina;
-    PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
-        htp.p('<option value="' || opzione || '">' || opzione || '</option>');
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT NULL) IS BEGIN
+        IF valore IS NOT NULL THEN
+            htp.p('<option value="' || valore || '">' || opzione || '</option>');
+        ELSE htp.p('<option value="' || opzione || '">' || opzione || '</option>');
+        END IF;
     END tendinaOption;
 
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN

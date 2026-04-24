@@ -110,9 +110,10 @@ create or replace package body Stile as
 
     /*div flex*/
     #flex{
-        margin: 2vw 3vw;
+        margin: 2vw auto;
         display:flex;
         justify-content: space-between;
+        align-items: center;
         border-radius: 1vw;
         background:white;
         border: 0.25vw solid var(--colore-primario);
@@ -121,7 +122,7 @@ create or replace package body Stile as
     }
     
     #modulo{
-        width: 90%;
+        width: 86%;
         margin: 2.5vw auto;
         display: flex;
         flex-direction: column;
@@ -142,7 +143,27 @@ create or replace package body Stile as
         background: var(--colore-primario);
         color: white;
         font-size: clamp(30px, 2vw, 2vw);
-        }
+    }
+
+    #filtroTipologia{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    #filtroTipologia select{
+        width: 50vw;
+        height: clamp(50px, 3vw, 3.5vw);
+        border: 0.25vw solid var(--colore-primario);
+        border-radius: 1vw;
+        font-size: clamp(30px, 2vw, 2.5vw);
+    }
+
+    #filtroTipologia button{
+        background: var(--colore-primario);
+        color: white;
+        font-weight: 600;
+    }
 
     textarea{
         width: 100%;

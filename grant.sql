@@ -8,4 +8,5 @@ GRANT EXECUTE on loginProc to anonymous;
 
 GRANT EXECUTE ON Corsi TO anonymous;
 GRANT EXECUTE ON test TO anonymous;
+
 commit;

@@ -1,11 +1,7 @@
-create or replace procedure home( IdSessione IN NUMBER DEFAULT NULL, msg IN VARCHAR2 DEFAULT NULL) is
+create or replace procedure home( IdSessione IN NUMBER DEFAULT -1, msg IN VARCHAR2 DEFAULT NULL) is
 BEGIN
 
-  IF IdSessione IS NOT NULL THEN
-    baseHTML.apriPagina('Fitzone', IdSessione);
-  ELSE
-    baseHTML.apriPagina('Fitzone');
-  END IF;
+  baseHTML.apriPagina('Fitzone', IdSessione);
 
   componenti.messaggioLogin(msg);
 

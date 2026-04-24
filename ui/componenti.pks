@@ -32,9 +32,6 @@ procedure StatCard (
 
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
--- del gruppo 3 (qui abusivamente)
-procedure listaCorsi(numero IN number DEFAULT NULL);
-
 END Componenti;
 
 
