@@ -10,12 +10,16 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     BEGIN
         -- Link per la home
         IF p_idSessione != -1 THEN
-            v_idSessione := p_idSessione;
-            -- Recupero il nome dell'utente per il menu
-            SELECT username INTO v_username
-            FROM sessioni, credenziali
-            WHERE sessioni.idUtente = credenziali.idUtente
-            AND sessioni.idSessione = p_idSessione;
+            IF sessioneUtente.controllaSessione(p_idSessione) THEN
+                v_idSessione := p_idSessione;
+                -- Recupero il nome dell'utente per il menu
+                SELECT username INTO v_username
+                FROM sessioni, credenziali
+                WHERE sessioni.idUtente = credenziali.idUtente
+                AND sessioni.idSessione = p_idSessione;
+            ELSE
+                sessioneUtente.logout(p_idSessione);
+            END IF;
         ELSIF UPPER(OWA_UTIL.GET_CGI_ENV('PATH_INFO')) NOT LIKE '%HOME%' THEN
             --GEMINI, mi fido di te
             -- Se p_idSessione è invalido E non siamo già sulla home: REDIRECT

@@ -8,14 +8,14 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     );
     procedure chiudiPagina;
 
-    -- div speciali: lista, griglia
+    -- div speciali(id definiti): lista, griglia
     procedure apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiDiv;
 
     procedure paragrafo( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure h1( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
 
-    -- nome per chiamarlo in un form
+    -- nome utilee  per chiamarlo in un form
     procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
     PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT null);
