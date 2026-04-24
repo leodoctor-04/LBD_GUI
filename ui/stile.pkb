@@ -277,6 +277,24 @@ create or replace package body Stile as
         color: transparent;
         text-shadow: 0 0 0 #fff;
     }
+
+    /*messaggio post-form*/
+    #errore{
+        background-color: lightcoral;
+        border-radius: 1vw;
+        border: 0.25vw solid red;
+        padding: 1vw;
+        font-size: clamp(20px, 1.5vw, 2vw);
+        color:white;
+    }
+    #successo{
+        background-color: lightgreen;
+        border-radius: 1vw;
+        border: 0.25vw solid green;
+        padding: 1vw;
+        font-size: clamp(20px, 1.5vw, 2vw);
+        color:white;
+    }
     </style>
     ');
 

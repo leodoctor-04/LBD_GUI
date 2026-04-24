@@ -46,7 +46,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
                         <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
                         Componenti.MenuHamburger(p_idSessione);
                 --TITOLO
-                htp.p('<a href="'|| global.url || 'home?IdSessione=' || p_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+                htp.p('<a href="'|| global.url || 'home?p_idSessione=' || p_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
                     </div>');
                 --Utente
                 htp.p('<div style="display: flex; align-items: center; gap: 10px;">
@@ -72,7 +72,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiPagina IS BEGIN
         htp.print('
             <footer>
-            <a href="'|| global.url || 'home?IdSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+            <a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
             <p>&copy; ' || to_char(sysdate, 'YYYY') || ' FitZone. Tutti i diritti riservati</p>
             </footer>
         ');
