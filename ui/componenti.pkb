@@ -337,7 +337,6 @@ function toggleMenu() {
 
 end;
 
-
 procedure MenuButton (
     Testo       IN varchar2,
     Link        IN varchar2,

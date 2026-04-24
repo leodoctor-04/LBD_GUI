@@ -181,6 +181,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
                 ELSE
                     htp.prn( ' placeholder="' || placeholder || '"' );
                 END IF;
+            ELSIF tipo = 'date' THEN
+                    htp.prn( ' placeholder="dd-mm-yyyy"' );
             END IF;
             IF obbligatorio THEN
                 htp.prn( ' required' );
