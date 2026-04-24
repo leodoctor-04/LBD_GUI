@@ -172,7 +172,6 @@ create or replace PACKAGE BODY sessioneUtente AS
         end if;
     end login;
 
-
     procedure logout(p_idSessione IN SESSIONI.IdSessione%TYPE) AS
         v_aggiornata boolean := false;
     begin
@@ -180,11 +179,11 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_aggiornata) then
             --il logout ha successo
             --apex_util.redirect_url ( p_url => global.root || 'home' );
-            htp.print('<script>window.location.href="' || global.root || 'home";</script>');
+            htp.print('<script>window.location.href="' || global.url || 'home";</script>');
         else 
             --il logout non va a buon fine
             --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
-            htp.print('<script>window.location.href="' || global.root || 'home";</script>');
+            htp.print('<script>window.location.href="' || global.url || 'home";</script>');
         end if;
     end logout;
 

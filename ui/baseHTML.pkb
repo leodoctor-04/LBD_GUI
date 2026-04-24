@@ -16,6 +16,14 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
             FROM sessioni, credenziali
             WHERE sessioni.idUtente = credenziali.idUtente
             AND sessioni.idSessione = p_idSessione;
+        ELSIF UPPER(OWA_UTIL.GET_CGI_ENV('PATH_INFO')) NOT LIKE '%HOME%' THEN
+            --GEMINI, mi fido di te
+            -- Se p_idSessione è invalido E non siamo già sulla home: REDIRECT
+            -- Usiamo owa_util per un redirect lato server (più pulito)
+            -- Nota: owa_util.redirect_url deve essere chiamato PRIMA di htp.p
+            owa_util.redirect_url(global.root || 'home');
+            RETURN; -- Fondamentale per interrompere l'esecuzione
+            -- mi fido sia di uwu e di questo return
         END IF;
     
         htp.htmlOpen;

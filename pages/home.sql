@@ -19,7 +19,7 @@ BEGIN
   baseHTML.apriDiv;
     baseHTML.H1('I nostri corsi', 'margin-bottom:0px; text-align: center; color:white;' );
     baseHTML.apriDiv('lista' );
-      componenti.listaCorsi(5);
+      Corsi.VISUALIZZACORSI(5);
     baseHTML.chiudiDiv;
   baseHTML.chiudiDiv;
 

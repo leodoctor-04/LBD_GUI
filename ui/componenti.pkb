@@ -304,6 +304,7 @@ begin
     MenuButton('Crea Corso',          global.root || 'crea_corso',              p_idSessione);
     MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
     MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
+    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione );
 
     htp.print('</div>');
 
@@ -346,7 +347,7 @@ procedure MenuButton (
     v_link varchar2(4000);
 begin
     if p_idSessione is not null then
-        v_link := Link || '?IdSessione=' || p_idSessione;
+        v_link := Link || '?p_idSessione=' || p_idSessione;
     else
         v_link := Link;
     end if;
