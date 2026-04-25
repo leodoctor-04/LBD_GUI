@@ -158,11 +158,11 @@ create or replace PACKAGE BODY sessioneUtente AS
             if(v_sessioneDuplicata) then
                 --si dice che è stata chiusa la sessione precedente e mandiamo in homePage
                 --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?p_IdSessione=' || p_idSessione || '";</script>');
             else
                 --mandiamo direttamente in homePage
                 --apex_util.redirect_url ( p_url => global.root || 'home' );
-                htp.print('<script>window.location.href="' || global.root || 'home?IdSessione=' || p_idSessione || '";</script>');
+                htp.print('<script>window.location.href="' || global.root || 'home?p_IdSessione=' || p_idSessione || '";</script>');
             end if;
         else 
             p_idSessione := NULL;

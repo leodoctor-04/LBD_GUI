@@ -11,7 +11,7 @@ create or replace package body Stile as
         }
 
     h1{ font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px; }
-    p{ font-size: clamp(20px, 1.5vw, 2vw); }
+    p, a{ font-size: clamp(20px, 1.5vw, 2vw); }
 
     body{
         background: var(--colore-secondario);
@@ -90,7 +90,7 @@ create or replace package body Stile as
         align-items: center;
         border: 0.25vw solid var(--colore-primario);
     }
-    #lista p {
+    #lista p, #lista a {
         background-color: var(--colore-primario);
         width:95%;
         border-radius: 1vw;
@@ -280,11 +280,13 @@ create or replace package body Stile as
 
     /*messaggio post-form*/
     #errore{
+        display:flex;
+        justify-content: space-between
         background-color: lightcoral;
         border-radius: 1vw;
         border: 0.25vw solid red;
         padding: 1vw;
-        font-size: clamp(20px, 1.5vw, 2vw);
+        font-size: clamp(30px, 2.5vw, 3vw);
         color:white;
     }
     #successo{

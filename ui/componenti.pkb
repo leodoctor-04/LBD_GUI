@@ -298,6 +298,11 @@ begin
     htp.print('<h3>Menu</h3>');
 
     -- sidebar buttons
+    MenuButton('Home',         global.root || 'home',      p_idSessione);
+    --Leonardo Benedetti
+    MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
+    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
+
     MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
     MenuButton('Corsi',               global.root || 'pagina_corsi',            p_idSessione);
     MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
