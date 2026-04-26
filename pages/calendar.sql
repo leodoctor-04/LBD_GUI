@@ -25,17 +25,14 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     days panel := Panel(
         css_style =>    layout.HLIST || 
                         layout.add_size(height => '100%') ||
-                        'position:relative' 
+                        'position:relative'
 
     );
     add_button button := button(
         class => 'add_button',
         text => '+',
-        css_style => 
-                'position:sticky;'          ||
-                'z-index:111;'              ||
-                'bottom:0px;right:50px;'    ||
-                layout.add_size('100px','100px')
+        css_style => layout.add_size('100px','100px') || 'position:relative;top:-150;right:50'
+
 
     );
 
@@ -197,6 +194,7 @@ BEGIN
 
     lessons := lesson_toArray(nxt_monday,v_idUtente);
     basehtml.aggiungi_Stile('
+
         .controls_panel{
             margin: 0px;
             padding: 3px;
@@ -336,7 +334,20 @@ BEGIN
     '
     );
 
-    add_button.showhtml;
+
+    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+        currP := panel (
+            css_style => 
+                    'position:sticky;'               ||
+                    'z-index:111;'                   ||
+                    'bottom:0px;right:50px;'         ||
+                    layout.hlist(halign => aligment.page_end) ||
+                    layout.add_size(height=>'0px')
+        );
+        currP.add_element(add_button);
+        currP.showhtml;
+    end if;
+
     basehtml.chiudiPagina;
 end;
 /
