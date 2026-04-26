@@ -140,6 +140,7 @@ create or replace type body submit_butt is
         self.class := class;
         self.css_style := css_style;
         self.in_name := in_name;
+        return;
     end;
     OVERRIDING MEMBER PROCEDURE showhtml as
     begin
@@ -174,6 +175,7 @@ create or replace type body numberInput IS
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end; 
     overriding member procedure showhtml as
     begin
@@ -208,6 +210,7 @@ create or replace type body textInput IS
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end; 
     overriding member procedure showhtml as
     begin
@@ -242,6 +245,7 @@ create or replace type body passwordInput IS
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end; 
 
     overriding member procedure showhtml as
@@ -277,6 +281,7 @@ create or replace type body textAreaInput IS
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end; 
     overriding member procedure showhtml as
     begin
@@ -309,6 +314,7 @@ create or replace type body checkbox is
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end;
     overriding member procedure showhtml as
     begin
@@ -444,17 +450,19 @@ create or replace type body dateInput IS
         self.css_style := css_style;
         self.in_name := in_name;
         self.in_value := in_value;
+        return;
     end; 
     overriding member procedure showhtml as
     begin
         htp.print(
-            '<input '   || 
-            'id="'      || self.id                              || '" ' ||
-            'class="'   || self.class                           || '" ' ||
-            'style="'   || self.css_style                       || '" ' ||
-            'name="'    || self.in_name                         || '" ' ||
-            'value="'   || TO_CHAR(self.in_value,'dd-mm-yyyy')  || '" ' ||
-            'type="'    || 'date'                               || '" ' ||
+            '<input '           || 
+            'id="'              || self.id                              || '" ' ||
+            'class="'           || self.class                           || '" ' ||
+            'style="'           || self.css_style                       || '" ' ||
+            'name="'            || self.in_name                         || '" ' ||
+            'value="'           || TO_CHAR(self.in_value,'dd-mm-yyyy')  || '" ' ||
+            'type="'            || 'date'                               || '" ' ||
+            'placeholder ="'    || 'dd-mon-yyyy'                        || '" ' ||
             '>'
         );
     end; 

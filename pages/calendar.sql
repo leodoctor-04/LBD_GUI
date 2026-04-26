@@ -23,8 +23,23 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         css_style => layout.HLIST('10px',halign => aligment.page_center)
     );
     days panel := Panel(
-        css_style => layout.HLIST || 'height:100%;'
+        css_style =>    layout.HLIST || 
+                        layout.add_size(height => '100%') ||
+                        'position:relative' 
+
     );
+    add_button button := button(
+        class => 'add_button',
+        text => '+',
+        css_style => 
+                'position:sticky;'          ||
+                'z-index:111;'              ||
+                'bottom:0px;right:50px;'    ||
+                layout.add_size('100px','100px')
+
+    );
+
+
     currP panel;
     currLessClm panel;
     nxt_monday date;
@@ -138,16 +153,19 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         ---- act buttons
         act_buttons.add_element(
             button(
+                class => 'clearButton',
                 text => 'bt1'
             )
         );
         act_buttons.add_element(
             button(
+                class => 'clearButton',
                 text => 'bt2'
             )
         );
         act_buttons.add_element(
             button(
+                class => 'clearButton',
                 text => 'bt3'
             )
         );
@@ -186,20 +204,22 @@ BEGIN
             gap: 10px;
         }
 
-        .controls_panel button{
+        .add_button{
+            background:black;
+            border-radius:50%;
+            color:white;
+        }
+
+        .clearButton{
             background: none;
             border: none;
             color: grey;
         }
 
-        .controls_panel button:active{
+        .clearButton:active{
             color: black;
         }
 
-        .controls_panel button{
-            background: none;
-            border: none;
-        }
 
         .day_label{
             background-color: antiquewhite;
@@ -240,14 +260,15 @@ BEGIN
             box-shadow: 1px 1px grey;
             padding: 0px 5px;
         }
-
     ');
 
     -- ui
     basehtml.apriPagina( titolo => 'calendario');
 
+    --toolPn.add_element(add_button);
     toolPn.add_element(
         button(
+            class => 'clearButton',
             text => '<i class="material-icons">arrow_back_ios</i>',
             onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy') || ''''
     ));
@@ -258,6 +279,7 @@ BEGIN
         
     toolPn.add_element(
         button(
+            class => 'clearButton',
             text => '<i class="material-icons">arrow_forward_ios</i>',
             onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy') || ''''
     ));
@@ -314,6 +336,7 @@ BEGIN
     '
     );
 
+    add_button.showhtml;
     basehtml.chiudiPagina;
 end;
 /
