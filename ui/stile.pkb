@@ -281,7 +281,7 @@ create or replace package body Stile as
     /*messaggio post-form*/
     #errore{
         display:flex;
-        justify-content: space-between
+        justify-content: space-between;
         background-color: lightcoral;
         border-radius: 1vw;
         border: 0.25vw solid red;

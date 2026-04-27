@@ -8,6 +8,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     ) IS
         v_username VARCHAR2(100);
     BEGIN
+        v_idSessione := p_idSessione;
         -- Link per la home
         IF p_idSessione != -1 THEN
             IF sessioneUtente.controllaSessione(p_idSessione) THEN
