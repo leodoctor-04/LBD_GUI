@@ -459,9 +459,6 @@ BEGIN
                 }
             }
         }
-        function openPopup(parent,idx){
-            parent.children[idx].showModal();
-        }
 
         courseSelect.addEventListener("change", () => {
             var index = courseSelect.selectedIndex;
@@ -469,12 +466,6 @@ BEGIN
         })
 
         update_roomSelect(courseSelect.selectedIndex);
-
-        var ls = document.getElementsByClassName("lesson");
-
-        for(l of ls){
-            l.onclick = function(event){ openPopup(event.target,2)};
-        }
     '
     );
 
