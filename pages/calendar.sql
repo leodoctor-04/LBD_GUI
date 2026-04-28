@@ -1,10 +1,11 @@
-create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null )AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null)AS
     -- constants
     dayRange constant number := 7;
 
     -- types
     type dname_array is varray(dayRange) of varchar(10);
     type lesson is record(
+        id_lesson number,
         course_title varchar(100), -- mettere type of
         instructor_name varchar(100),
         instructor_surname varchar(100),
@@ -23,21 +24,35 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         css_style => layout.HLIST('10px',halign => aligment.page_center)
     );
     days panel := Panel(
-        css_style => layout.HLIST || 'height:100%;'
+        css_style =>    layout.HLIST || 
+                        layout.add_size(height => '100%') ||
+                        'position:relative'
     );
+    add_button button := button(
+        class => 'add_button',
+        text => '+',
+        css_style => layout.add_size('100px','100px') || 'position:relative;top:-150;right:50',
+        onclick => 'openPopup(this.parentElement,1)'
+    );
+
     currP panel;
     currLessClm panel;
     nxt_monday date;
     lessons dayXlessons;
     v_idUtente number;
 
-    -- functions & procedures 
+-----------------------------------------------------------------------------------------
+-- functions & procedures 
+-----------------------------------------------------------------------------------------
+
+    -- give the lesson in the week where exist p_startDate.
     function lesson_toArray(p_startDate date, p_idUtente number)return dayXlessons is
         monday date;
         d number; 
         res dayXlessons := dayXlessons(); 
     begin
 
+        monday := NEXT_DAY(p_startDate-7, 'MONDAY');
         --generate tables
         for i in 1 .. dayRange loop
             res.extend;
@@ -46,24 +61,27 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 
         --add lesson to the table
         for c_row in (
-            SELECT corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
+            SELECT lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
             FROM lezione,corso,utente
             WHERE 
                 --join
                 lezione.idCorso = corso.idCorso and
                 corso.idistruttore =  utente.idutente and
                 -- data check
-                lezione.datainizio between p_startDate and p_startDate+7 
-                -- subscription check
-
+                lezione.datainizio between monday and (monday + 7)
+                /* and (giusta??)
+                -- ck subscr.
+                corso.idCorso in (
+                    SELECT idcorso
+                    from ISCRIZIONE_CORSO
+                    where idutente = p_idUtente
+                )*/
             ORDER BY lezione.datainizio,lezione.datafine
-            )
-        loop
-            monday := NEXT_DAY(c_row.datainizio-7, 'MONDAY');
+        ) loop
             d := (c_row.datainizio - monday ) + 1;
-            dbms_output.put_line(d);
             res(d).extend;
             res(d)(res(d).count) := lesson(
+                id_lesson  => c_row.idLezione,
                 course_title  => c_row.titolo,
                 instructor_name  => c_row.nome,
                 instructor_surname => c_row.cognome,
@@ -100,7 +118,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         act_buttons panel := panel(
             css_style => layout.hlist(gap=>'10px',halign => aligment.space_around) 
         );
-    begin
+    BEGIN 
         main_p.add_element(
             label(text=> l.course_title)
         );
@@ -138,16 +156,20 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         ---- act buttons
         act_buttons.add_element(
             button(
-                text => 'bt1'
+                class => 'clearButton',
+                text => '<i class="material-icons">check</i>',
+                onclick => 'location = ...... ' 
             )
         );
         act_buttons.add_element(
             button(
+                class => 'clearButton',
                 text => 'bt2'
             )
         );
         act_buttons.add_element(
             button(
+                class => 'clearButton',
                 text => 'bt3'
             )
         );
@@ -158,7 +180,110 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         main_p.add_element(info_popup);
 
         return main_p;
+    END;
+
+    function insertLesson_popup(id_inst number) return popup is
+        res popup := popup();
+        f input_form := input_form( 
+            submit_action => '',
+            css_style => 
+                layout.vlist                                            || 
+                layout.add_minSize(height => '60px', width => '15vh')   || 
+                layout.add_internal_spacing('10px')
+        );
+        input_ct panel; 
+        inopt option_menu;
+        roomSelectP panel;
+    begin
+        -- data
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'data'));
+        input_ct.add_element(
+            dateInput(
+                in_name  => 'newL_date',
+                in_value => '' 
+        ));
+        f.add_element(input_ct);
+
+        -- ora inizio
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'inizio'));
+        input_ct.add_element(
+            timeInput(
+                in_name  => 'newL_start',
+                in_value => ora(00,00)
+        ));
+        f.add_element(input_ct);
+
+        -- ora fine
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'fine'));
+        input_ct.add_element(
+            timeInput(
+                in_name  => 'newL_end',
+                in_value => ora(00,11)
+        ));
+        f.add_element(input_ct);
+
+        -- corso
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'corso'));
+        ---- querycss_style
+        inopt := option_menu(
+            id => 'courseSelect'
+        );
+        for c in (
+            SELECT titolo,idcorso
+            from corso
+            where corso.idistruttore = id_inst
+        ) loop
+            inopt.add_option(opt => c.titolo, val => c.idCorso);
+        end loop;
+        input_ct.add_element(inopt);
+
+        f.add_element(input_ct);
+
+        -- sala
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'sala'));
+        ----- query
+        roomSelectP := panel(
+            id => 'roomSelect_div',
+            css_style => layout.hlist
+        );
+        for c in (
+            SELECT idcorso,maxPartecipanti
+            from corso
+            where corso.idistruttore = id_inst
+        ) loop
+            -- 1 opt per corso
+            inopt := option_menu();
+            for s in (
+                select idSala
+                from sala_corsi
+                where capienzaMassima > c.maxPartecipanti
+            ) loop
+                inopt.add_option(s.idSala);
+            end loop;
+
+            roomSelectP.add_element(inopt);
+        end loop;
+        input_ct.add_element(roomSelectP);
+
+        f.add_element(input_ct);
+        -- submit + final add
+        f.add_element(
+            submit_butt(
+                in_name => 'create'
+        ));
+        res.add_element(f);
+
+        return res;
     end;
+
+----------------------------------------------------------------------------------------------
+--CODE
+----------------------------------------------------------------------------------------------
 
 BEGIN
     if(p_idSessione is null) then
@@ -179,6 +304,7 @@ BEGIN
 
     lessons := lesson_toArray(nxt_monday,v_idUtente);
     basehtml.aggiungi_Stile('
+
         .controls_panel{
             margin: 0px;
             padding: 3px;
@@ -186,20 +312,22 @@ BEGIN
             gap: 10px;
         }
 
-        .controls_panel button{
+        .add_button{
+            background:black;
+            border-radius:50%;
+            color:white;
+        }
+
+        .clearButton{
             background: none;
             border: none;
             color: grey;
         }
 
-        .controls_panel button:active{
+        .clearButton:active{
             color: black;
         }
 
-        .controls_panel button{
-            background: none;
-            border: none;
-        }
 
         .day_label{
             background-color: antiquewhite;
@@ -240,14 +368,15 @@ BEGIN
             box-shadow: 1px 1px grey;
             padding: 0px 5px;
         }
-
     ');
 
     -- ui
     basehtml.apriPagina( titolo => 'calendario');
 
+    --toolPn.add_element(add_button);
     toolPn.add_element(
         button(
+            class => 'clearButton',
             text => '<i class="material-icons">arrow_back_ios</i>',
             onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy') || ''''
     ));
@@ -258,6 +387,7 @@ BEGIN
         
     toolPn.add_element(
         button(
+            class => 'clearButton',
             text => '<i class="material-icons">arrow_forward_ios</i>',
             onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy') || ''''
     ));
@@ -297,19 +427,58 @@ BEGIN
     end loop;
     days.showhtml;
 
-
+    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+        currP := panel (
+            css_style => 
+                    'position:sticky;'               ||
+                    'z-index:111;'                   ||
+                    'bottom:0px;right:50px;'         ||
+                    layout.hlist(halign => aligment.page_end) ||
+                    layout.add_size(height=>'0px')
+        );
+        currP.add_element(add_button);
+        currP.add_element(insertLesson_popup(12));
+        currP.showhtml;
+    end if;
 
     -- script to open the popup on onclick of items with the class lesson
     baseHtml.aggiungi_script(script =>
     '
-        function openPopup(parent){
-            parent.children[2].showModal();
+        var courseSelect    = document.getElementById("courseSelect");
+        var roomSelects_div = document.getElementById("roomSelect_div");
+
+        function update_roomSelect(index) {
+            for(idx in roomSelects_div.children){
+                if(index == idx){
+                    roomSelects_div.children[idx].name = "newL_room"
+                    roomSelects_div.children[idx].style.display = "block"
+                }
+                else{ 
+                    roomSelects_div.children[idx].name = ""
+                    roomSelects_div.children[idx].style.display = "none"
+                }
+            }
+        }
+
+        courseSelect.addEventListener("change", () => {
+            var index = courseSelect.selectedIndex;
+            update_roomSelect(index);
+        })
+
+        update_roomSelect(courseSelect.selectedIndex);
+    '
+    );
+
+    baseHtml.aggiungi_script(script =>
+    '
+        function openPopup(parent,idx){
+            parent.children[idx].showModal();
         }
 
         var ls = document.getElementsByClassName("lesson");
 
         for(l of ls){
-            l.onclick = function(event){ openPopup(event.target)};
+            l.onclick = function(event){ openPopup(event.target,2)};
         }
     '
     );
