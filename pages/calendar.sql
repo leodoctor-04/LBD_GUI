@@ -1,4 +1,4 @@
-create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null )AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null)AS
     -- constants
     dayRange constant number := 7;
 
@@ -27,7 +27,6 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         css_style =>    layout.HLIST || 
                         layout.add_size(height => '100%') ||
                         'position:relative'
-
     );
     add_button button := button(
         class => 'add_button',
@@ -189,11 +188,12 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             submit_action => '',
             css_style => 
                 layout.vlist                                            || 
-                layout.add_minSize(height => '60px', width => '60px')   || 
+                layout.add_minSize(height => '60px', width => '15vh')   || 
                 layout.add_internal_spacing('10px')
         );
         input_ct panel; 
         inopt option_menu;
+        roomSelectP panel;
     begin
         -- data
         input_ct := panel(css_style => layout.hlist);
@@ -229,7 +229,9 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct := panel(css_style => layout.hlist);
         input_ct.add_element(label(text => 'corso'));
         ---- querycss_style
-        inopt := option_menu();
+        inopt := option_menu(
+            id => 'courseSelect'
+        );
         for c in (
             SELECT titolo,idcorso
             from corso
@@ -245,6 +247,10 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct := panel(css_style => layout.hlist);
         input_ct.add_element(label(text => 'sala'));
         ----- query
+        roomSelectP := panel(
+            id => 'roomSelect_div',
+            css_style => layout.hlist
+        );
         for c in (
             SELECT idcorso,maxPartecipanti
             from corso
@@ -259,8 +265,10 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             ) loop
                 inopt.add_option(s.idSala);
             end loop;
-            input_ct.add_element(inopt);
+
+            roomSelectP.add_element(inopt);
         end loop;
+        input_ct.add_element(roomSelectP);
 
         f.add_element(input_ct);
         -- submit + final add
@@ -419,25 +427,7 @@ BEGIN
     end loop;
     days.showhtml;
 
-
-
-    -- script to open the popup on onclick of items with the class lesson
-    baseHtml.aggiungi_script(script =>
-    '
-        function openPopup(parent,idx){
-            parent.children[idx].showModal();
-        }
-
-        var ls = document.getElementsByClassName("lesson");
-
-        for(l of ls){
-            l.onclick = function(event){ openPopup(event.target,2)};
-        }
-    '
-    );
-
-
-    --if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
         currP := panel (
             css_style => 
                     'position:sticky;'               ||
@@ -449,7 +439,44 @@ BEGIN
         currP.add_element(add_button);
         currP.add_element(insertLesson_popup(12));
         currP.showhtml;
-    --end if;
+    end if;
+
+    -- script to open the popup on onclick of items with the class lesson
+    baseHtml.aggiungi_script(script =>
+    '
+        var courseSelect    = document.getElementById("courseSelect");
+        var roomSelects_div = document.getElementById("roomSelect_div");
+
+        function update_roomSelect(index) {
+            for(idx in roomSelects_div.children){
+                if(index == idx){
+                    roomSelects_div.children[idx].name = "newL_room"
+                    roomSelects_div.children[idx].style.display = "block"
+                }
+                else{ 
+                    roomSelects_div.children[idx].name = ""
+                    roomSelects_div.children[idx].style.display = "none"
+                }
+            }
+        }
+        function openPopup(parent,idx){
+            parent.children[idx].showModal();
+        }
+
+        courseSelect.addEventListener("change", () => {
+            var index = courseSelect.selectedIndex;
+            update_roomSelect(index);
+        })
+
+        update_roomSelect(courseSelect.selectedIndex);
+
+        var ls = document.getElementsByClassName("lesson");
+
+        for(l of ls){
+            l.onclick = function(event){ openPopup(event.target,2)};
+        }
+    '
+    );
 
     basehtml.chiudiPagina;
 end;
