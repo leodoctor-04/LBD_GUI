@@ -477,6 +477,7 @@ BEGIN
         }
     '
     );
+
     baseHtml.aggiungi_script(script =>
     '
         function openPopup(parent,idx){
