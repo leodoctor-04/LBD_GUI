@@ -1,4 +1,4 @@
-create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null)AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null, p_msg in varchar DEFAULT null)AS
     -- constants
     dayRange constant number := 7;
 
@@ -182,10 +182,10 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         return main_p;
     END;
 
-    function insertLesson_popup(id_inst number) return popup is
+    function insertLesson_popup(id_inst number, id_ses number, cDate date) return popup is
         res popup := popup();
         f input_form := input_form( 
-            submit_action => '',
+            submit_action => global.root || 'add_lesson',
             css_style => 
                 layout.vlist                                            || 
                 layout.add_minSize(height => '60px', width => '15vh')   || 
@@ -195,12 +195,26 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         inopt option_menu;
         roomSelectP panel;
     begin
+        -- hidden data for the riderect
+        f.add_element(
+            hiddenInput(
+                in_name => 'p_idSessione',
+                in_value => '' || id_ses
+            )
+        );
+        f.add_element(
+            hiddenInput(
+                in_name => 'p_cdata',
+                in_value => to_char(cdate,'dd-mon-yy') 
+            )
+        );
+
         -- data
         input_ct := panel(css_style => layout.hlist);
         input_ct.add_element(label(text => 'data'));
         input_ct.add_element(
             dateInput(
-                in_name  => 'newL_date',
+                in_name  => 'p_data',
                 in_value => '' 
         ));
         f.add_element(input_ct);
@@ -210,7 +224,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct.add_element(label(text => 'inizio'));
         input_ct.add_element(
             timeInput(
-                in_name  => 'newL_start',
+                in_name  => 'p_inizio',
                 in_value => ora(00,00)
         ));
         f.add_element(input_ct);
@@ -220,7 +234,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct.add_element(label(text => 'fine'));
         input_ct.add_element(
             timeInput(
-                in_name  => 'newL_end',
+                in_name  => 'p_fine',
                 in_value => ora(00,11)
         ));
         f.add_element(input_ct);
@@ -228,9 +242,11 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         -- corso
         input_ct := panel(css_style => layout.hlist);
         input_ct.add_element(label(text => 'corso'));
-        ---- querycss_style
+
+        ---- query
         inopt := option_menu(
-            id => 'courseSelect'
+            id => 'courseSelect',
+            in_name => 'p_idcorso'
         );
         for c in (
             SELECT titolo,idcorso
@@ -246,6 +262,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         -- sala
         input_ct := panel(css_style => layout.hlist);
         input_ct.add_element(label(text => 'sala'));
+
         ----- query
         roomSelectP := panel(
             id => 'roomSelect_div',
@@ -371,7 +388,7 @@ BEGIN
     ');
 
     -- ui
-    basehtml.apriPagina( titolo => 'calendario');
+    basehtml.apriPagina( titolo => 'calendario', p_idsessione =>p_idSessione);
 
     --toolPn.add_element(add_button);
     toolPn.add_element(
@@ -437,7 +454,7 @@ BEGIN
                     layout.add_size(height=>'0px')
         );
         currP.add_element(add_button);
-        currP.add_element(insertLesson_popup(12));
+        currP.add_element(insertLesson_popup(v_idUtente,p_idsessione,nxt_monday));
         currP.showhtml;
     end if;
 
@@ -450,7 +467,7 @@ BEGIN
         function update_roomSelect(index) {
             for(idx in roomSelects_div.children){
                 if(index == idx){
-                    roomSelects_div.children[idx].name = "newL_room"
+                    roomSelects_div.children[idx].name = "p_idsala"
                     roomSelects_div.children[idx].style.display = "block"
                 }
                 else{ 

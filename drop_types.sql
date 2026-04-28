@@ -11,6 +11,7 @@ drop type panel         FORCE;
 drop type ui_container  FORCE;
 
 -- inputs
+drop type hiddenInput   FORCE;
 drop type timeInput     FORCE;
 drop type dateInput     FORCE;
 drop type checkbox      FORCE;

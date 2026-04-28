@@ -331,3 +331,38 @@ create or replace type body timeInput IS
     end; 
 end;
 /
+
+create or replace type hiddenInput under f_input(
+    in_value varchar(200),
+
+    constructor function hiddenInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result,
+    overriding member procedure showhtml 
+);
+/
+
+create or replace type body hiddenInput IS
+    constructor function hiddenInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value varchar) return self as result as
+    begin
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.in_name := in_name;
+        self.in_value := in_value;
+        return;
+    end; 
+    overriding member procedure showhtml as
+    begin
+        htp.print(
+            '<input '   || 
+            'id="'      || self.id          || '" ' ||
+            'class="'   || self.class       || '" ' ||
+            'style="'   || self.css_style   || '" ' ||
+            'name="'    || self.in_name     || '" ' ||
+            'value="'   || self.in_value    || '" ' ||
+            'type="'    || 'hidden'         || '" ' ||
+            '>'
+        );
+    end; 
+end;
+/
