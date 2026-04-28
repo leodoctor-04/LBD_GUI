@@ -1,21 +1,34 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
+    -- v_idSessione NUMBER := -1; variabile globale pertenerela sessione
+
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     ) IS
-        v_homeLink VARCHAR2(4000);
         v_username VARCHAR2(100);
     BEGIN
+        v_idSessione := p_idSessione;
         -- Link per la home
         IF p_idSessione != -1 THEN
-            v_homeLink := global.root || 'home?IdSessione=' || p_idSessione;
-
-            -- Recupero il nome dell'utente per il menu
-            SELECT username INTO v_username
-            FROM sessioni, credenziali
-            WHERE sessioni.idUtente = credenziali.idUtente
-            AND sessioni.idSessione = p_idSessione;
+            IF sessioneUtente.controllaSessione(p_idSessione) THEN
+                v_idSessione := p_idSessione;
+                -- Recupero il nome dell'utente per il menu
+                SELECT username INTO v_username
+                FROM sessioni, credenziali
+                WHERE sessioni.idUtente = credenziali.idUtente
+                AND sessioni.idSessione = p_idSessione;
+            ELSE
+                sessioneUtente.logout(p_idSessione);
+            END IF;
+        ELSIF UPPER(OWA_UTIL.GET_CGI_ENV('PATH_INFO')) NOT LIKE '%HOME%' THEN
+            --GEMINI, mi fido di te
+            -- Se p_idSessione è invalido E non siamo già sulla home: REDIRECT
+            -- Usiamo owa_util per un redirect lato server (più pulito)
+            -- Nota: owa_util.redirect_url deve essere chiamato PRIMA di htp.p
+            owa_util.redirect_url(global.root || 'home');
+            RETURN; -- Fondamentale per interrompere l'esecuzione
+            -- mi fido sia di uwu e di questo return
         END IF;
     
         htp.htmlOpen;
@@ -28,17 +41,16 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.bodyOpen;
             htp.print('<header>');
     
-            IF p_idSessione != -1 THEN
+            IF p_idSessione > 0 THEN
                 -- MENU HAMBURGER
                 htp.p('<div style="display: flex; align-items: center; gap: 20px;">
                         <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
                         Componenti.MenuHamburger(p_idSessione);
-                        --TITOLO    
-                htp.p('<h1 style="cursor:pointer;" onclick="window.location.href=''' || v_homeLink || ''';">'
-                            || titolo || '</h1>
-                    </div>'
-                    || --Utente
-                    '<div style="display: flex; align-items: center; gap: 10px;">
+                --TITOLO
+                htp.p('<a href="'|| global.url || 'home?p_idSessione=' || p_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+                    </div>');
+                --Utente
+                htp.p('<div style="display: flex; align-items: center; gap: 10px;">
                         <p>' || INITCAP(v_username) || '</p>
                         <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
                     </div>');
@@ -61,7 +73,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiPagina IS BEGIN
         htp.print('
             <footer>
-            <h1>FitZone</h1>
+            <a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
             <p>&copy; ' || to_char(sysdate, 'YYYY') || ' FitZone. Tutti i diritti riservati</p>
             </footer>
         ');
@@ -122,8 +134,11 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.p('</select>');
         htp.p('</div>');
     END chiudiMenuTendina;
-    PROCEDURE tendinaOption(opzione IN VARCHAR2) IS BEGIN
-        htp.p('<option value="' || opzione || '">' || opzione || '</option>');
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT NULL) IS BEGIN
+        IF valore IS NOT NULL THEN
+            htp.p('<option value="' || valore || '">' || opzione || '</option>');
+        ELSE htp.p('<option value="' || opzione || '">' || opzione || '</option>');
+        END IF;
     END tendinaOption;
 
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
@@ -179,6 +194,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
                 ELSE
                     htp.prn( ' placeholder="' || placeholder || '"' );
                 END IF;
+            ELSIF tipo = 'date' THEN
+                    htp.prn( ' placeholder="dd-mm-yyyy"' );
             END IF;
             IF obbligatorio THEN
                 htp.prn( ' required' );
@@ -240,4 +257,23 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiCella IS BEGIN
         htp.p('</td>');
     END chiudiCella;
+
+    PROCEDURE aggiungi_Stile(stile varchar) is
+    begin
+        htp.p(
+            utl_lms.format_message( '<style>%s</style>',stile)
+        );
+    end;
+
+    PROCEDURE aggiungi_script(script varchar) is
+    begin
+        htp.p(
+            utl_lms.format_message( '<script>%s</script>',script)
+        );
+    end;
+
+    procedure redirect(url varchar) IS
+    begin
+        htp.print('<script>window.location.href="' || url || '";</script>');
+    end;
 END baseHTML;

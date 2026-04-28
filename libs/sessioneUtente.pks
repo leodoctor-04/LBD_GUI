@@ -10,4 +10,12 @@ procedure logout(p_idSessione IN SESSIONI.IdSessione%TYPE);
 
 function controllaSessione(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean;
 
+function controllaAmministrativo(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean;
+
+function controllaAtleta(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean;
+
+function controllaIstruttore(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean;
+
+function controllaPersonalTrainer(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean;
+
 END sessioneUtente;

@@ -1,12 +1,14 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
 
+    v_idSessione NUMBER := -1;
+
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
     );
     procedure chiudiPagina;
 
-    -- div speciali: lista, griglia
+    -- div speciali(id definiti): lista, griglia
     procedure apriDiv( id IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiDiv;
 
@@ -16,7 +18,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     -- nome per chiamarlo in un form
     procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
-    procedure tendinaOption( opzione IN VARCHAR2 );
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT null);
 
     -- per i form onclick vuoto e diventa di tipo submit da mettere nel modulo
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL );
@@ -48,6 +50,8 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     -- per inserire altre procedure in una cella
     PROCEDURE apriCella;
     PROCEDURE chiudiCella;
-
+    procedure aggiungi_stile(stile varchar);
+    procedure aggiungi_script(script varchar);
+    procedure redirect(url varchar);
 
 end baseHTML;
