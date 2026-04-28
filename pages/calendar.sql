@@ -5,6 +5,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     -- types
     type dname_array is varray(dayRange) of varchar(10);
     type lesson is record(
+        id_lesson number,
         course_title varchar(100), -- mettere type of
         instructor_name varchar(100),
         instructor_surname varchar(100),
@@ -31,11 +32,9 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     add_button button := button(
         class => 'add_button',
         text => '+',
-        css_style => layout.add_size('100px','100px') || 'position:relative;top:-150;right:50'
-
-
+        css_style => layout.add_size('100px','100px') || 'position:relative;top:-150;right:50',
+        onclick => 'openPopup(this.parentElement,1)'
     );
-
 
     currP panel;
     currLessClm panel;
@@ -43,13 +42,18 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     lessons dayXlessons;
     v_idUtente number;
 
-    -- functions & procedures 
+-----------------------------------------------------------------------------------------
+-- functions & procedures 
+-----------------------------------------------------------------------------------------
+
+    -- give the lesson in the week where exist p_startDate.
     function lesson_toArray(p_startDate date, p_idUtente number)return dayXlessons is
         monday date;
         d number; 
         res dayXlessons := dayXlessons(); 
     begin
 
+        monday := NEXT_DAY(p_startDate-7, 'MONDAY');
         --generate tables
         for i in 1 .. dayRange loop
             res.extend;
@@ -58,24 +62,27 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 
         --add lesson to the table
         for c_row in (
-            SELECT corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
+            SELECT lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
             FROM lezione,corso,utente
             WHERE 
                 --join
                 lezione.idCorso = corso.idCorso and
                 corso.idistruttore =  utente.idutente and
                 -- data check
-                lezione.datainizio between p_startDate and p_startDate+7 
-                -- subscription check
-
+                lezione.datainizio between monday and (monday + 7)
+                /* and (giusta??)
+                -- ck subscr.
+                corso.idCorso in (
+                    SELECT idcorso
+                    from ISCRIZIONE_CORSO
+                    where idutente = p_idUtente
+                )*/
             ORDER BY lezione.datainizio,lezione.datafine
-            )
-        loop
-            monday := NEXT_DAY(c_row.datainizio-7, 'MONDAY');
+        ) loop
             d := (c_row.datainizio - monday ) + 1;
-            dbms_output.put_line(d);
             res(d).extend;
             res(d)(res(d).count) := lesson(
+                id_lesson  => c_row.idLezione,
                 course_title  => c_row.titolo,
                 instructor_name  => c_row.nome,
                 instructor_surname => c_row.cognome,
@@ -112,7 +119,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         act_buttons panel := panel(
             css_style => layout.hlist(gap=>'10px',halign => aligment.space_around) 
         );
-    begin
+    BEGIN 
         main_p.add_element(
             label(text=> l.course_title)
         );
@@ -151,7 +158,8 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         act_buttons.add_element(
             button(
                 class => 'clearButton',
-                text => 'bt1'
+                text => '<i class="material-icons">check</i>',
+                onclick => 'location = ...... ' 
             )
         );
         act_buttons.add_element(
@@ -173,7 +181,101 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         main_p.add_element(info_popup);
 
         return main_p;
+    END;
+
+    function insertLesson_popup(id_inst number) return popup is
+        res popup := popup();
+        f input_form := input_form( 
+            submit_action => '',
+            css_style => 
+                layout.vlist                                            || 
+                layout.add_minSize(height => '60px', width => '60px')   || 
+                layout.add_internal_spacing('10px')
+        );
+        input_ct panel; 
+        inopt option_menu;
+    begin
+        -- data
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'data'));
+        input_ct.add_element(
+            dateInput(
+                in_name  => 'newL_date',
+                in_value => '' 
+        ));
+        f.add_element(input_ct);
+
+        -- ora inizio
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'inizio'));
+        input_ct.add_element(
+            timeInput(
+                in_name  => 'newL_start',
+                in_value => ora(00,00)
+        ));
+        f.add_element(input_ct);
+
+        -- ora fine
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'fine'));
+        input_ct.add_element(
+            timeInput(
+                in_name  => 'newL_end',
+                in_value => ora(00,11)
+        ));
+        f.add_element(input_ct);
+
+        -- corso
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'corso'));
+        ---- querycss_style
+        inopt := option_menu();
+        for c in (
+            SELECT titolo,idcorso
+            from corso
+            where corso.idistruttore = id_inst
+        ) loop
+            inopt.add_option(opt => c.titolo, val => c.idCorso);
+        end loop;
+        input_ct.add_element(inopt);
+
+        f.add_element(input_ct);
+
+        -- sala
+        input_ct := panel(css_style => layout.hlist);
+        input_ct.add_element(label(text => 'sala'));
+        ----- query
+        for c in (
+            SELECT idcorso,maxPartecipanti
+            from corso
+            where corso.idistruttore = id_inst
+        ) loop
+            -- 1 opt per corso
+            inopt := option_menu();
+            for s in (
+                select idSala
+                from sala_corsi
+                where capienzaMassima > c.maxPartecipanti
+            ) loop
+                inopt.add_option(s.idSala);
+            end loop;
+            input_ct.add_element(inopt);
+        end loop;
+
+        f.add_element(input_ct);
+        -- submit + final add
+        f.add_element(
+            submit_butt(
+                in_name => 'create'
+        ));
+        res.add_element(f);
+
+        return res;
     end;
+
+----------------------------------------------------------------------------------------------
+--CODE
+----------------------------------------------------------------------------------------------
 
 BEGIN
     if(p_idSessione is null) then
@@ -322,20 +424,20 @@ BEGIN
     -- script to open the popup on onclick of items with the class lesson
     baseHtml.aggiungi_script(script =>
     '
-        function openPopup(parent){
-            parent.children[2].showModal();
+        function openPopup(parent,idx){
+            parent.children[idx].showModal();
         }
 
         var ls = document.getElementsByClassName("lesson");
 
         for(l of ls){
-            l.onclick = function(event){ openPopup(event.target)};
+            l.onclick = function(event){ openPopup(event.target,2)};
         }
     '
     );
 
 
-    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+    --if(sessioneUtente.controllaIstruttore(p_idSessione)) then
         currP := panel (
             css_style => 
                     'position:sticky;'               ||
@@ -345,8 +447,9 @@ BEGIN
                     layout.add_size(height=>'0px')
         );
         currP.add_element(add_button);
+        currP.add_element(insertLesson_popup(12));
         currP.showhtml;
-    end if;
+    --end if;
 
     basehtml.chiudiPagina;
 end;

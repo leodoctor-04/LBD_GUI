@@ -1,5 +1,5 @@
 -- utils
-create or replace type option_list is table of varchar(100);
+create or replace type ora is varray(2) of number;
 /
 
 -- ui types
@@ -25,102 +25,6 @@ create or replace TYPE BODY f_input IS
 
     OVERRIDING MEMBER PROCEDURE showhtml as
     BEGIN
-        return;
-    END;
-END;
-/
-
-create or replace type option_menu under f_input(
-    options option_list,
-
-    CONSTRUCTOR FUNCTION option_menu(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT,
-
-    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt varchar),
-    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number),
-    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu),
-
-    MEMBER FUNCTION  search_option(opt varchar) return number,
-    MEMBER FUNCTION  count_options return number,
-    OVERRIDING MEMBER PROCEDURE showhtml 
-);
-/
-
-create or replace TYPE BODY option_menu is
-    CONSTRUCTOR FUNCTION option_menu(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar default '') RETURN SELF AS RESULT as
-    begin
-        self.mem_id := SYS_GUID();
-        self.id := id;
-        self.class := class;
-        self.css_style := css_style;
-        self.in_name := in_name;
-        self.options := option_list();
-        return;
-    end;
-
-    MEMBER PROCEDURE add_option(SELF IN OUT option_menu, opt VARCHAR) as
-    BEGIN
-        self.options.extend();
-        self.options(self.options.count) := opt;
-        return;
-    end;
-
-    MEMBER PROCEDURE delete_option(SELF IN OUT option_menu, idx number) as
-    begin
-        -- ** ad essere un gentleman in caso che idx>count dovrebbe lanciare un errore **
-        -- *** oss: se esistessero i generics questa operazione potrebbe essere generalizata
-        
-        -- ** if idx = count allora basta un trim **
-
-        self.options.delete(idx);
-
-        -- shift a sx
-        for i in idx .. self.options.count loop
-            self.options(i) := self.options(i+1);
-        end loop;
-
-        -- remove void space
-        self.options.trim(1);
-    end;
-
-    MEMBER FUNCTION search_option(opt varchar) return number as
-    begin
-        for i in 1 .. self.options.count loop
-            if self.options(i) = opt then
-                return i;
-            end if;
-        end loop;
-
-        return -1;
-    end;
-
-    MEMBER PROCEDURE clear_options(SELF IN OUT option_menu) as
-    begin
-        self.options.delete;
-        return;
-    end;
-
-    MEMBER FUNCTION count_options return number as
-    begin
-        return self.options.count;
-    end;
-
-
-    OVERRIDING MEMBER PROCEDURE showhtml as
-    BEGIN
-        htp.print(
-            '<select '  || 
-            'id="'      || self.id          || '" ' ||
-            'class="'   || self.class       || '" ' ||
-            'style="'   || self.css_style   || '" ' ||
-            'name="'    || self.in_name     || '">'
-        );
-
-        for i in 1 .. self.options.count loop
-            htp.print( '<option value=' || self.options(i) || '>' || self.options(i) ||'</option>' );
-        end loop;
-
-        htp.print('</select>');
-
         return;
     END;
 END;
@@ -341,98 +245,6 @@ create or replace type body checkbox is
 end;
 /
 
-
--- nota: prima o poi mettere anche la possibilita di specificare checked
-create or replace type radioOptionsInput under f_input(
-    options option_list,
-
-    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT,
-
-    MEMBER PROCEDURE add_option(SELF IN OUT radioOptionsInput, opt varchar),
-    MEMBER PROCEDURE delete_option(SELF IN OUT radioOptionsInput, idx number),
-    MEMBER PROCEDURE clear_options(SELF IN OUT radioOptionsInput),
-
-    MEMBER FUNCTION  search_option(opt varchar) return number,
-    MEMBER FUNCTION  count_options return number,
-    OVERRIDING MEMBER PROCEDURE showhtml 
-);
-/
-
-create or replace TYPE BODY radioOptionsInput is
-
-    CONSTRUCTOR FUNCTION radioOptionsInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar) RETURN SELF AS RESULT as
-    begin
-        self.mem_id := SYS_GUID();
-        self.id := id;
-        self.class := class;
-        self.css_style := css_style;
-        self.in_name := in_name;
-        self.options := option_list();
-        return;
-    end;
-
-    MEMBER PROCEDURE add_option(SELF IN OUT radioOptionsInput, opt VARCHAR) as
-    BEGIN
-        self.options.extend();
-        self.options(self.options.count) := opt;
-        return;
-    end;
-
-    MEMBER PROCEDURE delete_option(SELF IN OUT radioOptionsInput, idx number) as
-    begin
-        self.options.delete(idx);
-
-        -- shift a sx
-        for i in idx .. self.options.count loop
-            self.options(i) := self.options(i+1);
-        end loop;
-
-        -- remove void space
-        self.options.trim(1);
-    end;
-
-    MEMBER FUNCTION search_option(opt varchar) return number as
-    begin
-        for i in 1 .. self.options.count loop
-            if self.options(i) = opt then
-                return i;
-            end if;
-        end loop;
-
-        return -1;
-    end;
-
-    MEMBER PROCEDURE clear_options(SELF IN OUT radioOptionsInput) as
-    begin
-        self.options.delete;
-        return;
-    end;
-
-    MEMBER FUNCTION count_options return number as
-    begin
-        return self.options.count;
-    end;
-
-
-    OVERRIDING MEMBER PROCEDURE showhtml as
-    BEGIN
-
-        for i in 1 .. self.options.count loop
-            htp.print(
-                '<input '   || 
-                'id="'      || self.id          || '" ' ||
-                'class="'   || self.class       || '" ' ||
-                'style="'   || self.css_style   || '" ' ||
-                'name="'    || self.in_name     || '" ' ||
-                'type="'    || 'radio'          || '" >' 
-                || '<label for= "' || self.options(i)|| '">'|| self.options(i) || '</label> <br>'
-            );
-        end loop;
-        return;
-    END;
-END;
-/
-
 create or replace type dateInput under f_input(
     in_value date,
 
@@ -463,6 +275,57 @@ create or replace type body dateInput IS
             'value="'           || TO_CHAR(self.in_value,'dd-mm-yyyy')  || '" ' ||
             'type="'            || 'date'                               || '" ' ||
             'placeholder ="'    || 'dd-mon-yyyy'                        || '" ' ||
+            '>'
+        );
+    end; 
+end;
+/
+
+create or replace type timeInput under f_input(
+    in_value ora,
+
+    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora) return self as result,
+    overriding member procedure showhtml 
+);
+/
+
+create or replace type body timeInput IS
+    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora) return self as result as
+    begin
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.in_name := in_name;
+        self.in_value := in_value;
+        return;
+    end; 
+    overriding member procedure showhtml as
+    hstr varchar(3);
+    mstr varchar(3);
+    begin
+        if (self.in_value(1) < 10) then
+            hstr := '0' || self.in_value(1);
+        else 
+            hstr := ''  || self.in_value(1);
+        end if;
+
+        if (self.in_value(2) < 10) then
+            mstr := '0' || self.in_value(2);
+        else 
+            mstr := ''  || self.in_value(2);
+        end if;
+
+
+
+        htp.print(
+            '<input '           || 
+            'id="'              || self.id                                      || '" ' ||
+            'class="'           || self.class                                   || '" ' ||
+            'style="'           || self.css_style                               || '" ' ||
+            'name="'            || self.in_name                                 || '" ' ||
+            'value="'           || hstr || ':' || mstr                          || '" ' ||
+            'type="'            || 'time'                                       || '" ' ||
             '>'
         );
     end; 
