@@ -477,6 +477,19 @@ BEGIN
         }
     '
     );
+    baseHtml.aggiungi_script(script =>
+    '
+        function openPopup(parent,idx){
+            parent.children[idx].showModal();
+        }
+
+        var ls = document.getElementsByClassName("lesson");
+
+        for(l of ls){
+            l.onclick = function(event){ openPopup(event.target,2)};
+        }
+    '
+    );
 
     basehtml.chiudiPagina;
 end;
