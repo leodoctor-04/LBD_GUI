@@ -6,6 +6,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     type dname_array is varray(dayRange) of varchar(10);
     type lesson is record(
         id_lesson number,
+        teach BOOLEAN,
         course_title varchar(100), -- mettere type of
         instructor_name varchar(100),
         instructor_surname varchar(100),
@@ -46,7 +47,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 -----------------------------------------------------------------------------------------
 
     -- give the lesson in the week where exist p_startDate.
-    function lesson_toArray(p_startDate date, p_idUtente number)return dayXlessons is
+    function lesson_toArray(p_startDate date, p_idUtente number, p_idIstruttore number default null)return dayXlessons is
         monday date;
         d number; 
         res dayXlessons := dayXlessons(); 
@@ -61,7 +62,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 
         --add lesson to the table
         for c_row in (
-            SELECT lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
+            SELECT corso.idistruttore,lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
             FROM lezione,corso,utente
             WHERE 
                 --join
@@ -69,29 +70,35 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 corso.idistruttore =  utente.idutente and
                 -- data check
                 lezione.datainizio between monday and (monday + 7)
-                /* and (giusta??)
+                and
                 -- ck subscr.
                 corso.idCorso in (
                     SELECT idcorso
                     from ISCRIZIONE_CORSO
                     where idutente = p_idUtente
-                )*/
+                )
             ORDER BY lezione.datainizio,lezione.datafine
         ) loop
             d := (c_row.datainizio - monday ) + 1;
             res(d).extend;
             res(d)(res(d).count) := lesson(
                 id_lesson  => c_row.idLezione,
+                teach => false,
                 course_title  => c_row.titolo,
                 instructor_name  => c_row.nome,
                 instructor_surname => c_row.cognome,
                 startD => c_row.datainizio,
                 endD => c_row.datafine
             );
+
+            if(c_row.idistruttore = p_idistruttore) then
+                res(d)(res(d).count).teach := true;
+            end if;
         end loop;
 
         return res;
     end;
+
 
     function new_lesson_popup(l lesson) return panel is
         main_p panel := panel(
@@ -119,6 +126,13 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             css_style => layout.hlist(gap=>'10px',halign => aligment.space_around) 
         );
     BEGIN 
+        if(l.teach) then
+            main_p.class := main_p.class || ' teach';
+        else
+            main_p.class := main_p.class || ' attend';
+        end if;
+
+
         main_p.add_element(
             label(text=> l.course_title)
         );
@@ -318,8 +332,13 @@ BEGIN
     select sessioni.idutente into v_idUtente 
     from sessioni 
     where sessioni.idSessione = p_idSessione;
+    
+    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+        lessons := lesson_toArray(nxt_monday,v_idUtente,v_idUtente);
+    else
+        lessons := lesson_toArray(nxt_monday,v_idUtente);
+    end if;
 
-    lessons := lesson_toArray(nxt_monday,v_idUtente);
     basehtml.aggiungi_Stile('
 
         .controls_panel{
