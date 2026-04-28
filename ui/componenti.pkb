@@ -1,4 +1,11 @@
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY COMPONENTI as
+--------------------------------------------------------
+--  File creato - martedì-aprile-28-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body COMPONENTI
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."COMPONENTI" as
 
 PROCEDURE calendar(startDate IN DATE) is
     nextLun Date;
@@ -245,48 +252,47 @@ begin
 end;
 
 procedure StatCard (
-        Titolo      varchar2,
-        Valore      varchar2,
-        Descrizione varchar2 default null
-    ) is
-    begin
-        htp.print('<div style="
-            background:white;
-            border-radius:22px;
-            padding:26px 24px;
-            box-shadow:0 6px 18px rgba(0,0,0,0.10);
-            border:1px solid #e8e8e8;
-            min-height:170px;
+    Titolo      varchar2,
+    Valore      varchar2,
+    Descrizione varchar2 default null
+) IS
+BEGIN
+    htp.p('
+        <div style="
+            background:#1f1f1f;
+            border:1.5px solid #8fd400;
+            border-radius:24px;
+            padding:30px 25px;
+            min-height:200px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35);
             display:flex;
             flex-direction:column;
             justify-content:center;
+            align-items:center;
             text-align:center;
-        ">');
+        ">
+            <h3 style="
+                margin:0 0 20px 0;
+                color:#a6e22e;
+                font-size:20px;
+            ">' || Titolo || '</h3>
 
-        htp.print('<div style="
-            font-size:20px;
-            font-weight:800;
-            color:#0f3fb8;
-            margin-bottom:14px;
-        ">' || Titolo || '</div>');
+            <div style="
+                margin-bottom:18px;
+                color:white;
+                font-size:48px;
+                font-weight:bold;
+            ">' || Valore || '</div>
 
-        htp.print('<div style="
-            font-size:42px;
-            font-weight:900;
-            color:#111;
-            margin-bottom:10px;
-        ">' || Valore || '</div>');
-
-        if Descrizione is not null then
-            htp.print('<div style="
-                font-size:15px;
-                color:#666;
-                line-height:1.5;
-            ">' || Descrizione || '</div>');
-        end if;
-
-        htp.print('</div>');
-end;
+            <p style="
+                margin:0;
+                color:#cfcfcf;
+                font-size:16px;
+                line-height:1.4;
+            ">' || Descrizione || '</p>
+        </div>
+    ');
+END;
 
 procedure MenuHamburger (
     p_idSessione IN NUMBER
@@ -298,12 +304,19 @@ begin
     htp.print('<h3>Menu</h3>');
 
     -- sidebar buttons
+    MenuButton('Home',         global.root || 'home',      p_idSessione);
+    --Leonardo Benedetti
+    MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
+    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
+
     MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
     MenuButton('Corsi',               global.root || 'pagina_corsi',            p_idSessione);
     MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
     MenuButton('Crea Corso',          global.root || 'crea_corso',              p_idSessione);
     MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
+    MenuButton('Sala Pesi',          global.root || 'salapesi.visualizza',                 p_idSessione);
     MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
+    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione );
 
     htp.print('</div>');
 
@@ -337,7 +350,6 @@ function toggleMenu() {
 
 end;
 
-
 procedure MenuButton (
     Testo       IN varchar2,
     Link        IN varchar2,
@@ -347,7 +359,7 @@ procedure MenuButton (
     v_link varchar2(4000);
 begin
     if p_idSessione is not null then
-        v_link := Link || '?IdSessione=' || p_idSessione;
+        v_link := Link || '?p_idSessione=' || p_idSessione;
     else
         v_link := Link;
     end if;
@@ -420,20 +432,9 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
     END IF;
 END messaggioLogin;
 
-procedure listaCorsi( numero IN number DEFAULT NULL ) is
-begin
-    if numero is null then
-        FOR corso IN ( SELECT titolo FROM Corso )
-        LOOP
-            baseHTML.paragrafo( corso.titolo );
-        END LOOP;
-    else
-        FOR corso IN ( SELECT titolo FROM Corso fetch first numero rows only)
-        LOOP
-            baseHTML.paragrafo( corso.titolo );
-        END LOOP;
-    end if;
-end listaCorsi;
-
 END Componenti;
+
 /
+
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO PUBLIC;

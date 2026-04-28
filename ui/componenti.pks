@@ -1,4 +1,11 @@
-CREATE OR REPLACE EDITIONABLE PACKAGE COMPONENTI as
+--------------------------------------------------------
+--  File creato - martedì-aprile-28-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package COMPONENTI
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."COMPONENTI" as
 
 -- types
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
@@ -32,9 +39,9 @@ procedure StatCard (
 
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
--- del gruppo 3 (qui abusivamente)
-procedure listaCorsi(numero IN number DEFAULT NULL);
-
 END Componenti;
 
+/
 
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO PUBLIC;

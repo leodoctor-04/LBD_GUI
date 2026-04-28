@@ -1,4 +1,11 @@
-create or replace package body Stile as
+--------------------------------------------------------
+--  File creato - martedì-aprile-28-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body STILE
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."STILE" as
 
     PROCEDURE stile is begin
     htp.print('
@@ -11,7 +18,7 @@ create or replace package body Stile as
         }
 
     h1{ font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px; }
-    p{ font-size: clamp(20px, 1.5vw, 2vw); }
+    p, a{ font-size: clamp(20px, 1.5vw, 2vw); }
 
     body{
         background: var(--colore-secondario);
@@ -90,7 +97,7 @@ create or replace package body Stile as
         align-items: center;
         border: 0.25vw solid var(--colore-primario);
     }
-    #lista p {
+    #lista p, #lista a {
         background-color: var(--colore-primario);
         width:95%;
         border-radius: 1vw;
@@ -110,9 +117,10 @@ create or replace package body Stile as
 
     /*div flex*/
     #flex{
-        margin: 2vw 3vw;
+        margin: 2vw auto;
         display:flex;
         justify-content: space-between;
+        align-items: center;
         border-radius: 1vw;
         background:white;
         border: 0.25vw solid var(--colore-primario);
@@ -121,7 +129,7 @@ create or replace package body Stile as
     }
     
     #modulo{
-        width: 90%;
+        width: 86%;
         margin: 2.5vw auto;
         display: flex;
         flex-direction: column;
@@ -142,7 +150,27 @@ create or replace package body Stile as
         background: var(--colore-primario);
         color: white;
         font-size: clamp(30px, 2vw, 2vw);
-        }
+    }
+
+    #filtroTipologia{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    #filtroTipologia select{
+        width: 50vw;
+        height: clamp(50px, 3vw, 3.5vw);
+        border: 0.25vw solid var(--colore-primario);
+        border-radius: 1vw;
+        font-size: clamp(30px, 2vw, 2.5vw);
+    }
+
+    #filtroTipologia button{
+        background: var(--colore-primario);
+        color: white;
+        font-weight: 600;
+    }
 
     textarea{
         width: 100%;
@@ -192,112 +220,6 @@ create or replace package body Stile as
     }
     tr:nth-child(odd) {
         background-color: #e1e1e1;
-    }
-
-
-    /* INIZIO */
-    /*
-        calendar style
-    */
-    .calendar{
-        display: grid;
-        grid-template-columns: repeat(5,1fr);
-        grid-template-rows: 1fr 1fr 20fr;
-        gap: 0px;
-
-        border: 1px black solid;
-    }
-
-    .control_panel{
-        margin: 0px;
-        padding: 3px;
-        background-color: var(--colore-primario);
-        grid-column: span 5;
-        display: flex;
-        flex-direction: row;
-        flex-flow: 1;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .control_panel button{
-        background: none;
-        border: none;
-        color: grey;
-    }
-
-
-    .control_panel button:active{
-        color: black;
-    }
-
-    .control_panel button{
-        background: none;
-        border: none;
-    }
-
-    .day_label{
-        display: flex;
-        margin: 0px;
-
-        background-color: antiquewhite;
-        border: 1px solid grey;
-
-        height: 100%;
-        width: 100%;
-
-        font-size: 1.9rem;
-        justify-content: center;
-        align-items: center;   
-    }
-
-    .lesson_column{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        border: 1px solid grey;
-        padding-top: 10px;
-    }
-
-    .lesson{
-        border-radius: 10%;
-        background-color: #ffc7d1;
-        box-shadow: 1px 1px grey;
-        display: grid;
-        grid-template-columns: repeat(2,1fr);
-        grid-template-columns: repeat(2,1fr);
-        gap: 0px 10px;
-        padding: 0px 5px;
-    }
-
-
-    .attend{
-        background-color: #ffc7d1;
-    }
-    .teach{
-        background-color: #c3edd5;
-    }
-
-    .lesson_popup[open]{
-        width: 50vh;
-        background-color: olive;
-        border: 1px;
-        border-radius: 10px;
-        display: grid;
-        grid-template-rows: repeat(3,1fr);
-        grid-template-columns: repeat(3,1fr);
-        gap: 0px;
-        font-size: 2vh;
-        box-shadow: 3px 3px grey;
-    }
-
-    .lesson_popup p{
-        text-align: center;
-    }
-    .lesson_popup a{
-        display: flex;
-        align-items: center;
     }
 
     /*
@@ -362,8 +284,50 @@ create or replace package body Stile as
         color: transparent;
         text-shadow: 0 0 0 #fff;
     }
+
+    /*messaggio post-form*/
+    #errore{
+        display:flex;
+        justify-content: space-between;
+        background-color: lightcoral;
+        border-radius: 1vw;
+        border: 0.25vw solid red;
+        padding: 1vw;
+        font-size: clamp(30px, 2.5vw, 3vw);
+        color:white;
+    }
+    #successo{
+        background-color: lightgreen;
+        border-radius: 1vw;
+        border: 0.25vw solid green;
+        padding: 1vw;
+        font-size: clamp(20px, 1.5vw, 2vw);
+        color:white;
+    }
+    
+    /*Stile bottone link*/
+    .btn-link {
+        display: inline-block;
+        padding: 0.8vw 1.2vw;
+        background: var(--colore-primario);
+        color: white;
+        border-radius: 0.5vw;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-link:hover {
+        opacity: 0.85;
+    }
+    
     </style>
     ');
 
 end stile;
 end Stile;
+
+/
+
+  GRANT EXECUTE ON "DELPRETE2526"."STILE" TO "ANONYMOUS";
