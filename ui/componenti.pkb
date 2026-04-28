@@ -300,13 +300,16 @@ begin
     -- sidebar buttons
     MenuButton('Home',         global.root || 'home',      p_idSessione);
     --Leonardo Benedetti
-    MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
-    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
+    IF sessioneUtente.controllaAtleta( p_idSessione ) OR sessioneUtente.controllaIstruttore( p_idSessione ) THEN
+        MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
+    END IF;
+    IF sessioneUtente.controllaAmministrativo( p_idSessione ) THEN
+        MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
+        MenuButton('Elimina corso',         global.root || 'eliminaCorso',      p_idSessione);
+    END IF;
 
     MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
-    MenuButton('Corsi',               global.root || 'pagina_corsi',            p_idSessione);
     MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
-    MenuButton('Crea Corso',          global.root || 'crea_corso',              p_idSessione);
     MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
     MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
     MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione );
