@@ -1,5 +1,5 @@
 --------------------------------------------------------
---  File creato - martedì-aprile-28-2026   
+--  File creato - mercoledì-aprile-29-2026   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Package Body COMPONENTI
@@ -294,29 +294,109 @@ BEGIN
     ');
 END;
 
+PROCEDURE CardLink (
+    Titolo      IN VARCHAR2,
+    Valore      IN VARCHAR2,
+    Descrizione IN VARCHAR2 DEFAULT NULL,
+    Link        IN VARCHAR2 DEFAULT '#'
+) IS
+BEGIN
+    htp.p('
+        <a href="' || Link || '" style="
+            text-decoration:none;
+            color:inherit;
+            background:#1f1f1f;
+            border:1.5px solid #8fd400;
+            border-radius:24px;
+            padding:34px 28px;
+            min-height:200px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35);
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            cursor:pointer;
+            transition:transform 0.2s ease, box-shadow 0.2s ease;
+        "
+        onmouseover="
+            this.style.transform=''translateY(-6px)'';
+            this.style.boxShadow=''0 10px 28px rgba(143,212,0,0.35)'';
+        "
+        onmouseout="
+            this.style.transform=''translateY(0)'';
+            this.style.boxShadow=''0 6px 18px rgba(0,0,0,0.35)'';
+        ">
+
+            <div style="
+                color:#a6e22e;
+                font-size:42px;
+                font-weight:bold;
+                margin-bottom:14px;
+            ">' || Valore || '</div>
+
+            <p style="
+                margin:0;
+                color:#cfcfcf;
+                font-size:16px;
+            ">' || Descrizione || '</p>
+
+        </a>
+    ');
+END;
+
 procedure MenuHamburger (
     p_idSessione IN NUMBER
 ) is
+    v_idUtente SESSIONI.IdUtente%TYPE;
+    v_isIstruttore NUMBER := 0;
+    v_isAmministrativo NUMBER := 0;
 begin
+    -- Recupero utente dalla sessione
+    begin
+        select IdUtente
+        into v_idUtente
+        from SESSIONI
+        where IdSessione = p_idSessione;
+    exception
+        when no_data_found then
+            v_idUtente := null;
+    end;
+
+    -- Controllo se è istruttore
+    if v_idUtente is not null then
+        select count(*)
+        into v_isIstruttore
+        from ISTRUTTORE
+        where IdUtente = v_idUtente;
+
+        select count(*)
+        into v_isAmministrativo
+        from AMMINISTRATIVO
+        where IdUtente = v_idUtente;
+    end if;
+
     -- SIDEBAR
     htp.print('<div id="sidebar">');
 
     htp.print('<h3>Menu</h3>');
 
-    -- sidebar buttons
-    MenuButton('Home',         global.root || 'home',      p_idSessione);
-    --Leonardo Benedetti
-    MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
-    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
+    -- Menu visibile agli atleti / base
+    MenuButton('Home',                global.root || 'home',                  p_idSessione);
+    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',             p_idSessione);
+    MenuButton('Calendario Lezioni',   global.root || 'calendario',            p_idSessione);
+    MenuButton('Abbonamento',          global.root || 'pagina_abbonamento.visualizza',    p_idSessione);
 
-    MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
-    MenuButton('Corsi',               global.root || 'pagina_corsi',            p_idSessione);
-    MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
-    MenuButton('Crea Corso',          global.root || 'crea_corso',              p_idSessione);
-    MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
-    MenuButton('Sala Pesi',          global.root || 'salapesi.visualizza',                 p_idSessione);
-    MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
-    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione );
+    -- Se è amministrativo, oppure sia amministrativo che istruttore
+    if v_isAmministrativo > 0 then
+        MenuButton('Area Amministrativo', global.root || 'areaGestionale', p_idSessione);
+
+    -- Se è solo istruttore
+    elsif v_isIstruttore > 0 then
+        MenuButton('Area Istruttore', global.root || 'areaGestionale', p_idSessione);
+    end if;
+
+    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione);
 
     htp.print('</div>');
 
