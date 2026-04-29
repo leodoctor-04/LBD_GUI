@@ -1,10 +1,16 @@
 create or replace procedure TuoiCorsi( p_idSessione IN NUMBER DEFAULT -1, p_filtro IN NUMBER DEFAULT 1 ) is
+  v_idUtente NUMBER;
 BEGIN
   baseHTML.apriPagina('Visualizza tuoi corsi', p_idSessione);
+
+  SELECT idUtente INTO v_idUtente FROM SESSIONI WHERE p_idSessione = idSessione;
 
   baseHTML.H1( 'I tuoi Corsi', 'margin-bottom:0px; text-align:center; margin-top:2vw; color:white;' );
   baseHTML.apriDiv( 'lista' );
     Corsi.visualizzaCorsi(p_idSessione);
+    IF sessioneUtente.controllaIstruttore(p_idSessione) THEN
+      Corsi.visualizzaCorsiIstruttore(v_idUtente, true);
+    END IF;
   baseHTML.chiudiDiv;
 
   baseHTML.apriModulo( 'filtroTipologia', global.url || 'TuoiCorsi' );

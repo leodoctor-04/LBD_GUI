@@ -149,10 +149,13 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
         htp.p( '>' || testo || '</button>' );
     END bottone;
 
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
+    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn('<a ');
         IF pagina IS NOT NULL THEN
             htp.prn( 'href="' || pagina || '"' );
+        END IF;
+        IF stile IS NOT NULL THEN
+            htp.prn( ' style="'|| stile || '"' );
         END IF;
         htp.p( '>' || testo || '</a>' );
 

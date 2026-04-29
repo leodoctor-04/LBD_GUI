@@ -80,12 +80,21 @@ BEGIN
 
 END listaCorsiAll;
 
-PROCEDURE visualizzaCorsiIstruttore( p_idIstruttore IN number ) IS
+PROCEDURE visualizzaCorsiIstruttore( p_idIstruttore IN number, isLink in boolean DEFAULT false ) IS
+is_empty boolean := true;
 BEGIN
-    FOR corso IN ( SELECT titolo FROM Corso WHERE idIstruttore = p_idIstruttore AND Stato = 'ATTIVO' )
+    FOR corso IN ( SELECT idCorso, titolo FROM Corso WHERE idIstruttore = p_idIstruttore AND Stato = 'ATTIVO' )
     LOOP
-        baseHTML.paragrafo( corso.titolo );
+        is_empty := false;
+        IF isLink THEN
+            baseHTML.collegamento( corso.titolo, global.url || 'CorsoSingolo?p_idSessione=' || baseHTML.v_idSessione || '&p_id=' || corso.idCorso , 'background-color: deepskyblue; border: 0.25vw solid blue;' );
+        ELSE
+            baseHTML.paragrafo( corso.titolo, 'background-color: cornflowerblue; border: 0.25vw solid blue;' );
+        END IF;
     END LOOP;
+    IF is_empty THEN
+        baseHTML.paragrafo( 'nessun corso gestito', 'background-color: cornflowerblue; border: 0.25vw solid blue;' );
+    END IF;
 END visualizzaCorsiIstruttore;
 
 PROCEDURE visualizzaCorso( p_id IN number ) IS
@@ -167,20 +176,6 @@ PROCEDURE moduloInserisciCorso IS BEGIN
             baseHTML.tendinaOption( r.nomeTipologia, r.idTipologia);
         END LOOP;
         baseHTML.chiudiMenuTendina;
-
-        htp.p('<script>
-            // Usiamo il doppio apice per il selettore CSS all''interno della stringa PL/SQL
-            const selectTipologia = document.querySelector(''select[id="Tipologia"]'');
-            
-            // Verifichiamo che l''elemento esista prima di aggiungere il listener
-            if (selectTipologia) {
-                selectTipologia.addEventListener(''change'', function() {
-                    console.log("Tipologia selezionata (ID): " + this.value);
-                });
-            } else {
-                console.error("Elemento p_idtipologia non trovato nel DOM");
-            }
-        </script>');
 
         baseHTML.apriMenuTendina('Istruttore', 'p_idIstruttore');
         FOR i IN (SELECT nome, cognome, Utente.idUtente FROM Utente, Istruttore WHERE Istruttore.idUtente = Utente.idUtente ) LOOP

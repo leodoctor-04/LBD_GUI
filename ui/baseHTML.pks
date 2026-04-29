@@ -23,7 +23,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     -- per i form onclick vuoto e diventa di tipo submit da mettere nel modulo
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL );
 
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
+    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL);
 
     -- form( action<la pagina a cui inviare i dati>)
     PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL);

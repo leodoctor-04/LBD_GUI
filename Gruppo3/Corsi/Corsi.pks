@@ -10,7 +10,8 @@ procedure visualizzaCorsi(
 PROCEDURE listaCorsiAll( p_tipologia IN varchar2 DEFAULT NULL, useSessione BOOLEAN default TRUE);
 
 PROCEDURE visualizzaCorsiIstruttore(
-    p_idIstruttore IN number
+    p_idIstruttore IN number,
+    isLink IN boolean DEFAULT false
 );
 
 -- visualizza tutti i dettagli di un corso specifico
