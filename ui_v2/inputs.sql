@@ -2,6 +2,30 @@
 create or replace type ora is varray(2) of number;
 /
 
+create or replace function ora_toString(o ora) return varchar is
+    res varchar(10);
+begin
+    if(o is null) then
+        return '';
+    end if;
+
+
+    if (o(1) < 10) then
+        res := '0' || o(1);
+    else 
+        res := ''  || o(1);
+    end if;
+
+    if (o(2) < 10) then
+        res := res || ':0' || o(2);
+    else 
+        res := res || ':'  || o(2);
+    end if;
+
+    return res;
+end;
+/
+
 -- ui types
 create or replace type f_input under uielem(
     in_name VARCHAR(100),
@@ -59,41 +83,6 @@ create or replace type body submit_butt is
             '>'
         );
     end;
-end;
-/
-
-create or replace type numberInput under f_input(
-    in_value number,
-
-    constructor function numberInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value number) return self as result,
-    overriding member procedure showhtml 
-);
-/
-
-create or replace type body numberInput IS
-    constructor function numberInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number) return self as result as
-    begin
-        self.mem_id := SYS_GUID();
-        self.id := id;
-        self.class := class;
-        self.css_style := css_style;
-        self.in_name := in_name;
-        self.in_value := in_value;
-        return;
-    end; 
-    overriding member procedure showhtml as
-    begin
-        htp.print(
-            '<input '   || 
-            'id="'      || self.id          || '" ' ||
-            'class="'   || self.class       || '" ' ||
-            'style="'   || self.css_style   || '" ' ||
-            'name="'    || self.in_name     || '" ' ||
-            'value="'   || self.in_value    || '" ' ||
-            'type="'    || 'number'         || '" ' ||
-            '>'
-        );
-    end; 
 end;
 /
 
@@ -244,94 +233,6 @@ create or replace type body checkbox is
     end;
 end;
 /
-
-create or replace type dateInput under f_input(
-    in_value date,
-
-    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date) return self as result,
-    overriding member procedure showhtml 
-);
-/
-
-create or replace type body dateInput IS
-    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date) return self as result as
-    begin
-        self.mem_id := SYS_GUID();
-        self.id := id;
-        self.class := class;
-        self.css_style := css_style;
-        self.in_name := in_name;
-        self.in_value := in_value;
-        return;
-    end; 
-    overriding member procedure showhtml as
-    begin
-        htp.print(
-            '<input '           || 
-            'id="'              || self.id                              || '" ' ||
-            'class="'           || self.class                           || '" ' ||
-            'style="'           || self.css_style                       || '" ' ||
-            'name="'            || self.in_name                         || '" ' ||
-            'value="'           || TO_CHAR(self.in_value,'dd-mm-yyyy')  || '" ' ||
-            'type="'            || 'date'                               || '" ' ||
-            'placeholder ="'    || 'dd-mon-yyyy'                        || '" ' ||
-            '>'
-        );
-    end; 
-end;
-/
-
-create or replace type timeInput under f_input(
-    in_value ora,
-
-    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora) return self as result,
-    overriding member procedure showhtml 
-);
-/
-
-create or replace type body timeInput IS
-    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora) return self as result as
-    begin
-        self.mem_id := SYS_GUID();
-        self.id := id;
-        self.class := class;
-        self.css_style := css_style;
-        self.in_name := in_name;
-        self.in_value := in_value;
-        return;
-    end; 
-    overriding member procedure showhtml as
-    hstr varchar(3);
-    mstr varchar(3);
-    begin
-        if (self.in_value(1) < 10) then
-            hstr := '0' || self.in_value(1);
-        else 
-            hstr := ''  || self.in_value(1);
-        end if;
-
-        if (self.in_value(2) < 10) then
-            mstr := '0' || self.in_value(2);
-        else 
-            mstr := ''  || self.in_value(2);
-        end if;
-
-
-
-        htp.print(
-            '<input '           || 
-            'id="'              || self.id                                      || '" ' ||
-            'class="'           || self.class                                   || '" ' ||
-            'style="'           || self.css_style                               || '" ' ||
-            'name="'            || self.in_name                                 || '" ' ||
-            'value="'           || hstr || ':' || mstr                          || '" ' ||
-            'type="'            || 'time'                                       || '" ' ||
-            '>'
-        );
-    end; 
-end;
-/
-
 create or replace type hiddenInput under f_input(
     in_value varchar(200),
 
@@ -361,6 +262,130 @@ create or replace type body hiddenInput IS
             'name="'    || self.in_name     || '" ' ||
             'value="'   || self.in_value    || '" ' ||
             'type="'    || 'hidden'         || '" ' ||
+            '>'
+        );
+    end; 
+end;
+/
+
+create or replace type numberInput under f_input(
+    in_value number,
+    in_max number,
+    in_min number,
+
+    constructor function numberInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value number, in_max number default null, in_min number default null) return self as result,
+    overriding member procedure showhtml 
+);
+/
+
+create or replace type body numberInput IS
+    constructor function numberInput(id varchar, class varchar, css_style varchar,in_name varchar,in_value number, in_max number default null, in_min number default null) return self as result as
+    begin
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.in_name := in_name;
+        self.in_value := in_value;
+        self.in_max := in_max;
+        self.in_min := in_min;
+        return;
+    end; 
+    overriding member procedure showhtml as
+    begin
+        htp.print(
+            '<input '   || 
+            'id="'      || self.id          || '" ' ||
+            'class="'   || self.class       || '" ' ||
+            'style="'   || self.css_style   || '" ' ||
+            'name="'    || self.in_name     || '" ' ||
+            'value="'   || self.in_value    || '" ' ||
+            'max="'  || self.in_max      || '" ' ||
+            'min="'  || self.in_max      || '" ' ||
+            'type="'    || 'number'         || '" ' ||
+            '>'
+        );
+    end; 
+end;
+/
+
+create or replace type dateInput under f_input(
+    in_value date,
+    in_max date,
+    in_min date,
+
+    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date, in_max date default null, in_min date default null) return self as result,
+    overriding member procedure showhtml 
+);
+/
+
+create or replace type body dateInput IS
+    constructor function dateInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value date, in_max date default null, in_min date default null) return self as result as
+    begin
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.in_name := in_name;
+        self.in_value := in_value;
+        self.in_max := in_max;
+        self.in_min := in_min;
+        return;
+    end; 
+    overriding member procedure showhtml as
+    begin
+        htp.print(
+            '<input '           || 
+            'id="'              || self.id                              || '" ' ||
+            'class="'           || self.class                           || '" ' ||
+            'style="'           || self.css_style                       || '" ' ||
+            'name="'            || self.in_name                         || '" ' ||
+            'value="'           || TO_CHAR(self.in_value,'yyyy-mm-dd')  || '" ' ||
+            'max="'          || TO_CHAR(self.in_max,'yyyy-mm-dd')    || '" ' ||
+            'min="'          || TO_CHAR(self.in_min,'yyyy-mm-dd')    || '" ' ||
+            'type="'            || 'date'                               || '" ' ||
+            'placeholder ="'    || 'dd-mon-yyyy'                        || '" ' ||
+            '>'
+        );
+    end; 
+end;
+/
+
+create or replace type timeInput under f_input(
+    in_value ora,
+    in_max ora,
+    in_min ora,
+
+    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora, in_min ora default null, in_max ora default null) return self as result,
+    overriding member procedure showhtml 
+);
+/
+
+create or replace type body timeInput IS
+    constructor function timeInput(id varchar default '', class varchar default '', css_style varchar default '', in_name varchar, in_value ora, in_min ora default null, in_max ora default null) return self as result as
+    begin
+        self.mem_id := SYS_GUID();
+        self.id := id;
+        self.class := class;
+        self.css_style := css_style;
+        self.in_name := in_name;
+        self.in_value := in_value;
+        self.in_max := in_max;
+        self.in_min := in_min;
+        return;
+    end; 
+    overriding member procedure showhtml as
+    begin
+        htp.print(
+            '<input '           || 
+            'id="'              || self.id                      || '" ' ||
+            'class="'           || self.class                   || '" ' ||
+            'style="'           || self.css_style               || '" ' ||
+            'name="'            || self.in_name                 || '" ' ||
+            'value="'           || ora_toString(self.in_value)  || '" ' ||
+            'max="'          || ora_toString(self.in_max)    || '" ' ||
+            'min="'          || ora_toString(self.in_min)    || '" ' ||
+            'type="'            || 'time'                       || '" ' ||
             '>'
         );
     end; 

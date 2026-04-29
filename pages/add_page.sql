@@ -26,6 +26,6 @@ begin
 EXCEPTION 
     when others then
         ROLLBACK;
-        basehtml.redirect(global.root || 'calendario?p_idsessione=' || p_idSessione || chr(38) || 'p_startDate=' || to_char(p_cdata,'dd-mon-yyyy') || 'p_msg=errore' );
+        basehtml.redirect(global.root || 'calendario?p_idsessione=' || p_idSessione || chr(38) || 'p_startDate=' || to_char(p_cdata,'dd-mon-yyyy') || chr(38) || 'p_msg=errore durante la creazione della lezione' );
         return;
 end;

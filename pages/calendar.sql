@@ -128,8 +128,10 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     BEGIN 
         if(l.teach) then
             main_p.class := main_p.class || ' teach';
+            info_ct.class := info_ct.class || ' teach';
         else
             main_p.class := main_p.class || ' attend';
+            info_ct.class := info_ct.class || '  attend';
         end if;
 
 
@@ -168,25 +170,29 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         info_ct.add_element(h_panel);
 
         ---- act buttons
-        act_buttons.add_element(
-            button(
-                class => 'clearButton',
-                text => '<i class="material-icons">check</i>',
-                onclick => 'location = ...... ' 
-            )
-        );
-        act_buttons.add_element(
-            button(
-                class => 'clearButton',
-                text => 'bt2'
-            )
-        );
-        act_buttons.add_element(
-            button(
-                class => 'clearButton',
-                text => 'bt3'
-            )
-        );
+
+        if(l.teach) then
+            act_buttons.add_element(
+                button(
+                    class => 'clearButton',
+                    text => '<i class="material-icons">delete</i>',
+                    onclick => 'location = ...... ' 
+                )
+            );
+        else
+            if (l.startD > SYSDATE) then
+                act_buttons.add_element(
+                    button(
+                        class => 'clearButton',
+                        text => '<i class="material-icons">check</i>',
+                        onclick => 'location = ...... ' 
+                    )
+                );
+            end if;
+            ---- compare qualcosa se invece e' gia partecipata
+        end if; 
+
+
         info_ct.add_element(act_buttons);
 
         ---- final adds
@@ -229,7 +235,8 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct.add_element(
             dateInput(
                 in_name  => 'p_data',
-                in_value => '' 
+                in_value => SYSDATE,
+                in_min   => SYSDATE
         ));
         f.add_element(input_ct);
 
@@ -239,7 +246,10 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct.add_element(
             timeInput(
                 in_name  => 'p_inizio',
-                in_value => ora(00,00)
+                in_value => ora(08,00),
+                in_min   => ora(08,00),
+                in_max   => ora(20,00)
+
         ));
         f.add_element(input_ct);
 
@@ -249,7 +259,9 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct.add_element(
             timeInput(
                 in_name  => 'p_fine',
-                in_value => ora(00,11)
+                in_value => ora(09,00),
+                in_min   => ora(08,00),
+                in_max   => ora(20,00)
         ));
         f.add_element(input_ct);
 
@@ -329,6 +341,11 @@ BEGIN
         nxt_monday := NEXT_DAY(p_startDate-7, 'MONDAY');
     end if;
 
+    if (p_msg is not null) then
+        htp.p('<script>alert("' || p_msg || '") </script>');
+    end if;
+
+
     select sessioni.idutente into v_idUtente 
     from sessioni 
     where sessioni.idSessione = p_idSessione;
@@ -375,16 +392,8 @@ BEGIN
 
         .lesson{
             border-radius: 10%;
-            background-color: #ffc7d1;
             box-shadow: 1px 1px grey;
             padding: 0px 5px;
-        }
-
-        .attend{
-            background-color: #ffc7d1;
-        }
-        .teach{
-            background-color: #c3edd5;
         }
 
         .lesson_popup {
@@ -400,10 +409,17 @@ BEGIN
 
         .lesson_popup>div{
             border-radius: 10%;
-            background-color: #ffc7d1;
             box-shadow: 1px 1px grey;
             padding: 0px 5px;
         }
+
+        .attend{
+            background-color: #ffc7d1;
+        }
+        .teach{
+            background-color: #c3edd5;
+        }
+
     ');
 
     -- ui
