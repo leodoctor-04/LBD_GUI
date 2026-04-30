@@ -135,28 +135,16 @@ create or replace PACKAGE BODY BASEHTML AS
         htp.p('</select>');
         htp.p('</div>');
     END chiudiMenuTendina;
-    
-    PROCEDURE tendinaOption(
-        opzione     IN VARCHAR2,
-        valore      IN VARCHAR2 DEFAULT NULL,
-        selezionata IN BOOLEAN DEFAULT FALSE
-    ) IS
-    BEGIN
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT NULL, selezionato IN BOOLEAN DEFAULT FALSE) IS BEGIN
         htp.prn('<option value="');
-    
         IF valore IS NOT NULL THEN
-            htp.prn(valore);
-        ELSE
-            htp.prn(opzione);
+            htp.prn( valore || '" ' );
+        ELSE htp.prn( opzione || '" ' );
         END IF;
-    
-        htp.prn('"');
-    
-        IF selezionata THEN
-            htp.prn(' selected');
+        IF selezionato THEN
+        htp.prn( 'selected' );
         END IF;
-    
-        htp.p('>' || opzione || '</option>');
+        htp.p( '>' || opzione || '</option>');
     END tendinaOption;
     
     PROCEDURE bottone(
@@ -378,3 +366,5 @@ create or replace PACKAGE BODY BASEHTML AS
     END vaiACapo;
     
 END baseHTML;
+/
+GRANT EXECUTE ON baseHTML TO anonymous;

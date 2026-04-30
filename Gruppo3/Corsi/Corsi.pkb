@@ -221,3 +221,5 @@ BEGIN
 
 END votoCorso;
 END Corsi;
+/
+GRANT EXECUTE ON Corsi to anonymous;

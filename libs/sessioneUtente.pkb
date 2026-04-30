@@ -292,4 +292,6 @@ create or replace PACKAGE BODY sessioneUtente AS
 
     end controllaPersonalTrainer;
 
-    end sessioneUtente; 
+end sessioneUtente; 
+/    
+GRANT EXECUTE ON sessioneutente to anonymous;

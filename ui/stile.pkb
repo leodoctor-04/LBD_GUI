@@ -303,6 +303,10 @@ create or replace package body Stile as
         font-size: clamp(20px, 1.5vw, 2vw);
         color:white;
     }
+
+    #errore p, #successo p{
+        font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
+    }
     
     /* Stile bottone link */
     .btn-link {
@@ -325,12 +329,10 @@ create or replace package body Stile as
         opacity: 0.85;
     }
     
-
-    #errore p, #successo p{
-        font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
-    }
     </style>
     ');
 
-end stile;
-end Stile;
+    end stile; --chiudi procedura
+end Stile; --chiudi pacchetto
+/
+GRANT EXECUTE ON Stile TO anonymous;

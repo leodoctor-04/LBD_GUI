@@ -25,3 +25,5 @@ BEGIN
 
   baseHTML.chiudiPagina;
 end home;
+/
+GRANT EXECUTE ON home TO anonymous;
