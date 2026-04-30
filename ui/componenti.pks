@@ -1,11 +1,5 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE COMPONENTI as
 
--- types
-TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
-
--- pkg scope var
-array_corsi tabella_corsi;
-
 -- procedure
 PROCEDURE calendar(startDate IN DATE);
 PROCEDURE lesson(isTeacher BOOLEAN,course VARCHAR, teacher VARCHAR, startH VARCHAR , endH VARCHAR);
@@ -41,7 +35,3 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
 END Componenti;
 
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
-  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO PUBLIC;

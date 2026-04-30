@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - martedì-aprile-28-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body STILE
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."STILE" as
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY STILE as
 
     PROCEDURE stile is begin
     htp.print('
@@ -310,6 +303,10 @@
         font-size: clamp(20px, 1.5vw, 2vw);
         color:white;
     }
+
+    #errore p, #successo p{
+        font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
+    }
     
     /*Stile bottone link*/
     .btn-link {
@@ -328,16 +325,7 @@
         opacity: 0.85;
     }
     
-
-    #errore p, #successo p{
-        font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
-    }
     </style>
     ');
 
 end stile;
-end Stile;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."STILE" TO "ANONYMOUS";

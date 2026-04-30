@@ -7,6 +7,14 @@ BEGIN
   baseHTML.apriPagina( v_nome_corso, p_idSessione);
 
   Corsi.visualizzaCorso(p_id);
+  
+  -- baseHTML.apriDiv('modulo', stile=>'display: flex; justify-content: space-evenly; margin-bottom: 2.5vw;');
+  -- -- IF IS NOT iscritto
+  --   baseHTML.bottone('iscriviti');
+  --   baseHTML.bottone('vedi Recensioni');
+  --   -- ELSE
+  --   baseHTML.bottone('recensisci');
+  -- baseHTML.chiudiDiv;
  
   baseHTML.chiudiPagina;
 end CorsoSingolo;
