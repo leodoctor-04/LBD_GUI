@@ -75,7 +75,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 corso.idCorso in (
                     SELECT idcorso
                     from ISCRIZIONE_CORSO
-                    where idutente = p_idUtente
+                    where iscrizione_corso.idatleta = p_idUtente
                 )
             ORDER BY lezione.datainizio,lezione.datafine
         ) loop
@@ -181,26 +181,25 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                     idLezione = l.id_lesson
                 ;
 
-                if(gabrielli.controllaPartecipazione(l.id_lesson)) then
-                    act_buttons.add_element(
-                        button(
-                            class => 'clearButton',
-                            text => '<i class="material-icons">check</i>',
-                            onclick => 'window.location.href=''' || global.url || 'add_partecipazione?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
-                        )
-                    );
-
-                end if;
                 if(res >= 1) then
                     act_buttons.add_element(
                         button(
                             class => 'clearButton',
                             text => '<i class="material-icons">close</i>',
-                            onclick => 'window.location.href=''' || global.url || 'delete_partecipazione?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
+                            onclick => 'window.location.href=''' || global.url || 'delete_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
                         )
                     );
+                else
+                    --if(gabrielli.controllaPartecipazione(l.id_lesson)) then
+                        act_buttons.add_element(
+                            button(
+                                class => 'clearButton',
+                                text => '<i class="material-icons">check</i>',
+                                onclick => 'window.location.href=''' || global.url || 'add_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                            )
+                        );
+                    --end if;
                 end if;
-                ---- compare qualcosa se invece e' gia partecipata
             end if; 
         else
             if(l.teach) then
