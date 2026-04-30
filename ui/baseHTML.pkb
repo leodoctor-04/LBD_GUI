@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - mercoledì-aprile-29-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body BASEHTML
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."BASEHTML" AS
+create or replace PACKAGE BODY BASEHTML AS
     
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
@@ -54,11 +47,14 @@
                 --TITOLO
                 htp.p('<a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
                     </div>');
-                --Utente
-                htp.p('<div style="display: flex; align-items: center; gap: 10px;">
-                        <p>' || INITCAP(v_username) || '</p>
-                        <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
-                    </div>');
+                -- Utente cliccabile
+                htp.p('<a href="' || global.url || 'gabrielli.infoUtente?p_idSessione=' || v_idSessione || '" 
+                        style="text-decoration:none; color:inherit;">
+                        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <p>' || INITCAP(v_username) || '</p>
+                            <img src="" alt="icona" onerror="this.src=''https://cdn-icons-png.flaticon.com/512/149/149071.png'';">
+                        </div>
+                    </a>');
             ELSE
                 htp.print('<h1>' || titolo || '</h1>');
             --LOGIN
@@ -166,13 +162,19 @@
     PROCEDURE bottone(
         testo   IN VARCHAR2,
         onClick IN VARCHAR2 DEFAULT NULL,
-        tipo    IN VARCHAR2 DEFAULT 'button'
+        stile   IN VARCHAR2 DEFAULT NULL
     ) IS
     BEGIN
-        htp.prn('<button class="btn-link" type="' || tipo || '"');
+        htp.prn('<button class="btn-link" ');
+    
+        IF stile IS NOT NULL THEN
+            htp.prn('style="' || stile || '" ');
+        END IF;
     
         IF onClick IS NOT NULL THEN
-            htp.prn(' onclick="' || onClick || '()"');
+            htp.prn('type="button" onclick="' || onClick || '()"');
+        ELSE
+            htp.prn('type="submit"');
         END IF;
     
         htp.p('>' || testo || '</button>');
@@ -180,14 +182,23 @@
     
     PROCEDURE bottoneLink(
         testo IN VARCHAR2,
-        link  IN VARCHAR2
+        link  IN VARCHAR2,
+        stile IN VARCHAR2 DEFAULT NULL
     ) IS
     BEGIN
-        htp.p(
-            '<a href="' || link || '" class="btn-link">' ||
-                testo ||
-            '</a>'
-        );
+        IF stile IS NOT NULL THEN
+            htp.p(
+                '<a href="' || link || '" class="btn-link" style="' || stile || '">' ||
+                    testo ||
+                '</a>'
+            );
+        ELSE
+            htp.p(
+                '<a href="' || link || '" class="btn-link">' ||
+                    testo ||
+                '</a>'
+            );
+        END IF;
     END bottoneLink;
 
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
@@ -367,7 +378,3 @@
     END vaiACapo;
     
 END baseHTML;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";

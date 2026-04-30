@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - mercoledì-aprile-29-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package COMPONENTI
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."COMPONENTI" as
+create or replace PACKAGE COMPONENTI as
 
 -- types
 TYPE tabella_corsi IS TABLE OF Corso.titolo%TYPE;
@@ -47,8 +40,3 @@ PROCEDURE CardLink (
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
 END Componenti;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
-  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO PUBLIC;

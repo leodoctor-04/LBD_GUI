@@ -1,11 +1,4 @@
---------------------------------------------------------
---  File creato - mercoledì-aprile-29-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package BASEHTML
---------------------------------------------------------
-
-  CREATE OR REPLACE EDITIONABLE PACKAGE "DELPRETE2526"."BASEHTML" as
+create or replace PACKAGE BASEHTML as
 
     v_idSessione NUMBER := -1;
 
@@ -35,11 +28,13 @@
     PROCEDURE bottone(
         testo   IN VARCHAR2,
         onClick IN VARCHAR2 DEFAULT NULL,
-        tipo    IN VARCHAR2 DEFAULT 'button'
-    );
+         stile IN VARCHAR2 DEFAULT NULL
+    ) ;
+    
     PROCEDURE bottoneLink(
         testo IN VARCHAR2,
-        link  IN VARCHAR2
+        link  IN VARCHAR2,
+         stile IN VARCHAR2 DEFAULT NULL
     );
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
 
@@ -83,7 +78,3 @@
     PROCEDURE vaiACapo;
     
 end baseHTML;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";
