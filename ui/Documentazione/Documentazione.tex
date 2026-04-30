@@ -1,0 +1,205 @@
+\documentclass[a4paper,12pt]{article}
+
+% --- Pacchetti Necessari ---
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref} % Per link cliccabili
+\usepackage{xcolor}   % Per i colori del codice
+\usepackage{listings} % Per visualizzare il codice SQL
+\usepackage{booktabs} % Per tabelle eleganti
+\usepackage{longtable} % Per tabelle su più pagine
+
+% --- Configurazione Syntax Highlighting per SQL/PLSQL ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    language=SQL,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\title{Documentazione Tecnica Package PL/SQL \\ \textbf{BASEHTML}}
+\author{Sviluppo Software}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+Il package \texttt{BASEHTML} è stato progettato per facilitare la generazione di interfacce web HTML direttamente da procedure PL/SQL in ambiente Oracle. Gestisce la struttura della pagina, i componenti di layout, i moduli di input e le tabelle.
+
+\section{Variabili Globali}
+Il package mantiene uno stato interno tramite le seguenti variabili:
+\begin{itemize}
+    \item \textbf{\texttt{v\_idSessione}}: (\texttt{NUMBER}) Memorizza l'identificativo della sessione utente. Valore di default: $-1$.
+\end{itemize}
+
+\section{Specifiche delle Procedure}
+
+\subsection{Gestione Pagina}
+\begin{itemize}
+    \item \texttt{apriPagina(titolo, p\_idSessione)}: Apre il tag \texttt{html} e il \texttt{body}. Crea l'header con le procedure d'accesso e di navigazione del sito. Inoltre, gestisce il reindirizzamento in caso di sessione non valida
+    \item \texttt{chiudiPagina}: Chiude i tag aperti della pagina e crea il footer.
+\end{itemize}
+
+\subsection{Elementi di testo}
+I seguenti elementi servono per scrivere del testo all'interno del sito
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{paragrafo}(testo, stile) & Inserisce un tag \texttt{p} con il testo e lo stile CSS fornito. \\
+\texttt{h1}(testo, stile) & Inserisce un titolo \texttt{h1} con il testo e lo stile CSS fornito. \\
+\texttt{collegamento}(testo, pagina, stile) & Inserisce un link \texttt{a} con il testo mostrato,la pagina a cui andare al click e lo stile CSS fornito. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+\subsection{Layout e Contenitori}
+Attraverso queste procedure è possibile definire la struttura della pagina.
+
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{apriDiv}(id, stile) & Apre un tag \texttt{div}. Accetta \texttt{id} con flex, lista e griglia che forniscono stili predefiniti (sia alla div stessa che agli elementi interni ad essa) e \texttt{stile} per ritocchi personalizzati di CSS. \\
+\texttt{chiudiDiv} & Chiude il tag \texttt{div}. \\
+\texttt{apriPopup}(id) & Apre un popup \texttt{dialog} con lo stile dell'ID fornito. \\
+\texttt{chiudiPopup} & Chiude il tag \texttt{dialog} \\
+\bottomrule
+\end{longtable}
+
+\subsection{Form e Input}
+Queste procedure permettono la creazione di moduli interattivi.
+
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{apriModulo}(id, action) & Apre un tag \texttt{form}. Accetta \texttt{id} con modulo per l'incorniciamento del form e \texttt{action} indica la pagina a cui andare e inviare i dati. \\
+\texttt{chiudiModulo} & Chiude il tag \texttt{form}. \\
+\bottomrule
+\end{longtable}
+
+All'interno di un form, ogni campo deve avere un nome per poter essere passato alla pagina di destinazione all'invio del form
+Per inserire campi in un form, ci sono diverse opzioni:
+\subsubsection{Input}
+Inserisce un input standard nel form
+
+\begin{lstlisting}[caption={firma della procedura InserisciInput}]
+PROCEDURE inserisciInput(
+    id           IN VARCHAR2,
+    tipo         IN VARCHAR2 DEFAULT 'text',
+    nome         IN VARCHAR2,
+    valore       IN VARCHAR2 DEFAULT NULL,
+    placeholder  IN VARCHAR2 DEFAULT NULL,
+    obbligatorio IN BOOLEAN  DEFAULT false
+);
+\end{lstlisting}
+
+\paragraph{Parametri di \texttt{inserisciInput}:}
+\begin{itemize}
+    \item \textbf{id}: indica il testo del label relativo all'input, se lasciato vuoto, non si crea nessun label
+    \item \textbf{tipo}: Indica il tipo di input.
+        \subitem text = tipo di default, una casella di testo di una riga
+        \subitem password = una casella di testo che nasconde i caratteri al suo interno
+        \subitem email = una casella di testo, richiede una @ e un . dopo la @
+        \subitem checkbox = indica un elemento di una lista con una sola opzione valida
+        \subitem radio = indica un elemento di una lista con più opzioni valide
+        \subitem date = input di tipo data, mostra il calendario e richiede una data
+        \subitem hidden = l'input non viene mostrato all'utente, utile per passare parametri nascossti come l'id della sessione
+    \item \textbf{nome}: Il nome che verrà usato per recuperare il valore del campo, è quello che appare nell'URL della pagina all'invio del form.
+    \item \textbf{valore}: valore di default del campo, prima che l'utente lo modifichi (per input di tipo hidden è il valore che vogliamo passare)
+    \item \textbf{placeholder}: valore mostrato in caso di campo vuoto. solitamente è un'istruzione come: inserisci email, inserisci password. sparisce appena si compila il campo
+    \item \textbf{obbligatorio}: Se impostato a \texttt{true}, aggiunge l'attributo \texttt{required}, e non si può inviare il form fino a che il campo non è stato compilato.
+\end{itemize}
+
+\subsubsection{Menu A Tendina}
+inserisce un menù a tendina nel form
+\begin{itemize}
+    \item \textbf{apriMenuTendina(id, nome, stile)}: Apre il tag \texttt{select}, ID indica il testo del label relativo all'input, se lasciato vuoto, non si crea nessun label, Nome è Il nome che verrà usato per recuperare il valore del campo, è quello che appare nell'URL della pagina all'invio del form e Stile è lo stile CSS aggiungibile manualmente.
+    \item \textbf{chiudiMenuTendina}: Chiude il tag \texttt{select}
+    \item \textbf{tendinaOption(opzione, valore, selezionato)}: aggiunge un opzione al menù a tendina. opzione è il nome mostrato all'utente, valore è il nome mostrato alla macchina(=opzione se valore è omesso) e selezionato indica l'opzione da selezionare al caricamento della pagina
+
+\end{itemize}
+
+\subsubsection{Bottone}
+Ogni form richiede un bottone per inviare il form, ma può essere usato anche altrove per richiamare funzioni
+
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{Bottone}(testo, onClick) & Inserisce un tag \texttt{button} con il testo indicato e la funzione da chiamare. per i form, omettere il paramtro onClick.  \\
+\bottomrule
+\end{longtable}
+
+\subsubsection{TextArea}
+Utilizzabile quando si vuole un testo in un riquadro di dimensione aggiustabile, comunemente utilizzato nei form per inserire input più lunghi di una riga.
+
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{inserisciTextArea}(testo, nome, modificabile) & Inserisce un tag \texttt{TextArea} con il testo indicato. Nome permette di richiamare la textarea dopo un form, mentre il parametro modificabile indica se l'utente può modificare o meno il campo(default true) \\
+\bottomrule
+\end{longtable}
+
+\subsection{Tabella}
+I seguenti tag servono per creare una tabella
+
+\begin{longtable}{@{}p{5cm} p{8cm}@{}}
+\toprule
+\textbf{Procedura} & \textbf{Descrizione} \\ \midrule
+\texttt{apriTabella}(id, stile) & Inserisce un tag \texttt{table} con lo stile CSS indicato (id per tabelle non definiti)\\
+\texttt{chiudiTabella} & chiude il tag \texttt{table}\\
+\texttt{inizioRiga} & Inserisce un tag \texttt{tr} che inizia la riga della tabella\\
+\texttt{fineRiga} & Inserisce un tag \texttt{tr} che finisce la riga della tabella\\
+\texttt{inserisciIntestazione}(testo) & Inserisce un tag \texttt{th} che inserisce nella riga una cella di tipo intestazione con il testo indicato\\
+\texttt{inserisciCella}(testo) & Inserisce un tag \texttt{td} che inserisce nella riga una cella con il testo indicato\\
+\texttt{apriCella} & Apre un tag \texttt{td} per poter mettere nella cella elementi diversi dal testo\\
+\texttt{chiudiCella} & Chiude un tag \texttt{td} per chiudere una cella aperta con apriCella\\
+
+
+\bottomrule
+\end{longtable}
+
+\section{Utility di Sistema}
+\begin{itemize}
+    \item \texttt{aggiungi\_stile(stile)}: Permette di inserire blocchi CSS custom.
+    \item \texttt{aggiungi\_script(script)}: Inserisce codice JavaScript nella pagina.
+    \item \texttt{redirect(url)}: Forza un reindirizzamento della pagina tramite browser.
+\end{itemize}
+
+\section{Esempio di Utilizzo}
+Di seguito un esempio di codice PL/SQL per generare una pagina più semplice possibile utilizzando il package \texttt{BASEHTML}:
+
+\begin{lstlisting}
+create or replace procedure esempio( p_idSessione IN NUMBER DEFAULT -1) is
+BEGIN
+   BASEHTML.apriPagina('Login Sistema', idSessione);
+   
+   BASEHTML.chiudiPagina;
+END;
+end home;
+/
+GRANT EXECUTE ON esempio TO anonymous;
+\end{lstlisting}
+mettendo il grant della pagina in fondo alla pagina stessa, si può concedere l'autorizzazione alla pagina quando la si crea
+
+\end{document}

@@ -15,10 +15,10 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     procedure paragrafo( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure h1( testo IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
 
-    -- nome utilee  per chiamarlo in un form
+    -- nome utile per chiamarlo in un form
     procedure apriMenuTendina( id IN VARCHAR2 DEFAULT NULL, nome IN VARCHAR2, stile IN VARCHAR2 DEFAULT NULL );
     procedure chiudiMenuTendina;
-    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT null);
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT null, selezionato IN BOOLEAN DEFAULT FALSE);
 
     -- per i form onclick vuoto e diventa di tipo submit da mettere nel modulo
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL );
@@ -34,14 +34,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
         nome    IN VARCHAR2,    -- il nome per richiamare il campo
         valore  IN VARCHAR2 DEFAULT NULL,   --valore di default del campo
         placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se sono checked o no
-        obbligatorio    IN BOOLEAN  DEFAULT false,  -- Aggiunge l'attributo 'required'
-        stileDiv IN VARCHAR2 DEFAULT NULL,  -- CSS inline del contenitore <div> dell'input
-        stileInput IN VARCHAR2 DEFAULT NULL, -- CSS inline dell'elemento <input>
-
-        label IN VARCHAR2 DEFAULT NULL, -- Testo del label (se NULL usa id)
-
-        min_val IN NUMBER DEFAULT NULL, -- Valore minimo (per input number/date)
-        max_val IN NUMBER DEFAULT NULL  -- Valore massimo (per input number/date)
+        obbligatorio    IN BOOLEAN  DEFAULT false  -- Aggiunge l'attributo 'required'
     );
     PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
 
@@ -57,6 +50,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     -- per inserire altre procedure in una cella
     PROCEDURE apriCella;
     PROCEDURE chiudiCella;
+
     procedure aggiungi_stile(stile varchar);
     procedure aggiungi_script(script varchar);
     procedure redirect(url varchar);
