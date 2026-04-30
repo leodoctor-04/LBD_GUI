@@ -7,3 +7,11 @@ create or replace package aligment as
     space_around  constant varchar(20) := 'space-around';
 end;
 /
+
+create or replace package text_aligment as
+    page_end        constant varchar(3) := 'end';
+    page_start      constant varchar(5) := 'start';
+    page_center     constant varchar(6) := 'center';
+    page_justify    constant varchar(6) := 'justify';
+end;
+/

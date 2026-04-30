@@ -1,12 +1,7 @@
---------------------------------------------------------
---  File creato - mercoledì-aprile-29-2026   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Package Body BASEHTML
---------------------------------------------------------
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."BASEHTML" AS
-    
+    -- v_idSessione NUMBER := -1; variabile globale pertenerela sessione
+
     PROCEDURE apriPagina(
         titolo       IN VARCHAR2 DEFAULT NULL,
         p_idSessione IN NUMBER DEFAULT -1
@@ -46,13 +41,13 @@
         htp.bodyOpen;
             htp.print('<header>');
     
-            IF v_idSessione > 0 THEN
+            IF p_idSessione > 0 THEN
                 -- MENU HAMBURGER
                 htp.p('<div style="display: flex; align-items: center; gap: 20px;">
                         <h1 onclick="toggleMenu()" style="cursor: pointer;">☰</h1>');
-                        Componenti.MenuHamburger(v_idSessione);
+                        Componenti.MenuHamburger(p_idSessione);
                 --TITOLO
-                htp.p('<a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+                htp.p('<a href="'|| global.url || 'home?p_idSessione=' || p_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
                     </div>');
                 --Utente
                 htp.p('<div style="display: flex; align-items: center; gap: 10px;">
@@ -78,7 +73,7 @@
     PROCEDURE chiudiPagina IS BEGIN
         htp.print('
             <footer>
-             <a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
+            <a href="'|| global.url || 'home?p_idSessione=' || v_idSessione || '" style="text-decoration: none; color: inherit;"> <h1>FitZone</h1> </a>
             <p>&copy; ' || to_char(sysdate, 'YYYY') || ' FitZone. Tutti i diritti riservati</p>
             </footer>
         ');
@@ -139,38 +134,15 @@
         htp.p('</select>');
         htp.p('</div>');
     END chiudiMenuTendina;
-    
-    PROCEDURE tendinaOption(
-        opzione     IN VARCHAR2,
-        valore      IN VARCHAR2 DEFAULT NULL,
-        selezionata IN BOOLEAN DEFAULT FALSE
-    ) IS
-    BEGIN
-        htp.prn('<option value="');
-    
+    PROCEDURE tendinaOption(opzione IN VARCHAR2, valore IN VARCHAR2 DEFAULT NULL) IS BEGIN
         IF valore IS NOT NULL THEN
-            htp.prn(valore);
-        ELSE
-            htp.prn(opzione);
+            htp.p('<option value="' || valore || '">' || opzione || '</option>');
+        ELSE htp.p('<option value="' || opzione || '">' || opzione || '</option>');
         END IF;
-    
-        htp.prn('"');
-    
-        IF selezionata THEN
-            htp.prn(' selected');
-        END IF;
-    
-        htp.p('>' || opzione || '</option>');
     END tendinaOption;
-    
-    PROCEDURE bottone(
-        testo   IN VARCHAR2,
-        onClick IN VARCHAR2 DEFAULT NULL,
-        tipo    IN VARCHAR2 DEFAULT 'button'
-    ) IS
-    BEGIN
-        htp.prn('<button class="btn-link" type="' || tipo || '"');
-    
+
+    PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
+        htp.prn( '<button ' );
         IF onClick IS NOT NULL THEN
             htp.prn(' onclick="' || onClick || '()"');
         END IF;
@@ -190,10 +162,13 @@
         );
     END bottoneLink;
 
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
+    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn('<a ');
         IF pagina IS NOT NULL THEN
             htp.prn( 'href="' || pagina || '"' );
+        END IF;
+        IF stile IS NOT NULL THEN
+            htp.prn( ' style="'|| stile || '"' );
         END IF;
         htp.p( '>' || testo || '</a>' );
 
@@ -215,79 +190,37 @@
     END chiudiModulo;
     
     PROCEDURE inserisciInput(
-        id              IN VARCHAR2,
-        tipo            IN VARCHAR2 DEFAULT 'text',
-        nome            IN VARCHAR2,
-        valore          IN VARCHAR2 DEFAULT NULL,
-        placeholder     IN VARCHAR2 DEFAULT NULL,
-        obbligatorio    IN BOOLEAN  DEFAULT false,
-        stileDiv        IN VARCHAR2 DEFAULT NULL,
-        stileInput      IN VARCHAR2 DEFAULT NULL,
-        label           IN VARCHAR2 DEFAULT NULL,
-        min_val         IN NUMBER DEFAULT NULL,
-        max_val         IN NUMBER DEFAULT NULL
-    ) IS
-    BEGIN
-        htp.prn('<div');
-    
-        IF stileDiv IS NOT NULL THEN
-            htp.prn(' style="' || stileDiv || '"');
-        ELSE
-            htp.prn(' style="display:block;"');
-        END IF;
-    
-        htp.p('>');
-    
+        id  IN VARCHAR2,
+        tipo    IN VARCHAR2 DEFAULT 'text',    -- text, password, email, tel, checkbox, radio, number, hidden, date.
+        nome    IN VARCHAR2,    -- il nome per richiamare il campo
+        valore  IN VARCHAR2 DEFAULT NULL, 
+        placeholder IN VARCHAR2 DEFAULT NULL,
+        obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
+    ) IS BEGIN
+        htp.p('<div style="display: block;">');
             IF tipo <> 'hidden' THEN
-                htp.prn('<label for="' || id || '">');
-    
-                IF label IS NOT NULL THEN
-                    htp.prn(label);
-                ELSE
-                    htp.prn(id);
-                END IF;
-    
-                htp.p('</label>');
+                htp.p( '<label for="' || id || '">' || id || '</label>' );
             END IF;
-    
-            htp.prn('<input id="' || id || '" type="' || tipo || '" name="' || nome || '"');
-    
+            htp.prn( '<input id="' || id || '" type="' || tipo || '" name="' || nome || '"' );
             IF valore IS NOT NULL THEN
-                htp.prn(' value="' || valore || '"');
+                htp.prn( ' value="' || valore || '"' );
             END IF;
-    
             IF placeholder IS NOT NULL THEN
                 IF tipo = 'radio' OR tipo = 'checkbox' THEN
-                    htp.prn(' checked');
+                    htp.prn( ' checked' );
                 ELSE
-                    htp.prn(' placeholder="' || placeholder || '"');
+                    htp.prn( ' placeholder="' || placeholder || '"' );
                 END IF;
             ELSIF tipo = 'date' THEN
-                htp.prn(' placeholder="dd-mm-yyyy"');
+                    htp.prn( ' placeholder="dd-mm-yyyy"' );
             END IF;
-    
             IF obbligatorio THEN
-                htp.prn(' required');
+                htp.prn( ' required' );
             END IF;
-    
-            IF stileInput IS NOT NULL THEN
-                htp.prn(' style="' || stileInput || '"');
-            END IF;
-    
-            IF min_val IS NOT NULL THEN
-                htp.prn(' min="' || min_val || '"');
-            END IF;
-    
-            IF max_val IS NOT NULL THEN
-                htp.prn(' max="' || max_val || '"');
-            END IF;
-    
-            htp.p('>');
-    
+
+            htp.p( ' >');
         htp.p('</div>');
     END inserisciInput;
-    
-    
     PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true) IS BEGIN
         htp.prn( '<textarea' );
         IF nome IS NOT NULL THEN
@@ -341,8 +274,8 @@
     PROCEDURE chiudiCella IS BEGIN
         htp.p('</td>');
     END chiudiCella;
-    
-     PROCEDURE aggiungi_Stile(stile varchar) is
+
+    PROCEDURE aggiungi_Stile(stile varchar) is
     begin
         htp.p(
             utl_lms.format_message( '<style>%s</style>',stile)
@@ -360,14 +293,4 @@
     begin
         htp.print('<script>window.location.href="' || url || '";</script>');
     end;
-    
-    PROCEDURE vaiACapo IS
-    BEGIN
-        htp.p('<br>');
-    END vaiACapo;
-    
 END baseHTML;
-
-/
-
-  GRANT EXECUTE ON "DELPRETE2526"."BASEHTML" TO "ANONYMOUS";

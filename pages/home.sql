@@ -1,11 +1,7 @@
-create or replace procedure home( IdSessione IN NUMBER DEFAULT NULL, msg IN VARCHAR2 DEFAULT NULL) is
+create or replace procedure home( p_idSessione IN NUMBER DEFAULT -1, msg IN VARCHAR2 DEFAULT NULL) is
 BEGIN
 
-  IF IdSessione IS NOT NULL THEN
-    baseHTML.apriPagina('Fitzone', IdSessione);
-  ELSE
-    baseHTML.apriPagina('Fitzone');
-  END IF;
+  baseHTML.apriPagina('Fitzone', p_idSessione);
 
   componenti.messaggioLogin(msg);
 
@@ -23,7 +19,7 @@ BEGIN
   baseHTML.apriDiv;
     baseHTML.H1('I nostri corsi', 'margin-bottom:0px; text-align: center; color:white;' );
     baseHTML.apriDiv('lista' );
-      componenti.listaCorsi(5);
+      Corsi.visualizzaCorsi(useSessione => false);
     baseHTML.chiudiDiv;
   baseHTML.chiudiDiv;
 

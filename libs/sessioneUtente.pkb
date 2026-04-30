@@ -166,7 +166,6 @@ create or replace PACKAGE BODY sessioneUtente AS
         end if;
     end login;
 
-
     procedure logout(p_idSessione IN SESSIONI.IdSessione%TYPE) AS
         v_aggiornata boolean := false;
     begin
@@ -204,5 +203,93 @@ create or replace PACKAGE BODY sessioneUtente AS
         end if;
 
     end controllaSessione;
+
+    function controllaAmministrativo(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isAmministrativo SESSIONI.IsAmministratore%TYPE;
+    begin 
+        begin
+            select IsAmministratore into v_isAmministrativo
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isAmministrativo = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaAmministrativo;
+
+    function controllaAtleta(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isAtleta SESSIONI.IsAtleta%TYPE;
+    begin 
+        begin
+            select IsAtleta into v_isAtleta
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isAtleta = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaAtleta;
+
+     function controllaIstruttore(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isIstruttore SESSIONI.IsIstruttore%TYPE;
+    begin 
+        begin
+            select IsIstruttore into v_isIstruttore
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isIstruttore = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaIstruttore;
+
+         function controllaPersonalTrainer(p_idSessione IN SESSIONI.IdSessione%TYPE) return boolean AS
+        v_isPersonalTrainer SESSIONI.IsPersonalTrainer%TYPE;
+    begin 
+        begin
+            select IsPersonalTrainer into v_isPersonalTrainer
+            from SESSIONI
+            where p_idSessione = IdSessione;
+            EXCEPTION
+                when NO_DATA_FOUND then
+                    return false;
+                when OTHERS THEN
+                    return false;
+        end;
+
+        if(v_isPersonalTrainer = 0) then
+            return false;
+        else 
+            return true;
+        end if;
+
+    end controllaPersonalTrainer;
 
     end sessioneUtente; 
