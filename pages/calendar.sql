@@ -100,7 +100,8 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     end;
 
 
-    function new_lesson_popup(l lesson) return panel is
+    function new_lesson_popup(l lesson,d date, p_idutente number) return panel is
+        res number;
         main_p panel := panel(
             class => 'lesson',
             css_style =>    layout.vlist(gap => '10px') || 
@@ -170,28 +171,48 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         info_ct.add_element(h_panel);
 
         ---- act buttons
+        if(gabrielli.controllaLezione(l.id_lesson) = 1) then
+            if(not l.teach) then
+                -- controllo se la partecipazione'e' gia
+                select count(*) into res
+                from partecipa 
+                where  
+                    idAtleta = p_idutente and
+                    idLezione = l.id_lesson
+                ;
 
-        if(l.teach) then
-            act_buttons.add_element(
-                button(
-                    class => 'clearButton',
-                    text => '<i class="material-icons">delete</i>',
-                    onclick => 'location = ...... ' 
-                )
-            );
+                if(gabrielli.controllaPartecipazione(l.id_lesson)) then
+                    act_buttons.add_element(
+                        button(
+                            class => 'clearButton',
+                            text => '<i class="material-icons">check</i>',
+                            onclick => 'window.location.href=''' || global.url || 'add_partecipazione?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
+                        )
+                    );
+
+                end if;
+                if(res >= 1) then
+                    act_buttons.add_element(
+                        button(
+                            class => 'clearButton',
+                            text => '<i class="material-icons">close</i>',
+                            onclick => 'window.location.href=''' || global.url || 'delete_partecipazione?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
+                        )
+                    );
+                end if;
+                ---- compare qualcosa se invece e' gia partecipata
+            end if; 
         else
-            if (l.startD > SYSDATE) then
+            if(l.teach) then
                 act_buttons.add_element(
                     button(
                         class => 'clearButton',
-                        text => '<i class="material-icons">check</i>',
-                        onclick => 'location = ...... ' 
+                        text => '<i class="material-icons">delete</i>',
+                        onclick => 'window.location.href=''' || global.url || 'delete_lesson?p_idSessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
                     )
                 );
-            end if;
-            ---- compare qualcosa se invece e' gia partecipata
-        end if; 
-
+            end if; 
+        end if;
 
         info_ct.add_element(act_buttons);
 
@@ -467,7 +488,7 @@ BEGIN
 
         for j in 1 .. lessons(i).count loop
             currLessClm.add_element(
-                new_lesson_popup(lessons(i)(j))
+                new_lesson_popup(lessons(i)(j),nxt_monday,v_idutente)
             );
         end loop;
 
