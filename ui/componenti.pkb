@@ -1,4 +1,4 @@
-CREATE OR REPLACE EDITIONABLE PACKAGE BODY COMPONENTI as
+create or replace PACKAGE BODY COMPONENTI as
 
 PROCEDURE calendar(startDate IN DATE) is
     nextLun Date;
@@ -291,7 +291,7 @@ PROCEDURE CardLink (
     Titolo      IN VARCHAR2,
     Valore      IN VARCHAR2,
     Descrizione IN VARCHAR2 DEFAULT NULL,
-    Link        IN VARCHAR2 DEFAULT '#'
+    Link        IN VARCHAR2 DEFAULT '#' --deafult vaule == link cliccabile che non ti porta da nessuna parte
 ) IS
 BEGIN
     htp.p('
@@ -342,6 +342,7 @@ procedure MenuHamburger (
     p_idSessione IN NUMBER
 ) is
     v_idUtente SESSIONI.IdUtente%TYPE;
+    v_isPT NUMBER := 0;
     v_isIstruttore NUMBER := 0;
     v_isAmministrativo NUMBER := 0;
 begin
@@ -356,8 +357,13 @@ begin
             v_idUtente := null;
     end;
 
-    -- Controllo se è istruttore
+    -- Controllo se è personal tranier/istruttore/amministrativo
     if v_idUtente is not null then
+        select count(*)
+        into v_isPT
+        from personal_trainer
+        where IdUtente = v_idUtente;
+    
         select count(*)
         into v_isIstruttore
         from ISTRUTTORE
@@ -376,17 +382,23 @@ begin
 
     -- Menu visibile agli atleti / base
     MenuButton('Home',                global.root || 'home',                  p_idSessione);
-    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',             p_idSessione);
+    MenuButton('I Tuoi Corsi',         global.root || 'TuoiCorsi',             p_idSessione);
     MenuButton('Calendario Lezioni',   global.root || 'calendario',            p_idSessione);
+    MenuButton('Partecipazioni',          global.root || 'gabrielli.visualizzaPartecipazioni',    p_idSessione);
+    MenuButton('Iscrizioni',          global.root || 'gabrielli.visualizzaIscrizioni',    p_idSessione);
+
     MenuButton('Abbonamento',          global.root || 'pagina_abbonamento.visualizza',    p_idSessione);
 
-    -- Se è amministrativo, oppure sia amministrativo che istruttore
+    -- Se è amministrativo
     if v_isAmministrativo > 0 then
         MenuButton('Area Amministrativo', global.root || 'areaGestionale', p_idSessione);
 
-    -- Se è solo istruttore
+    -- Se è istruttore
     elsif v_isIstruttore > 0 then
         MenuButton('Area Istruttore', global.root || 'areaGestionale', p_idSessione);
+    -- Se è PT    
+    elsif v_isPT > 0 then
+        MenuButton('Area Persona Trainer', global.root || 'areaGestionale', p_idSessione);
     end if;
 
     MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione);
@@ -506,4 +518,3 @@ PROCEDURE messaggioLogin( msg IN VARCHAR2) IS BEGIN
 END messaggioLogin;
 
 END Componenti;
-/
