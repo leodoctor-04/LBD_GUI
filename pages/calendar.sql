@@ -96,6 +96,35 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             end if;
         end loop;
 
+        if(p_idistruttore is not null) then
+            for c_row in (
+                SELECT corso.idistruttore,lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
+                FROM lezione,corso,utente
+                WHERE 
+                    --join
+                    lezione.idCorso = corso.idCorso and
+                    corso.idistruttore =  utente.idutente and
+                    -- data check
+                    lezione.datainizio between monday and (monday + 7)
+                    and
+                    utente.idutente = p_idistruttore
+                ORDER BY lezione.datainizio,lezione.datafine
+            ) loop
+                d := (c_row.datainizio - monday ) + 1;
+                res(d).extend;
+                res(d)(res(d).count) := lesson(
+                    id_lesson  => c_row.idLezione,
+                    teach => true,
+                    course_title  => c_row.titolo,
+                    instructor_name  => c_row.nome,
+                    instructor_surname => c_row.cognome,
+                    startD => c_row.datainizio,
+                    endD => c_row.datafine
+                );
+
+            end loop;
+        end if;
+
         return res;
     end;
 
@@ -186,7 +215,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                         button(
                             class => 'clearButton',
                             text => '<i class="material-icons">close</i>',
-                            onclick => 'window.location.href=''' || global.url || 'delete_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                            onclick => 'window.location.href=''' || global.url || 'gabrielli.eliminaPartecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
                         )
                     );
                 else
@@ -195,7 +224,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                             button(
                                 class => 'clearButton',
                                 text => '<i class="material-icons">check</i>',
-                                onclick => 'window.location.href=''' || global.url || 'add_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                                onclick => 'window.location.href=''' || global.url || 'gabrielli.partecipa?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
                             )
                         );
                     --end if;
@@ -207,7 +236,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                     button(
                         class => 'clearButton',
                         text => '<i class="material-icons">delete</i>',
-                        onclick => 'window.location.href=''' || global.url || 'delete_lesson?p_idSessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
+                        onclick => 'window.location.href=''' || global.url || 'mugnaini.delete_lesson?p_idSessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
                     )
                 );
             end if; 
@@ -225,7 +254,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     function insertLesson_popup(id_inst number, id_ses number, cDate date) return popup is
         res popup := popup();
         f input_form := input_form( 
-            submit_action => global.root || 'add_lesson',
+            submit_action => global.root || 'mugnaini.add_lesson',
             css_style => 
                 layout.vlist                                            || 
                 layout.add_minSize(height => '60px', width => '15vh')   || 
@@ -349,7 +378,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 ----------------------------------------------------------------------------------------------
 
 BEGIN
-    if(p_idSessione is null) then
+    if(sessioneUtente.controllaSessione(p_idSessione)) then
         basehtml.redirect(global.root || 'home');
         return;
     end if;

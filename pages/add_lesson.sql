@@ -5,7 +5,7 @@ create or replace procedure add_lesson(p_idSessione in number,p_cdata in date,p_
     d_fine date; 
 begin
     -- controlla diritti
-    if(sessioneUtente.controllaIstruttore(p_idSessione)) then
+    if(not sessioneUtente.controllaIstruttore(p_idSessione)) then
         basehtml.redirect(global.root || 'calendario?p_idsessione=' || p_idSessione || chr(38) || 'p_startDate=' || to_char(p_cdata,'dd-mon-yyyy') || chr(38) || 'p_msg=errore durante la creazione della lezione. diritti invalidi' );
         RETURN;
     end if;
