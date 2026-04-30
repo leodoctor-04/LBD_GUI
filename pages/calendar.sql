@@ -96,6 +96,35 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             end if;
         end loop;
 
+        if(p_idistruttore is not null) then
+            for c_row in (
+                SELECT corso.idistruttore,lezione.idLezione,corso.titolo,utente.nome,utente.cognome,lezione.DATAINIZIO,lezione.datafine
+                FROM lezione,corso,utente
+                WHERE 
+                    --join
+                    lezione.idCorso = corso.idCorso and
+                    corso.idistruttore =  utente.idutente and
+                    -- data check
+                    lezione.datainizio between monday and (monday + 7)
+                    and
+                    utente.idutente = p_idistruttore
+                ORDER BY lezione.datainizio,lezione.datafine
+            ) loop
+                d := (c_row.datainizio - monday ) + 1;
+                res(d).extend;
+                res(d)(res(d).count) := lesson(
+                    id_lesson  => c_row.idLezione,
+                    teach => true,
+                    course_title  => c_row.titolo,
+                    instructor_name  => c_row.nome,
+                    instructor_surname => c_row.cognome,
+                    startD => c_row.datainizio,
+                    endD => c_row.datafine
+                );
+
+            end loop;
+        end if;
+
         return res;
     end;
 
