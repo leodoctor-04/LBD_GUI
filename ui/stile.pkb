@@ -1,4 +1,11 @@
-create or replace package body Stile as
+--------------------------------------------------------
+--  File creato - martedì-aprile-28-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body STILE
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DELPRETE2526"."STILE" as
 
     PROCEDURE stile is begin
     htp.print('
@@ -303,6 +310,24 @@ create or replace package body Stile as
         font-size: clamp(20px, 1.5vw, 2vw);
         color:white;
     }
+    
+    /*Stile bottone link*/
+    .btn-link {
+        display: inline-block;
+        padding: 0.8vw 1.2vw;
+        background: var(--colore-primario);
+        color: white;
+        border-radius: 0.5vw;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-link:hover {
+        opacity: 0.85;
+    }
+    
 
     #errore p, #successo p{
         font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
@@ -312,3 +337,7 @@ create or replace package body Stile as
 
 end stile;
 end Stile;
+
+/
+
+  GRANT EXECUTE ON "DELPRETE2526"."STILE" TO "ANONYMOUS";

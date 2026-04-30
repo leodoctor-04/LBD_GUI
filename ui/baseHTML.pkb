@@ -144,10 +144,23 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE bottone( testo IN VARCHAR2, onClick IN VARCHAR2 DEFAULT NULL ) IS BEGIN
         htp.prn( '<button ' );
         IF onClick IS NOT NULL THEN
-            htp.prn( 'type="button" onclick="' || onClick || '()"');
+            htp.prn(' onclick="' || onClick || '()"');
         END IF;
-        htp.p( '>' || testo || '</button>' );
+    
+        htp.p('>' || testo || '</button>');
     END bottone;
+    
+    PROCEDURE bottoneLink(
+        testo IN VARCHAR2,
+        link  IN VARCHAR2
+    ) IS
+    BEGIN
+        htp.p(
+            '<a href="' || link || '" class="btn-link">' ||
+                testo ||
+            '</a>'
+        );
+    END bottoneLink;
 
     PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn('<a ');
@@ -175,6 +188,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY BASEHTML AS
     PROCEDURE chiudiModulo IS BEGIN
         htp.p('</form>');
     END chiudiModulo;
+    
     PROCEDURE inserisciInput(
         id  IN VARCHAR2,
         tipo    IN VARCHAR2 DEFAULT 'text',    -- text, password, email, tel, checkbox, radio, number, hidden, date.

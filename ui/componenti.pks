@@ -30,8 +30,18 @@ procedure StatCard (
     Descrizione varchar2 default null
 );
 
+PROCEDURE CardLink (
+    Titolo      IN VARCHAR2,
+    Valore      IN VARCHAR2,
+    Descrizione IN VARCHAR2 DEFAULT NULL,
+    Link        IN VARCHAR2 DEFAULT '#'
+);
+
 PROCEDURE messaggioLogin( msg IN VARCHAR2);
 
 END Componenti;
 
+/
 
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO "ANONYMOUS";
+  GRANT EXECUTE ON "DELPRETE2526"."COMPONENTI" TO PUBLIC;

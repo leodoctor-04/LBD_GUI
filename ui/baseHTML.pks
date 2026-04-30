@@ -34,7 +34,14 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
         nome    IN VARCHAR2,    -- il nome per richiamare il campo
         valore  IN VARCHAR2 DEFAULT NULL,   --valore di default del campo
         placeholder IN VARCHAR2 DEFAULT NULL,   --per campi checked e radio, indica se sono checked o no
-        obbligatorio    IN BOOLEAN  DEFAULT false   -- Aggiunge l'attributo 'required'
+        obbligatorio    IN BOOLEAN  DEFAULT false,  -- Aggiunge l'attributo 'required'
+        stileDiv IN VARCHAR2 DEFAULT NULL,  -- CSS inline del contenitore <div> dell'input
+        stileInput IN VARCHAR2 DEFAULT NULL, -- CSS inline dell'elemento <input>
+
+        label IN VARCHAR2 DEFAULT NULL, -- Testo del label (se NULL usa id)
+
+        min_val IN NUMBER DEFAULT NULL, -- Valore minimo (per input number/date)
+        max_val IN NUMBER DEFAULT NULL  -- Valore massimo (per input number/date)
     );
     PROCEDURE inserisciTextArea( testo IN VARCHAR2, nome IN VARCHAR2 DEFAULT NULL, modificabile IN BOOLEAN DEFAULT true); -- name serve per richiamarlo nel form
 

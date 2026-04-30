@@ -245,74 +245,151 @@ begin
 end;
 
 procedure StatCard (
-        Titolo      varchar2,
-        Valore      varchar2,
-        Descrizione varchar2 default null
-    ) is
-    begin
-        htp.print('<div style="
-            background:white;
-            border-radius:22px;
-            padding:26px 24px;
-            box-shadow:0 6px 18px rgba(0,0,0,0.10);
-            border:1px solid #e8e8e8;
-            min-height:170px;
+    Titolo      varchar2,
+    Valore      varchar2,
+    Descrizione varchar2 default null
+) IS
+BEGIN
+    htp.p('
+        <div style="
+            background:#1f1f1f;
+            border:1.5px solid #8fd400;
+            border-radius:24px;
+            padding:30px 25px;
+            min-height:200px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35);
             display:flex;
             flex-direction:column;
             justify-content:center;
+            align-items:center;
             text-align:center;
-        ">');
+        ">
+            <h3 style="
+                margin:0 0 20px 0;
+                color:#a6e22e;
+                font-size:20px;
+            ">' || Titolo || '</h3>
 
-        htp.print('<div style="
-            font-size:20px;
-            font-weight:800;
-            color:#0f3fb8;
-            margin-bottom:14px;
-        ">' || Titolo || '</div>');
+            <div style="
+                margin-bottom:18px;
+                color:white;
+                font-size:48px;
+                font-weight:bold;
+            ">' || Valore || '</div>
 
-        htp.print('<div style="
-            font-size:42px;
-            font-weight:900;
-            color:#111;
-            margin-bottom:10px;
-        ">' || Valore || '</div>');
+            <p style="
+                margin:0;
+                color:#cfcfcf;
+                font-size:16px;
+                line-height:1.4;
+            ">' || Descrizione || '</p>
+        </div>
+    ');
+END;
 
-        if Descrizione is not null then
-            htp.print('<div style="
-                font-size:15px;
-                color:#666;
-                line-height:1.5;
-            ">' || Descrizione || '</div>');
-        end if;
+PROCEDURE CardLink (
+    Titolo      IN VARCHAR2,
+    Valore      IN VARCHAR2,
+    Descrizione IN VARCHAR2 DEFAULT NULL,
+    Link        IN VARCHAR2 DEFAULT '#'
+) IS
+BEGIN
+    htp.p('
+        <a href="' || Link || '" style="
+            text-decoration:none;
+            color:inherit;
+            background:#1f1f1f;
+            border:1.5px solid #8fd400;
+            border-radius:24px;
+            padding:34px 28px;
+            min-height:200px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35);
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            cursor:pointer;
+            transition:transform 0.2s ease, box-shadow 0.2s ease;
+        "
+        onmouseover="
+            this.style.transform=''translateY(-6px)'';
+            this.style.boxShadow=''0 10px 28px rgba(143,212,0,0.35)'';
+        "
+        onmouseout="
+            this.style.transform=''translateY(0)'';
+            this.style.boxShadow=''0 6px 18px rgba(0,0,0,0.35)'';
+        ">
 
-        htp.print('</div>');
-end;
+            <div style="
+                color:#a6e22e;
+                font-size:42px;
+                font-weight:bold;
+                margin-bottom:14px;
+            ">' || Valore || '</div>
+
+            <p style="
+                margin:0;
+                color:#cfcfcf;
+                font-size:16px;
+            ">' || Descrizione || '</p>
+
+        </a>
+    ');
+END;
 
 procedure MenuHamburger (
     p_idSessione IN NUMBER
 ) is
+    v_idUtente SESSIONI.IdUtente%TYPE;
+    v_isIstruttore NUMBER := 0;
+    v_isAmministrativo NUMBER := 0;
 begin
+    -- Recupero utente dalla sessione
+    begin
+        select IdUtente
+        into v_idUtente
+        from SESSIONI
+        where IdSessione = p_idSessione;
+    exception
+        when no_data_found then
+            v_idUtente := null;
+    end;
+
+    -- Controllo se è istruttore
+    if v_idUtente is not null then
+        select count(*)
+        into v_isIstruttore
+        from ISTRUTTORE
+        where IdUtente = v_idUtente;
+
+        select count(*)
+        into v_isAmministrativo
+        from AMMINISTRATIVO
+        where IdUtente = v_idUtente;
+    end if;
+
     -- SIDEBAR
     htp.print('<div id="sidebar">');
 
     htp.print('<h3>Menu</h3>');
 
-    -- sidebar buttons
-    MenuButton('Home',         global.root || 'home',      p_idSessione);
-    --Leonardo Benedetti
-    IF sessioneUtente.controllaAtleta( p_idSessione ) OR sessioneUtente.controllaIstruttore( p_idSessione ) THEN
-        MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',      p_idSessione);
-    END IF;
-    IF sessioneUtente.controllaAmministrativo( p_idSessione ) THEN
-        MenuButton('Crea corso',         global.root || 'CreaCorso',      p_idSessione);
-        MenuButton('Elimina corso',         global.root || 'eliminaCorso',      p_idSessione);
-    END IF;
+    -- Menu visibile agli atleti / base
+    MenuButton('Home',                global.root || 'home',                  p_idSessione);
+    MenuButton('I tuoi corsi',         global.root || 'TuoiCorsi',             p_idSessione);
+    MenuButton('Calendario Lezioni',   global.root || 'calendario',            p_idSessione);
+    MenuButton('Abbonamento',          global.root || 'pagina_abbonamento.visualizza',    p_idSessione);
 
-    MenuButton('Abbonamento',         global.root || 'pagina_abbonamento',      p_idSessione);
-    MenuButton('Calendario lezioni',  global.root || 'calendario',              p_idSessione);
-    MenuButton('Crea Abbonamento',    global.root || 'crea_abbonamento',        p_idSessione);
-    MenuButton('Statistiche Palestra',global.root || 'statistiche',             p_idSessione);
-    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione );
+    -- Se è amministrativo, oppure sia amministrativo che istruttore
+    if v_isAmministrativo > 0 then
+        MenuButton('Area Amministrativo', global.root || 'areaGestionale', p_idSessione);
+
+    -- Se è solo istruttore
+    elsif v_isIstruttore > 0 then
+        MenuButton('Area Istruttore', global.root || 'areaGestionale', p_idSessione);
+    end if;
+
+    MenuButton('Logout', global.root || 'sessioneUtente.logout', p_idSessione);
 
     htp.print('</div>');
 

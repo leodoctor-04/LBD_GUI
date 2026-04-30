@@ -139,16 +139,13 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(p_username is NULL or p_password is NULL) then 
             p_idSessione := NULL;
             IF p_username IS NULL AND p_password IS NULL THEN
-                --apex_util.redirect_url ( p_url => global.root || 'home?msg=campi_mancanti' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=campi_mancanti";</script>');
+                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=campi_mancanti');
                 RETURN;
             ELSIF p_username IS NULL THEN
-                --apex_util.redirect_url ( p_url => global.root || 'home?msg=user_mancante' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=user_mancante";</script>');
+                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=user_mancante');
                 RETURN;
             ELSIF p_password IS NULL THEN
-                --apex_util.redirect_url ( p_url => global.root || 'home?msg=pwd_mancante' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?msg=pwd_mancante";</script>');
+                OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=pwd_mancanti');
                 RETURN;
             END IF;
         else
@@ -157,18 +154,15 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_inserito) then
             if(v_sessioneDuplicata) then
                 --si dice che è stata chiusa la sessione precedente e mandiamo in homePage
-                --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
-                htp.print('<script>window.location.href="' || global.root || 'home?p_IdSessione=' || p_idSessione || '";</script>');
+                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
             else
                 --mandiamo direttamente in homePage
-                --apex_util.redirect_url ( p_url => global.root || 'home' );
-                htp.print('<script>window.location.href="' || global.root || 'home?p_IdSessione=' || p_idSessione || '";</script>');
+                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
             end if;
         else 
             p_idSessione := NULL;
             --mostriamo un errore di psw o username sbagliati e facciamo riprovare il login
-            --apex_util.redirect_url ( p_url => global.root || 'home?msg=errore_login' );
-            htp.print('<script>window.location.href="' || global.root || 'home?msg=errore_login";</script>');
+            OWA_UTIL.REDIRECT_URL(global.root || 'home?msg=errore_login');
         end if;
     end login;
 
@@ -179,11 +173,10 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_aggiornata) then
             --il logout ha successo
             --apex_util.redirect_url ( p_url => global.root || 'home' );
-            htp.print('<script>window.location.href="' || global.url || 'home";</script>');
+            OWA_UTIL.REDIRECT_URL(global.root || 'home');
         else 
             --il logout non va a buon fine
-            --apex_util.redirect_url ( p_url => global.root || 'home' ); -- da inserire un messaggio di errore nella home
-            htp.print('<script>window.location.href="' || global.url || 'home";</script>');
+            OWA_UTIL.REDIRECT_URL(global.root || 'home');
         end if;
     end logout;
 
