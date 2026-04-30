@@ -50,7 +50,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BASEHTML as
     -- per inserire altre procedure in una cella
     PROCEDURE apriCella;
     PROCEDURE chiudiCella;
-
+    
     procedure aggiungi_stile(stile varchar);
     procedure aggiungi_script(script varchar);
     procedure redirect(url varchar);
