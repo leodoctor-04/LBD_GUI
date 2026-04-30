@@ -215,7 +215,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                         button(
                             class => 'clearButton',
                             text => '<i class="material-icons">close</i>',
-                            onclick => 'window.location.href=''' || global.url || 'delete_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                            onclick => 'window.location.href=''' || global.url || 'gabrielli.eliminaPartecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
                         )
                     );
                 else
@@ -224,7 +224,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                             button(
                                 class => 'clearButton',
                                 text => '<i class="material-icons">check</i>',
-                                onclick => 'window.location.href=''' || global.url || 'add_partecipazione?p_idsessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idutente='|| p_idutente || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                                onclick => 'window.location.href=''' || global.url || 'gabrielli.partecipa?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
                             )
                         );
                     --end if;
@@ -378,7 +378,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 ----------------------------------------------------------------------------------------------
 
 BEGIN
-    if(p_idSessione is null) then
+    if(sessioneUtente.controllaSessione(p_idSessione)) then
         basehtml.redirect(global.root || 'home');
         return;
     end if;
