@@ -19,7 +19,6 @@ steps:
 7. ui/Componenti.pkb
 8. pages/home.sql
 9. pages/loginProc.sql
-10. grant.sql
 
 # sequenza di compilazione ui_v2
 1. drop dei tipi, drop_types.sql (non sempre necessario ma per sicurezza fatelo)

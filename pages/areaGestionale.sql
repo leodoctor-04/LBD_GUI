@@ -411,3 +411,4 @@ BEGIN
     baseHTML.chiudiPagina;
 END;
 /
+GRANT EXECUTE ON areaGestionale TO anonymous;

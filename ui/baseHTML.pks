@@ -32,7 +32,7 @@ create or replace PACKAGE BASEHTML as
         link  IN VARCHAR2,
          stile IN VARCHAR2 DEFAULT NULL
     );
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL);
+    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL );
 
     -- form( action<la pagina a cui inviare i dati>)
     PROCEDURE apriModulo( id IN VARCHAR2 DEFAULT NULL, action IN VARCHAR2 DEFAULT NULL);

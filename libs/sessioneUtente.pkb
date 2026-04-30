@@ -154,10 +154,10 @@ create or replace PACKAGE BODY sessioneUtente AS
         if(v_inserito) then
             if(v_sessioneDuplicata) then
                 --si dice che è stata chiusa la sessione precedente e mandiamo in homePage
-                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
+                OWA_UTIL.REDIRECT_URL( global.root || 'home?p_IdSessione=' || p_idSessione );
             else
                 --mandiamo direttamente in homePage
-                OWA_UTIL.REDIRECT_URL( global.root || 'home?IdSessione=' || p_idSessione );
+                OWA_UTIL.REDIRECT_URL( global.root || 'home?p_IdSessione=' || p_idSessione );
             end if;
         else 
             p_idSessione := NULL;

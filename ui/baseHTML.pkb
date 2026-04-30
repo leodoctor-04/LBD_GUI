@@ -189,10 +189,13 @@ create or replace PACKAGE BODY BASEHTML AS
         END IF;
     END bottoneLink;
 
-    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL) IS BEGIN
+    PROCEDURE collegamento( testo IN VARCHAR2, pagina IN VARCHAR2 DEFAULT NULL, stile IN VARCHAR2 DEFAULT NULL) IS BEGIN
         htp.prn('<a ');
         IF pagina IS NOT NULL THEN
             htp.prn( 'href="' || pagina || '"' );
+        END IF;
+        IF stile IS NOT NULL THEN
+            htp.prn( ' style="' || stile || '"' );
         END IF;
         htp.p( '>' || testo || '</a>' );
 
@@ -219,34 +222,15 @@ create or replace PACKAGE BODY BASEHTML AS
         nome            IN VARCHAR2,
         valore          IN VARCHAR2 DEFAULT NULL,
         placeholder     IN VARCHAR2 DEFAULT NULL,
-        obbligatorio    IN BOOLEAN  DEFAULT false,
-        stileDiv        IN VARCHAR2 DEFAULT NULL,
-        stileInput      IN VARCHAR2 DEFAULT NULL,
-        label           IN VARCHAR2 DEFAULT NULL,
-        min_val         IN NUMBER DEFAULT NULL,
-        max_val         IN NUMBER DEFAULT NULL
+        obbligatorio    IN BOOLEAN  DEFAULT false
     ) IS
     BEGIN
-        htp.prn('<div');
-    
-        IF stileDiv IS NOT NULL THEN
-            htp.prn(' style="' || stileDiv || '"');
-        ELSE
-            htp.prn(' style="display:block;"');
-        END IF;
+        htp.prn('<div style="display:block;"');
     
         htp.p('>');
     
             IF tipo <> 'hidden' THEN
-                htp.prn('<label for="' || id || '">');
-    
-                IF label IS NOT NULL THEN
-                    htp.prn(label);
-                ELSE
-                    htp.prn(id);
-                END IF;
-    
-                htp.p('</label>');
+                htp.prn('<label for="' || id || '">' || id ||'</label>');
             END IF;
     
             htp.prn('<input id="' || id || '" type="' || tipo || '" name="' || nome || '"');
@@ -267,18 +251,6 @@ create or replace PACKAGE BODY BASEHTML AS
     
             IF obbligatorio THEN
                 htp.prn(' required');
-            END IF;
-    
-            IF stileInput IS NOT NULL THEN
-                htp.prn(' style="' || stileInput || '"');
-            END IF;
-    
-            IF min_val IS NOT NULL THEN
-                htp.prn(' min="' || min_val || '"');
-            END IF;
-    
-            IF max_val IS NOT NULL THEN
-                htp.prn(' max="' || max_val || '"');
             END IF;
     
             htp.p('>');
