@@ -5,20 +5,33 @@ benvenuti alla repo del gruppo di grafica.
 directory:
 - **libs**: pacchetti che provengano da altri gruppi
 - **pages**: procedure che rappresentano le pagine del sito 
-- **stile**: pacchetti che riguardano il css
-- **ui**: pacchetti che riguardano l'html
+- **ui**: pacchetti che riguardano l'html e css
 
 # sequenza di compilazione 
 
 steps:
-1. global.pks
-2. sessioneUtente.pks e .pkb
-3. Stile.pks e .pkb
-4. Componenti.pks e.pkb
-5. baseHTML.pks e .pkb
-6. home.sql
-7. loginProc.sql
-8. grant.sql
+1. libs/global.pks
+2. libs/sessioneUtente.pks e .pkb
+3. ui/Stile.pks e .pkb
+4. ui/baseHTML.pks
+5. ui/Componenti.pks
+6. ui/baseHTML.pkb
+7. ui/Componenti.pkb
+8. pages/home.sql
+9. pages/loginProc.sql
+10. grant.sql
+
+# sequenza di compilazione ui_v2
+1. drop dei tipi, drop_types.sql (non sempre necessario ma per sicurezza fatelo)
+2. compilare ui_v2/uielem.sql
+3. compilare ui_v2/container.sql
+4. compilare ui_v2/inputs.sql
+5. compilare ui_v2/multiOpt_input.sql 
+5. compilare ui_v2/tables.sql 
+6. compilare i pacchetti di supporto(enum virtuali):
+    - ui/aligments.sql
+    - ui/layout.sql
+    - ui_v2/inputTypes.sql
 
 # esempi
 

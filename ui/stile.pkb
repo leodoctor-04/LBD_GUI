@@ -281,7 +281,9 @@ create or replace package body Stile as
     /*messaggio post-form*/
     #errore{
         display:flex;
-        justify-content: space-between;
+        justify-content: center;
+        align-items: center;
+        margin: 2.5vw;
         background-color: lightcoral;
         border-radius: 1vw;
         border: 0.25vw solid red;
@@ -290,7 +292,11 @@ create or replace package body Stile as
         color:white;
     }
     #successo{
+        display:flex;
+        justify-content: center;
+        align-items: center;
         background-color: lightgreen;
+        margin: 2.5vw;
         border-radius: 1vw;
         border: 0.25vw solid green;
         padding: 1vw;
@@ -319,6 +325,10 @@ create or replace package body Stile as
         opacity: 0.85;
     }
     
+
+    #errore p, #successo p{
+        font-size: clamp(40px, 3.5vw, 3.5vw); margin:0px;
+    }
     </style>
     ');
 

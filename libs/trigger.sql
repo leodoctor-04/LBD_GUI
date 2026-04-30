@@ -1,0 +1,15 @@
+-- DIPENDE DAL NOME DEL PACKAGE
+
+CREATE OR REPLACE TRIGGER trg_eliminaPARTECIPA
+AFTER DELETE ON ISCRIZIONE_CORSO
+FOR EACH ROW
+BEGIN
+	DELETE FROM PARTECIPA
+	WHERE IdAtleta = :OLD.IdAtleta
+		AND IdLezione IN (
+			SELECT l.IdLezione
+			FROM LEZIONE l
+			WHERE l.IdCorso = :OLD.IdCorso
+			AND gabrielli.controllaLezione(l.IdLezione) = 0
+		);
+END;

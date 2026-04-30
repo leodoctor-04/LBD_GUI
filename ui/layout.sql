@@ -4,13 +4,17 @@ create or replace package layout AS
     function grid(grow NUMBER default -1 ,gcolumn NUMBER default -1,gap varchar default '0px') return VARCHAR;
 
     function add_size(width varchar default '', height varchar default '') return varchar;
+    function add_minSize(width varchar default '', height varchar default '') return varchar;
+    function textAligment(align varchar )return varchar;
+    function add_internal_spacing(spacing varchar default '') return varchar;
+    function add_external_spacing(spacing varchar default '') return varchar;
 end;
 /
 
 create or replace package body layout as
     function hlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar is
     BEGIN
-        return 'display: flex;flex-direction: row;column-gap: '|| gap || ';align-content:' || halign || ';justify-content:' || valign || ';';
+        return 'display: flex;flex-direction: row;column-gap: '|| gap || ';align-content:' || valign || ';justify-content:' || halign || ';';
     end;
 
     function vlist(gap varchar default '0px', valign varchar default 'start', halign varchar default 'start') return varchar is
@@ -39,6 +43,7 @@ create or replace package body layout as
         end if;
     end;
 
+
     function add_size(width varchar default '', height varchar default '') return varchar is
         res VARCHAR(200) := '';
     begin
@@ -51,6 +56,25 @@ create or replace package body layout as
         end if;
 
         return res;
+    end;
+
+    function add_minSize(width varchar default '', height varchar default '') return varchar is
+        res VARCHAR(200) := '';
+    begin
+        if(width is not null) then
+            res := res ||  'min-width:' || width || ';';
+        end if;
+
+        if(height is not null) then
+            res := res || 'min-height:' || height || ';';
+        end if;
+
+        return res;
+    end;
+
+    function textAligment(align varchar )return varchar is
+    begin
+        return 'text-align:'  || align || ';';
     end;
 
     function add_internal_spacing(spacing varchar default '') return varchar is
