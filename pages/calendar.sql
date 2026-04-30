@@ -236,7 +236,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                     button(
                         class => 'clearButton',
                         text => '<i class="material-icons">delete</i>',
-                        onclick => 'window.location.href=''' || global.url || 'delete_lesson?p_idSessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
+                        onclick => 'window.location.href=''' || global.url || 'mugnaini.delete_lesson?p_idSessione=' || p_idSessione || chr(38) || 'p_cdata=' || TO_CHAR(d,'dd-mon-yy') || chr(38) || 'p_idLezione='|| l.id_lesson || ''''
                     )
                 );
             end if; 
@@ -254,7 +254,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     function insertLesson_popup(id_inst number, id_ses number, cDate date) return popup is
         res popup := popup();
         f input_form := input_form( 
-            submit_action => global.root || 'add_lesson',
+            submit_action => global.root || 'mugnaini.add_lesson',
             css_style => 
                 layout.vlist                                            || 
                 layout.add_minSize(height => '60px', width => '15vh')   || 
