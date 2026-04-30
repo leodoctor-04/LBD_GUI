@@ -28,3 +28,5 @@ EXCEPTION
         basehtml.redirect(global.root || 'calendario?p_idsessione=' || p_idSessione || chr(38) || 'p_startDate=' || to_char(p_cdata,'dd-mon-yyyy') || chr(38) || 'p_msg=errore durante la rimozione della lezione.' );
         RETURN;
 end;
+/
+GRANT EXECUTE ON delete_lesson TO anonymous;

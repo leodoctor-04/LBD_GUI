@@ -220,6 +220,18 @@ BEGIN
     BaseHTML.paragrafo( 'Voto: ' || v_voto );
 
 END votoCorso;
+
+PROCEDURE iscriviCorso(p_idUtente IN NUMBER, p_idCorso IN NUMBER) IS 
+BEGIN
+    INSERT INTO ISCRIZIONE_CORSO (idAtleta, idCorso) VALUES (p_idUtente, p_idCorso);
+    COMMIT;
+    baseHTML.paragrafo('iscrizione effettuata con successo');
+
+EXCEPTION
+    WHEN OTHERS THEN
+        baseHTML.paragrafo('iscrizione fallita');
+END iscriviCorso;
+
 END Corsi;
 /
 GRANT EXECUTE ON Corsi to anonymous;

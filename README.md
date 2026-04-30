@@ -32,6 +32,10 @@ steps:
     - ui/layout.sql
     - ui_v2/inputTypes.sql
 
+# poi eseguite anche tutte le pagine e cose in libs
+# mi spiace se sono state aggiunte tante cose, Sistemisti, ricordatevi il grant
+# ho aggiunto grant alla fine di tutte le pagine, quindi dovrebbero Grantare quando si creano
+
 # esempi
 
 esempio di url: http://131.114.73.17:8080/apex/Benedetti2526.home

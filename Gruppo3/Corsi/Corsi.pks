@@ -35,4 +35,6 @@ FUNCTION degradaCorso( p_id IN number ) RETURN NUMBER;
 
 PROCEDURE votoCorso( p_id IN number );
 
+PROCEDURE iscriviCorso( p_idUtente IN number, p_idCorso IN number );
+
 end Corsi;

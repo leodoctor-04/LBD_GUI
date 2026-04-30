@@ -53,3 +53,4 @@ EXCEPTION when OTHERS then
         return;
 end;
 /
+GRANT EXECUTE ON add_partecipazione TO anonymous;

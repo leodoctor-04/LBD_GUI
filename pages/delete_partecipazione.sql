@@ -24,3 +24,4 @@ EXCEPTION when OTHERS then
         return;
 end;
 /
+GRANT EXECUTE ON delete_partecipazione TO anonymous;

@@ -233,3 +233,4 @@ BEGIN
     days.showhtml;
 end;
 /
+GRANT EXECUTE ON calendario_corso TO anonymous;

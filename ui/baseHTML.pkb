@@ -153,7 +153,7 @@ create or replace PACKAGE BODY BASEHTML AS
         stile   IN VARCHAR2 DEFAULT NULL
     ) IS
     BEGIN
-        htp.prn('<button class="btn-link" ');
+        htp.prn('<button ');
     
         IF stile IS NOT NULL THEN
             htp.prn('style="' || stile || '" ');

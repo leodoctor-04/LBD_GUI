@@ -290,3 +290,4 @@
         baseHTML.chiudiPagina;
     END;
     /
+    GRANT EXECUTE ON VisualizzaStatistiche TO anonymous;

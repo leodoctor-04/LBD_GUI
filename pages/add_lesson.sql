@@ -62,3 +62,5 @@ EXCEPTION
         basehtml.redirect(global.root || 'calendario?p_idsessione=' || p_idSessione || chr(38) || 'p_startDate=' || to_char(p_cdata,'dd-mon-yyyy') || chr(38) || 'p_msg=errore durante la creazione della lezione' );
         return;
 end;
+/
+GRANT EXECUTE ON add_lesson TO anonymous;

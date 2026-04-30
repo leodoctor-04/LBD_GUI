@@ -558,3 +558,4 @@ BEGIN
     basehtml.chiudiPagina;
 end;
 /
+GRANT EXECUTE ON calendario TO anonymous;
