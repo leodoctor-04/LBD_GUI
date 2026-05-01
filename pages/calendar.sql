@@ -378,7 +378,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
 ----------------------------------------------------------------------------------------------
 
 BEGIN
-    if(sessioneUtente.controllaSessione(p_idSessione)) then
+    if(not sessioneUtente.controllaSessione(p_idSessione)) then
         basehtml.redirect(global.root || 'home');
         return;
     end if;
