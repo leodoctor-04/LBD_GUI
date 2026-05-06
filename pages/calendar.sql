@@ -35,6 +35,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         css_style => layout.add_size('100px','100px') || 'position:relative;top:-150;right:50',
         onclick => 'openPopup(this.parentElement,1)'
     );
+    floating_button popup;
 
     currP panel;
     currLessClm panel;
@@ -43,6 +44,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     v_idUtente number;
     v_code  NUMBER;
     v_errm VARCHAR(32672);
+    buttonValid boolean;
 -----------------------------------------------------------------------------------------
 -- functions & procedures 
 -----------------------------------------------------------------------------------------
@@ -256,8 +258,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         return main_p;
     END;
 
-    function insertLesson_popup(id_inst number, id_ses number, cDate date) return popup is
-        res popup := popup();
+    procedure insertLesson_popup(id_inst in number, id_ses in number, cDate in date, res out popup, isValid out boolean) is
         f input_form := input_form( 
             submit_action => global.root || 'mugnaini.add_lesson',
             css_style => 
@@ -268,7 +269,12 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         input_ct panel; 
         inopt option_menu;
         roomSelectP panel;
+        nRow number := 0;
     begin
+        res := popup();
+        isValid := true;
+
+
         -- hidden data for the riderect
         f.add_element(
             hiddenInput(
@@ -334,10 +340,15 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             where corso.idistruttore = id_inst
         ) loop
             inopt.add_option(opt => c.titolo, val => c.idCorso);
+            nRow := nRow + 1;
         end loop;
         input_ct.add_element(inopt);
 
         f.add_element(input_ct);
+
+        if(nRow = 0) then
+            isValid := false;
+        end if;
 
         -- sala
         input_ct := panel(css_style => layout.hlist);
@@ -354,6 +365,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
             where corso.idistruttore = id_inst
         ) loop
             -- 1 opt per corso
+            nRow := 0;
             inopt := option_menu();
             for s in (
                 select idSala
@@ -361,9 +373,13 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 where capienzaMassima > c.maxPartecipanti
             ) loop
                 inopt.add_option(s.idSala);
+                nRow := nRow + 1;
             end loop;
-
             roomSelectP.add_element(inopt);
+
+            if (nRow = 0) then
+                isValid := false;
+            end if;
         end loop;
         input_ct.add_element(roomSelectP);
 
@@ -374,8 +390,6 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 in_name => 'create'
         ));
         res.add_element(f);
-
-        return res;
     end;
 
 ----------------------------------------------------------------------------------------------
@@ -534,17 +548,22 @@ BEGIN
     days.showhtml;
 
     if(sessioneUtente.controllaIstruttore(p_idSessione)) then
-        currP := panel (
-            css_style => 
-                    'position:sticky;'               ||
-                    'z-index:111;'                   ||
-                    'bottom:0px;right:50px;'         ||
-                    layout.hlist(halign => aligment.page_end) ||
-                    layout.add_size(height=>'0px')
-        );
-        currP.add_element(add_button);
-        currP.add_element(insertLesson_popup(v_idUtente,p_idsessione,nxt_monday));
-        currP.showhtml;
+        insertLesson_popup(v_idUtente,p_idsessione,nxt_monday,floating_button,buttonValid);
+
+        if(buttonValid) then
+            currP := panel (
+                css_style => 
+                        'position:sticky;'               ||
+                        'z-index:111;'                   ||
+                        'bottom:0px;right:50px;'         ||
+                        layout.hlist(halign => aligment.page_end) ||
+                        layout.add_size(height=>'0px')
+            );
+            currP.add_element(add_button);
+            currP.add_element(floating_button);
+            currP.showhtml;
+        end if;
+
     end if;
 
     -- script to open the popup on onclick of items with the class lesson
