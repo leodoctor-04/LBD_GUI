@@ -1,4 +1,4 @@
-create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null,p_msg in varchar DEFAULT null)AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null, p_msg_showed in number default 0,p_msg in varchar DEFAULT null)AS
     -- constants
     dayRange constant number := 7;
 
@@ -539,7 +539,7 @@ BEGIN
         button(
             class => 'clearButton',
             text => '<i class="material-icons">arrow_back_ios</i>',
-            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy') || ''''
+            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday-7,'dd-mon-yy') || chr(38) || 'p_msg_showed=1'|| ''''
     ));
     toolPn.add_element(
         label(
@@ -550,7 +550,7 @@ BEGIN
         button(
             class => 'clearButton',
             text => '<i class="material-icons">arrow_forward_ios</i>',
-            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy') || ''''
+            onclick => 'window.location.href=''' || global.url || 'calendario?p_idSessione=' || p_idSessione || chr(38) || 'p_startDate=' || TO_CHAR(nxt_monday+7,'dd-mon-yy') ||  chr(38) || 'p_msg_showed=1' || ''''
     ));
     toolpn.showhtml;
 
@@ -604,23 +604,25 @@ BEGIN
             currP.add_element(floating_button);
             currP.showhtml;
         else
-            currP := panel (
-                id => 'snackbar'
-            );
-            currP.add_element(Label(text => 'il bottone per aggiungere lezioni e'' stato disattivato per discrepanze con l''insegnante'));
-            currP.showhtml;
+            if (p_msg_showed = 0) then
+                currP := panel (
+                    id => 'snackbar'
+                );
+                currP.add_element(Label(text => 'il bottone per aggiungere lezioni e'' stato disattivato per discrepanze con l''insegnante'));
+                currP.showhtml;
 
-            baseHtml.aggiungi_script(script =>
-            '
-                function showToast() {
-                    var x = document.getElementById("snackbar");
-                    x.className = "show";
-                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-                }
+                baseHtml.aggiungi_script(script =>
+                '
+                    function showToast() {
+                        var x = document.getElementById("snackbar");
+                        x.className = "show";
+                        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+                    }
 
-                showToast();
-            '
-            );
+                    showToast();
+                '
+                );
+            end if;
         end if;
     end if;
 
