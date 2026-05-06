@@ -1,4 +1,4 @@
-create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null, p_msg in varchar DEFAULT null)AS
+create or replace procedure calendario(p_idSessione in number default null, p_startDate in date default null,p_msg in varchar DEFAULT null)AS
     -- constants
     dayRange constant number := 7;
 
@@ -488,6 +488,47 @@ BEGIN
             background-color: #c3edd5;
         }
 
+        #snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: yellow;
+            color: black; 
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        #snackbar.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
     ');
 
     -- ui
@@ -562,9 +603,28 @@ BEGIN
             currP.add_element(add_button);
             currP.add_element(floating_button);
             currP.showhtml;
-        end if;
+        else
+            currP := panel (
+                id => 'snackbar'
+            );
+            currP.add_element(Label(text => 'il bottone per aggiungere lezioni e'' stato disattivato per discrepanze con l''insegnante'));
+            currP.showhtml;
 
+            baseHtml.aggiungi_script(script =>
+            '
+                function showToast() {
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+                }
+
+                showToast();
+            '
+            );
+        end if;
     end if;
+
+
 
     -- script to open the popup on onclick of items with the class lesson
     baseHtml.aggiungi_script(script =>
