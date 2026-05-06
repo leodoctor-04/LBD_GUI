@@ -80,7 +80,9 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 )
             ORDER BY lezione.datainizio,lezione.datafine
         ) loop
-            d := Mod((c_row.datainizio - monday ) + 1, dayRange);
+            d := (c_row.datainizio - monday ) + 1;
+            select greatest(d,1) into d from dual;
+            select least(d,7) into d from dual;
             res(d).extend;
             res(d)(res(d).count) := lesson(
                 id_lesson  => c_row.idLezione,
@@ -112,6 +114,8 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 ORDER BY lezione.datainizio,lezione.datafine
             ) loop
                 d := (c_row.datainizio - monday ) + 1;
+                select greatest(d,1) into d from dual;
+                select least(d,7) into d from dual;
                 res(d).extend;
                 res(d)(res(d).count) := lesson(
                     id_lesson  => c_row.idLezione,
