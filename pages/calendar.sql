@@ -337,9 +337,11 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         for c in (
             SELECT titolo,idcorso
             from corso
-            where corso.idistruttore = id_inst
+            where 
+                corso.idistruttore = id_inst and
+                not corso.stato = 'inattivo'
         ) loop
-            inopt.add_option(opt => c.titolo, val => c.idCorso);
+            inopt.add_option(opt => c.titolo || '(' || c.idCorso || ')', val => c.idCorso);
             nRow := nRow + 1;
         end loop;
         input_ct.add_element(inopt);
