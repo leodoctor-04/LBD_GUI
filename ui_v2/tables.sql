@@ -41,8 +41,6 @@ create or replace type trow_list as table of trow;
 /
 
 create or replace type data_table under uielem(
-    headers_color varchar(100),
-    cell_color varchar(100),
     headers strings,
     trows trow_list,
 
@@ -70,8 +68,6 @@ create or replace type body data_table is
         self.css_style := css_style;
         self.headers := strings();
         self.trows := trow_list();
-        self.headers_color := h_color;
-        self.cell_color := c_color;
         return;
     end;
 

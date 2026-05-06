@@ -41,7 +41,8 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
     nxt_monday date;
     lessons dayXlessons;
     v_idUtente number;
-
+    v_code  NUMBER;
+    v_errm VARCHAR(32672);
 -----------------------------------------------------------------------------------------
 -- functions & procedures 
 -----------------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 )
             ORDER BY lezione.datainizio,lezione.datafine
         ) loop
-            d := (c_row.datainizio - monday ) + 1;
+            d := Mod((c_row.datainizio - monday ) + 1, dayRange);
             res(d).extend;
             res(d)(res(d).count) := lesson(
                 id_lesson  => c_row.idLezione,
@@ -585,6 +586,11 @@ BEGIN
     );
 
     basehtml.chiudiPagina;
+
+EXCEPTION when others then 
+    v_code := SQLCODE;
+    v_errm := SQLERRM;
+    basehtml.redirect(global.root || 'calendario?p_idsessione='|| p_idSessione || chr(38) ||'p_startdate=' || TO_CHAR(p_startDate,'dd-mon-yy') || chr(38) || 'p_msg=code-' || v_code || ' text-' || v_errm);
 end;
 /
 GRANT EXECUTE ON calendario TO anonymous;
