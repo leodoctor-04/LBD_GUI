@@ -95,10 +95,6 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                 startD => c_row.datainizio,
                 endD => c_row.datafine
             );
-
-            if(c_row.idistruttore = p_idistruttore) then
-                res(d)(res(d).count).teach := true;
-            end if;
         end loop;
 
         if(p_idistruttore is not null) then
@@ -207,15 +203,14 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
         info_ct.add_element(h_panel);
 
         ---- act buttons
-        if(gabrielli.controllaLezione(l.id_lesson) = 1) then
+        if(gabrielli.controllaLezione(l.id_lesson)) then
             if(not l.teach) then
                 -- controllo se la partecipazione'e' gia
                 select count(*) into res
                 from partecipa 
                 where  
                     idAtleta = p_idutente and
-                    idLezione = l.id_lesson
-                ;
+                    idLezione = l.id_lesson;
 
                 if(res >= 1) then
                     act_buttons.add_element(
@@ -226,19 +221,15 @@ create or replace procedure calendario(p_idSessione in number default null, p_st
                         )
                     );
                 else
-                    --if(gabrielli.controllaPartecipazione(l.id_lesson)) then
-                        act_buttons.add_element(
-                            button(
-                                class => 'clearButton',
-                                text => '<i class="material-icons">check</i>',
-                                onclick => 'window.location.href=''' || global.url || 'gabrielli.partecipa?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
-                            )
-                        );
-                    --end if;
+                    act_buttons.add_element(
+                        button(
+                            class => 'clearButton',
+                            text => '<i class="material-icons">check</i>',
+                            onclick => 'window.location.href=''' || global.url || 'gabrielli.partecipa?p_idsessione=' || p_idSessione || chr(38) || 'p_idlezione='|| l.id_lesson ||''''
+                        )
+                    );
                 end if;
-            end if; 
-        else
-            if(l.teach) then
+            else
                 act_buttons.add_element(
                     button(
                         class => 'clearButton',
